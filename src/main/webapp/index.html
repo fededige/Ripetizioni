@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>JSP - Hello World</title>
+</head>
+<body>
+<p>Insert Docenti</p>
+<form action="docenti-servlet" method="post">
+    Inserisci la matricola:
+    <input name="matricola" size="30" type="text" required /> <br>
+    Inserisci il nome:
+    <input name="nome" size="30" type="text"/><br>
+    Inserisci il cognome:
+    <input name="cognome" size="30" type="text"/><br>
+    <p><input type="submit" name="invia" value="OK"/></p>
+</form>
+
+<form action="ServletAuth" method="get">
+    Login:
+    <input name="login" size="30" type="text" required /> <br>
+    Password:
+    <input name="password" size="30" type="text" required /><br>
+    <p><input type="submit" name="accesso" value="Accedi"/></p>
+</form>
+</body>
+</html>
