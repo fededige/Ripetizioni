@@ -401,6 +401,80 @@ public class DAO {
         }
     }
 
+    // 0 == libero
+    // 1 == docente occupato
+    // 2 == utente occupato
+
+    public static int[][] prentoazioni_disp(Docente d, Corso c, Utente u){
+        Connection conn = openConnection();
+        ArrayList<Prenotazione> prenotazioni = null;
+        int size = 5;
+        int griglia[][] = new int[size][size];
+        //rendiamo disponibili tutte le lezio
+        for(int i = 0; i < size; i++){
+            for(int j = 0; j < size; j++){
+                griglia[i][j] = 0;
+            }
+        }
+        try {
+            prenotazioni = mostraPrenotazioni(d, c, u);
+            for(Prenotazione p : prenotazioni){
+                int x = DayToIndex(p.getGiorno());
+                int y = HourToIndex(p.getOra());
+                if(d != null && p.getDocente() == d.getMatricola()){
+                    griglia[x][y] = 1;
+                }
+                else if(p.getUtente().equals(u.getNome_utente())){
+                    griglia[x][y] = 2;
+                }
+            }
+        }finally {
+            closeConnection(conn);
+        }
+        return griglia;
+    }
+
+    private static int DayToIndex(String giorno){
+        int indice = -1;
+        switch(giorno){
+            case "lunedì":
+                indice = 0;
+                break;
+            case "martedì":
+                indice =  1;
+                break;
+            case "mercoledì":
+                indice =  2;
+                break;
+            case "giovedì":
+                indice = 3;
+                break;
+            case "venerdì":
+                indice = 4;
+                break;
+        }
+        return indice;
+    }
+
+    private static int HourToIndex(String ora){
+        int indice = -1;
+        switch(ora){
+            case "15:00:00":
+                indice = 0;
+                break;
+            case "16:00:00":
+                indice =  1;
+                break;
+            case "17:00:00":
+                indice =  2;
+                break;
+            case "18:00:00":
+                indice = 3;
+                break;
+        }
+        return indice;
+    }
+
     public static ArrayList<Prenotazione> mostraPrenotazioni(){
         Connection conn = openConnection();
         ArrayList<Prenotazione> prenotazioni = new ArrayList<>();
@@ -420,6 +494,46 @@ public class DAO {
         return prenotazioni;
     }
 
+    public static ArrayList<Prenotazione> mostraPrenotazioni(Docente d,Corso c,Utente u){
+        String sql2="";
+        Connection conn = openConnection();
+        ArrayList<Prenotazione> prenotazioni = new ArrayList<>();
+        String sql = "SELECT * FROM prenotazione WHERE stato = true AND (utente = ";
+        sql += u;
+        try{
+            Statement st = conn.createStatement();
+            if(d != null && c != null){
+                sql2 = "SELECT * FROM insegna WHERE docente = " + d + " and corso = " + c;
+                ResultSet rs2 = st.executeQuery(sql2);
+                if(rs2.next()){
+                    sql += " OR docente= " + d;
+                    ResultSet rs = st.executeQuery(sql);
+                    while (rs.next()) {
+                        Prenotazione prenotazione = new Prenotazione(rs.getInt("corso"), rs.getInt("docente"), rs.getString("utente"), rs.getString("giorno"), rs.getString("ora"));
+                        prenotazioni.add(prenotazione);
+                    }
+                }
+            }
+            else if(d != null){
+                sql += " OR docente= " + d;
+                ResultSet rs = st.executeQuery(sql);
+                while (rs.next()) {
+                    Prenotazione prenotazione = new Prenotazione(rs.getInt("corso"), rs.getInt("docente"), rs.getString("utente"), rs.getString("giorno"), rs.getString("ora"));
+                    prenotazioni.add(prenotazione);
+                }
+            }
+            else if(c != null){
+
+            }
+
+            st.close();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }finally{
+            closeConnection(conn);
+        }
+        return prenotazioni;
+    }
     public static void rimuoviPrenotazioni(ArrayList<Prenotazione> prenotazioni){
         Connection conn = openConnection();
         try{
