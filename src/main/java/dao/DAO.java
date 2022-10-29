@@ -1,5 +1,8 @@
 package dao;
 
+import com.example.ripetizioni.DocentiServlet;
+import org.graalvm.compiler.nodes.calc.IntegerEqualsNode;
+
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -250,6 +253,25 @@ public class DAO {
         }
         return insegnamenti;
     }
+    // ci ritorna tutti i docenti
+    public static ArrayList<Integer> mostraInsegnamenti(Corso c){
+        Connection conn = openConnection();
+        ArrayList<Integer> docenti = new ArrayList<>();
+        try{
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM insegna WHERE stato = true AND corso=" + c);
+            while (rs.next()){
+                int matricola = rs.getInt("docente");
+                docenti.add(matricola);
+            }
+            st.close();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }finally {
+            closeConnection(conn);
+        }
+        return docenti;
+    }
 
 
     public static void rimuoviInsegnamento(ArrayList<Insegna> insegnamenti){
@@ -401,6 +423,31 @@ public class DAO {
         }
     }
 
+    public static ArrayList<Integer> docentiDisponibili(Corso c, String giorno, String ora){
+        Connection conn = openConnection();
+        ArrayList<Integer> docentiDisp = new ArrayList<>();
+        try{
+            String queryInternaInterna1 = "SELECT docente FROM prenotazione p WHERE p.docente = i.docente AND p.ora ="+ora+" AND p.giorno="+giorno ;
+            String queryInternaInterna2 = "SELECT docente FROM prenotazione p WHERE P.corso ="+ c.getCodice() +"AND p.ora ="+ora+" AND p.giorno="+giorno;
+            String queryInterna1 = "SELECT i.docente FROM insegna i WHERE i.corso =" + c.getCodice() + " AND NOT EXISTS( " + queryInternaInterna1 + ") ";
+            String queryInterna2 = "SELECT dd.docente  FROM ( " + queryInternaInterna2 + ") dd ";
+            String queryEsterna = "SELECT dl.docente FROM ( " + queryInterna1 + " ) dl WHERE dl.docente NOT IN(" + queryInterna2 + ")";
+            PreparedStatement st = conn.prepareStatement(queryEsterna);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()){
+                docentiDisp.add(rs.getInt("docente"));
+            }
+            st.close();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }finally {
+            closeConnection(conn);
+        }
+        if(docentiDisp.isEmpty())
+            return null;
+        return docentiDisp;
+    }
+
     // 0 == libero
     // 1 == docente occupato
     // 2 == utente occupato
@@ -418,15 +465,56 @@ public class DAO {
         }
         try {
             prenotazioni = mostraPrenotazioni(d, c, u);
-            for(Prenotazione p : prenotazioni){
-                int x = DayToIndex(p.getGiorno());
-                int y = HourToIndex(p.getOra());
-                if(d != null && p.getDocente() == d.getMatricola()){
-                    griglia[x][y] = 1;
+            if(d != null) {
+                for (Prenotazione p : prenotazioni) {
+                    int x = DayToIndex(p.getGiorno());
+                    int y = HourToIndex(p.getOra());
+                    if (p.getDocente() == d.getMatricola()) {
+                        griglia[x][y] = 1;
+                    } else if (u != null && p.getUtente().equals(u.getNome_utente())) {
+                        griglia[x][y] = 2;
+                    }
                 }
-                else if(p.getUtente().equals(u.getNome_utente())){
-                    griglia[x][y] = 2;
+            }
+            else if(c != null){
+                String[] giorni = {"lunedì","martedì","mercoledì","giovedì","venerdì"};
+                String[] ore = {"15:00:00","16:00:00","17:00:00","18:00:00"};
+                for(int i = 0; i < 5; i++){
+                    for(int j = 0; j < 4; j++){
+                        if(docentiDisponibili(c, giorni[i], ore[j]) != null){
+                            griglia[i][j] = 1;
+                        }
+                    }
                 }
+                for (Prenotazione p : prenotazioni){
+                    int x = DayToIndex(p.getGiorno());
+                    int y = HourToIndex(p.getOra());
+                    if (u != null && p.getUtente().equals(u.getNome_utente())) {
+                        griglia[x][y] = 2;
+                    }
+                }
+                    /*
+                    SELECT dl.docente //query totale: docenti di un corso liberi in un orario preciso
+                    FROM ( // query interna fa : docenti che non insegnano un corso in un orario preciso
+                        SELECT i.docente
+                        FROM insegna i
+                        WHERE i.corso = 1234 AND NOT EXISTS(
+                            SELECT docente
+                            FROM prenotazione p
+                            WHERE p.docente = i.docente AND p.ora = '15:00:00' AND p.giorno='lunedì'
+                        )
+                    ) dl
+                    WHERE dl.docente NOT IN(
+                        SELECT dd.docente
+                        FROM ( // query interna fa : docenti che insegnano un corso in un orario preciso
+                            SELECT docente
+                            FROM prenotazione p
+                            WHERE P.corso = 1234 AND p.ora = '15:00:00' AND p.giorno='lunedì'
+                        ) dd
+   	                )
+                    */
+
+                    //docenti totali di informatica liberi lunedì alle 15 - (docenti occupati lunedì alle 15 che insegnano informatica)
             }
         }finally {
             closeConnection(conn);
@@ -497,40 +585,37 @@ public class DAO {
     public static ArrayList<Prenotazione> mostraPrenotazioni(Docente d,Corso c,Utente u){
         String sql2="";
         Connection conn = openConnection();
-        ArrayList<Prenotazione> prenotazioni = new ArrayList<>();
-        String sql = "SELECT * FROM prenotazione WHERE stato = true AND (utente = ";
-        sql += u;
-        try{
-            Statement st = conn.createStatement();
-            if(d != null && c != null){
-                sql2 = "SELECT * FROM insegna WHERE docente = " + d + " and corso = " + c;
-                ResultSet rs2 = st.executeQuery(sql2);
-                if(rs2.next()){
-                    sql += " OR docente= " + d;
-                    ResultSet rs = st.executeQuery(sql);
-                    while (rs.next()) {
-                        Prenotazione prenotazione = new Prenotazione(rs.getInt("corso"), rs.getInt("docente"), rs.getString("utente"), rs.getString("giorno"), rs.getString("ora"));
-                        prenotazioni.add(prenotazione);
+        ArrayList<Prenotazione> prenotazioni = null;
+        if(u != null && (c != null || d != null)){
+            prenotazioni = new ArrayList<Prenotazione>();
+            String sql = "SELECT * FROM prenotazione WHERE stato = true AND (utente = ";
+            sql += u;
+            try{
+                Statement st = conn.createStatement();
+                if(d != null && c != null){
+                    sql2 = "SELECT * FROM insegna WHERE docente = " + d + " and corso = " + c;
+                    ResultSet rs2 = st.executeQuery(sql2);
+                    if(rs2.next()){
+                        sql += " OR docente= " + d + ")";
                     }
                 }
-            }
-            else if(d != null){
-                sql += " OR docente= " + d;
+                else if(d != null){
+                    sql += " OR docente= " + d + ")";
+                }
+                else if(c != null){
+                    sql += " OR corso = " + c + ")";
+                }
                 ResultSet rs = st.executeQuery(sql);
                 while (rs.next()) {
                     Prenotazione prenotazione = new Prenotazione(rs.getInt("corso"), rs.getInt("docente"), rs.getString("utente"), rs.getString("giorno"), rs.getString("ora"));
                     prenotazioni.add(prenotazione);
                 }
+                st.close();
+            }catch (SQLException e){
+                System.out.println(e.getMessage());
+            }finally{
+                closeConnection(conn);
             }
-            else if(c != null){
-
-            }
-
-            st.close();
-        }catch (SQLException e){
-            System.out.println(e.getMessage());
-        }finally{
-            closeConnection(conn);
         }
         return prenotazioni;
     }
