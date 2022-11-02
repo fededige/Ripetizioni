@@ -1,8 +1,5 @@
 package dao;
 
-import com.example.ripetizioni.DocentiServlet;
-import org.graalvm.compiler.nodes.calc.IntegerEqualsNode;
-
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -427,24 +424,29 @@ public class DAO {
         Connection conn = openConnection();
         ArrayList<Integer> docentiDisp = new ArrayList<>();
         try{
-            String queryInternaInterna1 = "SELECT docente FROM prenotazione p WHERE p.docente = i.docente AND p.ora ="+ora+" AND p.giorno="+giorno ;
-            String queryInternaInterna2 = "SELECT docente FROM prenotazione p WHERE P.corso ="+ c.getCodice() +"AND p.ora ="+ora+" AND p.giorno="+giorno;
-            String queryInterna1 = "SELECT i.docente FROM insegna i WHERE i.corso =" + c.getCodice() + " AND NOT EXISTS( " + queryInternaInterna1 + ") ";
+            String queryInternaInterna1 = "SELECT docente FROM prenotazione p WHERE p.stato = 1 AND p.docente = i.docente AND p.ora = '"+ora+"' AND p.giorno='"+giorno +"'";
+            String queryInternaInterna2 = "SELECT docente FROM prenotazione p WHERE p.stato = 1 AND P.corso ="+ c.getCodice() +" AND p.ora = '"+ora+"' AND p.giorno= '"+giorno+"'";
+            String queryInterna1 = "SELECT i.docente FROM insegna i WHERE i.stato  = 1 AND i.corso =" + c.getCodice() + " AND NOT EXISTS( " + queryInternaInterna1 + ") ";
             String queryInterna2 = "SELECT dd.docente  FROM ( " + queryInternaInterna2 + ") dd ";
             String queryEsterna = "SELECT dl.docente FROM ( " + queryInterna1 + " ) dl WHERE dl.docente NOT IN(" + queryInterna2 + ")";
+            //System.out.println(queryEsterna);
             PreparedStatement st = conn.prepareStatement(queryEsterna);
             ResultSet rs = st.executeQuery();
             while (rs.next()){
                 docentiDisp.add(rs.getInt("docente"));
             }
+            System.out.println("docenti" + docentiDisp.size());
             st.close();
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }finally {
             closeConnection(conn);
         }
-        if(docentiDisp.isEmpty())
+        if(docentiDisp.isEmpty()) {
+            System.out.println("ciao");
             return null;
+        }
+        System.out.println(docentiDisp.get(0));
         return docentiDisp;
     }
 
@@ -457,31 +459,41 @@ public class DAO {
         ArrayList<Prenotazione> prenotazioni = null;
         int size = 5;
         int griglia[][] = new int[size][size];
+
         //rendiamo disponibili tutte le lezio
         for(int i = 0; i < size; i++){
             for(int j = 0; j < size; j++){
                 griglia[i][j] = 0;
             }
         }
+        System.out.println("in prenotazioni disp");
         try {
             prenotazioni = mostraPrenotazioni(d, c, u);
+            if (prenotazioni == null ) System.out.println("è null");
+            System.out.println("prenotazioni.length: " + prenotazioni.size());
             if(d != null) {
+                System.out.println("in prenotazioni disp: prima del for");
                 for (Prenotazione p : prenotazioni) {
                     int x = DayToIndex(p.getGiorno());
+                    System.out.println("break1");
                     int y = HourToIndex(p.getOra());
+                    System.out.println("break2");
                     if (p.getDocente() == d.getMatricola()) {
                         griglia[x][y] = 1;
+                        System.out.println("break3");
                     } else if (u != null && p.getUtente().equals(u.getNome_utente())) {
                         griglia[x][y] = 2;
+                        System.out.println("break4");
                     }
                 }
+                System.out.println("in prenotazioni disp: dopo il for");
             }
             else if(c != null){
                 String[] giorni = {"lunedì","martedì","mercoledì","giovedì","venerdì"};
                 String[] ore = {"15:00:00","16:00:00","17:00:00","18:00:00"};
                 for(int i = 0; i < 5; i++){
                     for(int j = 0; j < 4; j++){
-                        if(docentiDisponibili(c, giorni[i], ore[j]) != null){
+                        if(docentiDisponibili(c, giorni[i], ore[j]) == null){
                             griglia[i][j] = 1;
                         }
                     }
@@ -583,27 +595,28 @@ public class DAO {
     }
 
     public static ArrayList<Prenotazione> mostraPrenotazioni(Docente d,Corso c,Utente u){
+        System.out.println("dentro mostra prenotazioni");
         String sql2="";
         Connection conn = openConnection();
         ArrayList<Prenotazione> prenotazioni = null;
         if(u != null && (c != null || d != null)){
             prenotazioni = new ArrayList<Prenotazione>();
             String sql = "SELECT * FROM prenotazione WHERE stato = true AND (utente = ";
-            sql += u;
+            sql += "'" + u.getNome_utente() + "'";
             try{
                 Statement st = conn.createStatement();
                 if(d != null && c != null){
-                    sql2 = "SELECT * FROM insegna WHERE docente = " + d + " and corso = " + c;
+                    sql2 = "SELECT * FROM insegna WHERE docente = " + d.getMatricola() + " and corso = " + c.getCodice();
                     ResultSet rs2 = st.executeQuery(sql2);
                     if(rs2.next()){
-                        sql += " OR docente= " + d + ")";
+                        sql += " OR docente= " + d.getMatricola() + ")";
                     }
                 }
                 else if(d != null){
-                    sql += " OR docente= " + d + ")";
+                    sql += " OR docente= " + d.getMatricola() + ")";
                 }
                 else if(c != null){
-                    sql += " OR corso = " + c + ")";
+                    sql += " OR corso = " + c.getCodice() + ")";
                 }
                 ResultSet rs = st.executeQuery(sql);
                 while (rs.next()) {
