@@ -19,7 +19,7 @@ public class ServletDao extends HttpServlet {
         String user = ctx.getInitParameter("user");
         String pwd = ctx.getInitParameter("pwd");
         dao = new DAO(url, user, pwd);
-        DAO.registerDriver();
+        dao.registerDriver();
         ctx.setAttribute("DAO",dao);
     }
 }
