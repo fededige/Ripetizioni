@@ -4,9 +4,9 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class DAO {
-    private static String url1 = "";
-    private static String user = "";
-    private static String password = "";
+    private String url1 = "";
+    private String user = "";
+    private String password = "";
 
     public DAO(String url, String user, String password){
         this.url1 = url;
@@ -23,7 +23,7 @@ public class DAO {
         }
     }
 
-    private static Connection openConnection(){
+    private Connection openConnection(){
         Connection conn1 = null;
         try {
             conn1 = DriverManager.getConnection(url1, user, password);
@@ -47,7 +47,7 @@ public class DAO {
         }
     }
 
-    public static Corso getCorso(int codice){
+    public Corso getCorso(int codice){
         Connection c = openConnection();
         Corso corso = null;
         try{
@@ -65,7 +65,7 @@ public class DAO {
         return corso;
     }
 
-    public static void insertCorsi(ArrayList<Corso> corsi){
+    public void insertCorsi(ArrayList<Corso> corsi){
         Connection c = openConnection();
         int i = 0;
         try{
@@ -89,7 +89,7 @@ public class DAO {
         }
     }
 
-    public static ArrayList<Corso> mostraCorsi(){
+    public ArrayList<Corso> mostraCorsi(){
         Connection conn = openConnection();
         ArrayList<Corso> corsi = new ArrayList<>();
         try{
@@ -108,7 +108,7 @@ public class DAO {
         return corsi;
     }
 
-    public static void rimuoviCorsi(ArrayList<Integer> codici){
+    public void rimuoviCorsi(ArrayList<Integer> codici){
         Connection conn = openConnection();
         try{
             String sql = "UPDATE corso SET stato = false WHERE codice = ?";
@@ -250,8 +250,8 @@ public class DAO {
         }
         return insegnamenti;
     }
-    // ci ritorna tutti i docenti
-    public static ArrayList<Integer> mostraInsegnamenti(Corso c){
+
+    public ArrayList<Integer> mostraInsegnamenti(Corso c){
         Connection conn = openConnection();
         ArrayList<Integer> docenti = new ArrayList<>();
         try{
@@ -372,7 +372,7 @@ public class DAO {
         }
     }
 
-    public static Utente utenteEsistente(String nomeutente, String password){
+    public Utente utenteEsistente(String nomeutente, String password){
         Connection conn = openConnection();
         Utente usr = null;
         try{
@@ -393,7 +393,7 @@ public class DAO {
         return usr;
     }
 
-    public static void insertPrenotazione(ArrayList<Prenotazione> prenotazioni){
+    public void insertPrenotazione(ArrayList<Prenotazione> prenotazioni){
         Connection conn = openConnection();
         int i = 0;
         try{
@@ -420,7 +420,28 @@ public class DAO {
         }
     }
 
-    public static ArrayList<Integer> docentiDisponibili(Corso c, String giorno, String ora){
+    public void insertPrenotazione(Prenotazione prenotazione){
+        Connection conn = openConnection();
+        int i = 0;
+        try{
+            String sql = "INSERT INTO prenotazione(corso, docente, utente, giorno, ora, stato) VALUES (?, ?, ?, ?, ?, ?)";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setInt(1, prenotazione.getCorso());
+            st.setInt(2, prenotazione.getDocente());
+            st.setString(3,prenotazione.getUtente());
+            st.setString(4, prenotazione.getGiorno());
+            st.setString(5, prenotazione.getOra());
+            st.setBoolean(6,prenotazione.isStato());
+            st.executeUpdate();
+            st.close();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }finally {
+            closeConnection(conn);
+        }
+    }
+
+    public ArrayList<Integer> docentiDisponibili(Corso c, String giorno, String ora){
         Connection conn = openConnection();
         ArrayList<Integer> docentiDisp = new ArrayList<>();
         try{
@@ -454,7 +475,7 @@ public class DAO {
     // 1 == docente occupato
     // 2 == utente occupato
 
-    public static int[][] prentoazioni_disp(Docente d, Corso c, Utente u){
+    public int[][] prentoazioni_disp(Docente d, Corso c, Utente u){
         Connection conn = openConnection();
         ArrayList<Prenotazione> prenotazioni = null;
         int size = 5;
@@ -575,7 +596,7 @@ public class DAO {
         return indice;
     }
 
-    public static ArrayList<Prenotazione> mostraPrenotazioni(){
+    public ArrayList<Prenotazione> mostraPrenotazioni(){
         Connection conn = openConnection();
         ArrayList<Prenotazione> prenotazioni = new ArrayList<>();
         try{
@@ -594,7 +615,7 @@ public class DAO {
         return prenotazioni;
     }
 
-    public static ArrayList<Prenotazione> mostraPrenotazioni(Docente d,Corso c,Utente u){
+    public ArrayList<Prenotazione> mostraPrenotazioni(Docente d,Corso c,Utente u){
         System.out.println("dentro mostra prenotazioni");
         String sql2="";
         Connection conn = openConnection();
@@ -632,7 +653,8 @@ public class DAO {
         }
         return prenotazioni;
     }
-    public static void rimuoviPrenotazioni(ArrayList<Prenotazione> prenotazioni){
+
+    public void rimuoviPrenotazioni(ArrayList<Prenotazione> prenotazioni){
         Connection conn = openConnection();
         try{
             String sql = "UPDATE prenotazione SET stato = false WHERE (docente = ? and giorno = ? and ora = ?)";
@@ -653,7 +675,7 @@ public class DAO {
         }
     }
 
-    public static void svuota_tabelle(){
+    public void svuota_tabelle(){
         Connection conn = openConnection();
         try{
             String sql = "DELETE FROM prenotazione";
