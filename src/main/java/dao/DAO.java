@@ -30,7 +30,7 @@ public class DAO {
             /*if (conn1 != null) {
                 //System.out.println("Connected to the database ripetizioni");
             }*/
-        } catch (SQLException e){
+        }catch (SQLException e){
             System.out.println(e.getMessage());
         }
         return conn1;
@@ -51,7 +51,7 @@ public class DAO {
         Connection c = openConnection();
         Corso corso = null;
         try{
-            String sql = "SELECT * FROM corso where codice = ?";
+            String sql = "SELECT * FROM corso WHERE codice = ? AND stato = true";
             PreparedStatement st = c.prepareStatement(sql);
             st.setInt(1, codice);
             ResultSet rs = st.executeQuery();
@@ -83,6 +83,23 @@ public class DAO {
                 corsi.remove(i);
                 insertCorsi(corsi);
             }
+            System.out.println(e.getMessage());
+        }finally {
+            closeConnection(c);
+        }
+    }
+
+    public void insertCorsi(Corso corso){
+        Connection c = openConnection();
+        try{
+            String sql = "INSERT INTO corso(codice, titolocorso, stato) VALUES (?, ?, ?)";
+            PreparedStatement st = c.prepareStatement(sql);
+            st.setInt(1, corso.getCodice());
+            st.setString(2, corso.getTitolo_corso());
+            st.setBoolean(3, corso.isStato());
+            st.executeUpdate();
+            st.close();
+        }catch (SQLException e){
             System.out.println(e.getMessage());
         }finally {
             closeConnection(c);
@@ -127,7 +144,24 @@ public class DAO {
         }
     }
 
-    public static Docente getDocente(int matricola){
+    public void rimuoviCorsi(int codice){
+        Connection conn = openConnection();
+        try{
+            String sql = "UPDATE corso SET stato = false WHERE codice = ?";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setInt(1, codice);
+            if(st.executeUpdate() == 0){ // forse gestire l'errore
+                System.out.println("executeUpdate: Materia inesistente");
+            }
+            st.close();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }finally {
+            closeConnection(conn);
+        }
+    }
+
+    public Docente getDocente(int matricola){
         Connection c = openConnection();
         Docente docente = null;
         try{
@@ -145,7 +179,7 @@ public class DAO {
         return docente;
     }
 
-    public static void insertDocenti(ArrayList<Docente> docenti){
+    public void insertDocenti(ArrayList<Docente> docenti){
         Connection conn = openConnection();
         int i = 0;
         try{
@@ -170,7 +204,25 @@ public class DAO {
         }
     }
 
-    public static ArrayList<Docente> mostraDocenti(){
+    public void insertDocenti(Docente docente){
+        Connection conn = openConnection();
+        try{
+            String sql = "INSERT INTO docente(matricola, cognome, nome, stato) VALUES (?, ?, ?, ?)";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setInt(1, docente.getMatricola());
+            st.setString(2, docente.getCognome());
+            st.setString(3, docente.getNome());
+            st.setBoolean(4, docente.isStato());
+            st.executeUpdate();
+            st.close();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }finally {
+            closeConnection(conn);
+        }
+    }
+
+    public ArrayList<Docente> mostraDocenti(){
         Connection conn = openConnection();
         ArrayList<Docente> docenti = new ArrayList<>();
         try{
@@ -189,7 +241,7 @@ public class DAO {
         return docenti;
     }
 
-    public static void rimuoviDocenti(ArrayList<Integer> docenti){
+    public void rimuoviDocenti(ArrayList<Integer> docenti){
         Connection conn = openConnection();
         try{
             String sql = "UPDATE docente SET stato = false WHERE matricola = ?";
@@ -208,7 +260,24 @@ public class DAO {
         }
     }
 
-    public static void insertInsegnamento(ArrayList<Insegna> insegnamenti){
+    public void rimuoviDocenti(int docente){
+        Connection conn = openConnection();
+        try{
+            String sql = "UPDATE docente SET stato = false WHERE matricola = ?";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setInt(1, docente);
+            if(st.executeUpdate() == 0){
+                System.out.println("executeUpdate: Docente inesistente");
+            }
+            st.close();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }finally {
+            closeConnection(conn);
+        }
+    }
+
+    public void insertInsegnamento(ArrayList<Insegna> insegnamenti){
         Connection conn = openConnection();
         int i = 0;
         try{
@@ -232,7 +301,24 @@ public class DAO {
         }
     }
 
-    public static ArrayList<Insegna> mostraInsegnamenti(){
+    public void insertInsegnamento(Insegna insegnamento){
+        Connection conn = openConnection();
+        try{
+            String sql = "INSERT INTO insegna(corso, docente,stato) VALUES (?, ?, ?)";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setInt(1, insegnamento.getCorso());
+            st.setInt(2, insegnamento.getDocente());
+            st.setBoolean(3, insegnamento.isStato());
+            st.executeUpdate();
+            st.close();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }finally {
+            closeConnection(conn);
+        }
+    }
+
+    public ArrayList<Insegna> mostraInsegnamenti(){
         Connection conn = openConnection();
         ArrayList<Insegna> insegnamenti = new ArrayList<>();
         try{
@@ -270,8 +356,7 @@ public class DAO {
         return docenti;
     }
 
-
-    public static void rimuoviInsegnamento(ArrayList<Insegna> insegnamenti){
+    public void rimuoviInsegnamento(ArrayList<Insegna> insegnamenti){
         Connection conn = openConnection();
         try{
             String sql = "UPDATE insegna SET stato = false WHERE docente = ? and corso= ?";
@@ -291,7 +376,25 @@ public class DAO {
         }
     }
 
-    public static Utente getUtente(String nomeutente){
+    public void rimuoviInsegnamento(Insegna insegnamento){
+        Connection conn = openConnection();
+        try{
+            String sql = "UPDATE insegna SET stato = false WHERE docente = ? and corso= ?";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setInt(1, insegnamento.getDocente());
+            st.setInt(2, insegnamento.getCorso());
+            if(st.executeUpdate() == 0){
+                System.out.println("executeUpdate: Insegnamento inesistente");
+            }
+            st.close();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }finally {
+            closeConnection(conn);
+        }
+    }
+
+    public Utente getUtente(String nomeutente){
         Connection c = openConnection();
         Utente utente = null;
         try{
@@ -309,7 +412,7 @@ public class DAO {
         return utente;
     }
 
-    public static void insertUtente(ArrayList<Utente> utenti){
+    public void insertUtente(ArrayList<Utente> utenti){
         Connection conn = openConnection();
         int i = 0;
         try{
@@ -334,7 +437,26 @@ public class DAO {
         }
     }
 
-    public static ArrayList<Utente> mostraUtenti(){
+    public void insertUtente(Utente utente){
+        Connection conn = openConnection();
+        int i = 0;
+        try{
+            String sql = "INSERT INTO utente(nomeutente, password, ruolo, stato) VALUES (?, ?, ?, ?)";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setString(1, utente.getNome_utente());
+            st.setString(2, utente.getPassword());
+            st.setString(3, utente.getRuolo());
+            st.setBoolean(4, utente.isStato());
+            st.executeUpdate();
+            st.close();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }finally {
+            closeConnection(conn);
+        }
+    }
+
+    public ArrayList<Utente> mostraUtenti(){
         Connection conn = openConnection();
         ArrayList<Utente> utenti = new ArrayList<>();
         try{
@@ -353,7 +475,7 @@ public class DAO {
         return utenti;
     }
 
-    public static void rimuoviUtente(ArrayList<String> utenti){
+    public void rimuoviUtente(ArrayList<String> utenti){
         Connection conn = openConnection();
         try{
             String sql = "UPDATE utente SET stato = false WHERE nomeutente = ?";
@@ -363,6 +485,23 @@ public class DAO {
                 if(st.executeUpdate() == 0){
                     System.out.println("executeUpdate: Utente inesistente");
                 }
+            }
+            st.close();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }finally {
+            closeConnection(conn);
+        }
+    }
+
+    public void rimuoviUtente(String utente){
+        Connection conn = openConnection();
+        try{
+            String sql = "UPDATE utente SET stato = false WHERE nomeutente = ?";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setString(1, utente);
+            if(st.executeUpdate() == 0){
+                System.out.println("executeUpdate: Utente inesistente");
             }
             st.close();
         }catch (SQLException e){
@@ -666,6 +805,25 @@ public class DAO {
                 if(st.executeUpdate() == 0){
                     System.out.println("executeUpdate: Prenotazione inesistente");
                 }
+            }
+            st.close();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }finally {
+            closeConnection(conn);
+        }
+    }
+
+    public void rimuoviPrenotazioni(Prenotazione prenotazione){
+        Connection conn = openConnection();
+        try{
+            String sql = "UPDATE prenotazione SET stato = false WHERE (docente = ? and giorno = ? and ora = ?)";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setInt(1, prenotazione.getDocente());
+            st.setString(2, prenotazione.getGiorno());
+            st.setString(3, prenotazione.getOra());
+            if(st.executeUpdate() == 0){
+                System.out.println("executeUpdate: Prenotazione inesistente");
             }
             st.close();
         }catch (SQLException e){
