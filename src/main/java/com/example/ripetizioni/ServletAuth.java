@@ -34,70 +34,33 @@ public class ServletAuth extends HttpServlet {
         String password = request.getParameter("password");
         PrintWriter out = response.getWriter();
         String url = response.encodeURL("ServletAuth");
-        out.println("<!DOCTYPE html>");
-        out.println("<html>");
-        out.println("<head>");
-        out.println("<title>Servlet Auth</title>");
-        out.println("</head>");
-        out.println("<body>");
-        String azione = request.getParameter("action");
-        if (azione!=null && azione.equals("invalida")) {
-            s.invalidate();
-            out.println("<p>Sessione invalidata!</p>");
-            out.println("<p> <a href=\"" + url + "\">Ricarica</a></p>");
-        }
-        else{
-            if (login != null && password != null) {
-                Utente user = dao.utenteEsistente(login, password);
-                if(user != null) {
-                    s.setAttribute("login", user.getNome_utente());
-                    s.setAttribute("ruolo", user.getRuolo());
-                    out.println("<p> Ciao, sei loggato con " + s.getAttribute("login") + "</p>");
-                    out.println(" E hai ruolo: " + s.getAttribute("ruolo") + "<br>");
-                    if (s.isNew())
-                        out.println(" nuova sessione</p>");
-                    else
-                        out.println(" vecchia sessione</p>");
-                    out.println("<p>ID di sessione: "+s.getId() + "</p>");
-                    out.println("<p>Data di creazione: " + new Date(s.getCreationTime()) + "</p>");
-                    out.println("<p>Max inactive time interval (in second): "
-                            + s.getMaxInactiveInterval() + "</p>");
-                    out.println("<p><a href=\"" + url + "?action=invalida\">Invalida</a></p>");
-
-                    System.out.println("prima del for");//new Docente(123, "Pippo", "Baudo")
-                    int[][] c = dao.prentoazioni_disp(null, new Corso(1234, "informatica"), new Utente("ema", "Pippo", "cliente"));
-                    //out.println("prima del for" + c.length);
-                    for(int i = 0; i < 5; i++){
-                        for(int j = 0; j < 4; j++){
-                            out.print(c[i][j] + " ");
-                            System.out.print("<p> ciao" + c[i][j] + "</p>");
-                        }
-                        out.println("<br>");
-                        System.out.println();
-                    }
-                }else{
-                    System.out.println("VERIFICA");
-                    out.println("<h2>Utente inesistente<h2>");
-                }
+        if (login != null && password != null) {
+            Utente user = dao.utenteEsistente(login, password);
+            if(user != null && user.getNome_utente() != null) {
+                s.setAttribute("login", user.getNome_utente());
+                s.setAttribute("ruolo", user.getRuolo());
+                out.println("<h2>Sei loggato</h2>");
+            }else if(user == null){
+                out.println("<h2>Utente inesistente</h2>");
             }
-            else{
-                out.println("<p> Ciao, sei loggato con " + s.getAttribute("login") + "</p>");
-                out.println("<br> E hai ruolo: " + s.getAttribute("ruolo"));
-                if (s.isNew())
-                    out.println(" nuova sessione</p>");
-                else
-                    out.println(" vecchia sessione</p>");
-                out.println("<p>ID di sessione: "+s.getId() + "</p>");
-                out.println("<p>Data di creazione: " + new Date(s.getCreationTime()) + "</p>");
-                out.println("<p>Max inactive time interval (in second): "
-                        + s.getMaxInactiveInterval() + "</p>");
-                out.println("<p><a href=\"" + url + "?action=invalida\">Invalida</a></p>");
+            else {
+                out.println("<h2>Password errata</h2>");
             }
-            out.println("</body>");
-            out.println("</html>");
-            out.close();
         }
-    }
+        out.flush();
+        out.close();
+        }
     public void destroy(){
     }
 }
+
+/*int[][] c = dao.prentoazioni_disp(null, new Corso(1234, "informatica"), new Utente("ema", "Pippo", "cliente"));
+                //out.println("prima del for" + c.length);
+                for(int i = 0; i < 5; i++){
+                    for(int j = 0; j < 4; j++){
+                        out.print(c[i][j] + " ");
+                        System.out.print("<p> ciao" + c[i][j] + "</p>");
+                    }
+                    out.println("<br>");
+                    System.out.println();
+                }*/

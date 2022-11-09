@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
 <head>
-    <title>JSP - Hello World</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <title>Prova ajax con jQuery</title>
 </head>
 <body>
 <p>Insert Docenti</p>
@@ -14,13 +15,29 @@
     <input name="cognome" size="30" type="text"/><br>
     <p><input type="submit" name="invia" value="OK"/></p>
 </form>
+<!-- action="ServletAuth" -->
 
-<form action="ServletAuth" method="get">
+<form method="get">
     Login:
-    <input name="login" size="30" type="text" required /> <br>
+    <input id="nomeut" name="login" size="30" type="text" required /> <br>
     Password:
-    <input name="password" size="30" type="text" required /><br>
-    <p><input type="submit" name="accesso" value="Accedi"/></p>
+    <input id="psw" name="password" size="30" type="text" required /><br>
+    <p><input id="log" type="button" name="accesso" value="Accedi"/></p>
 </form>
+<div id="info" class="outputTextArea"></div>
+<script type="text/javascript">
+    $(document).ready(function () { // When the DOM of this page is constructed
+        $("#log").click(function () {// on click of xx button do ...
+            var n = document.getElementById("nomeut").value;
+            var p = document.getElementById("psw").value;
+            $.get("ServletAuth", {login: n, password: p}, // GET to HelloServlet (hello-servlet)!
+                function (data) {      // callBack function
+                    $("#info").html(data);
+                    //(by ID) and insert dynamic content (data) into it
+                });
+        });
+    });
+</script>
 </body>
 </html>
+

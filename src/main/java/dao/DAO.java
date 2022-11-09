@@ -515,13 +515,14 @@ public class DAO {
         Connection conn = openConnection();
         Utente usr = null;
         try{
-            String sql = "SELECT * FROM utente WHERE nomeutente = '" + nomeutente + "'  AND password = '" + password + "' AND stato = 1";
+            String sql = "SELECT * FROM utente WHERE nomeutente = '" + nomeutente + "' AND stato = 1";
             Statement st =  conn.createStatement();
             ResultSet rs = st.executeQuery(sql);
-            System.out.println("pre next");
             if(rs.next()){
-                System.out.println("SIAMO IN IF");
+                //System.out.println("SIAMO IN IF")
                 usr = new Utente(rs.getString("nomeutente"),rs.getString("password"),rs.getString("ruolo"));
+                if(!usr.getPassword().equals(password))
+                    usr = new Utente(null, null,  null);
             }
             st.close();
         }catch (SQLException e){
