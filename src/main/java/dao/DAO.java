@@ -513,16 +513,19 @@ public class DAO {
 
     public Utente utenteEsistente(String nomeutente, String password){
         Connection conn = openConnection();
-        Utente usr = null;
+        Utente usr = new Utente(null, null, null);
+        usr.setStato(false); //utente inesistente
         try{
-            String sql = "SELECT * FROM utente WHERE nomeutente = '" + nomeutente + "' AND stato = 1";
+            String sql = "SELECT * FROM utente WHERE nomeutente = '" + nomeutente + "' AND stato = true";
             Statement st =  conn.createStatement();
             ResultSet rs = st.executeQuery(sql);
             if(rs.next()){
                 //System.out.println("SIAMO IN IF")
                 usr = new Utente(rs.getString("nomeutente"),rs.getString("password"),rs.getString("ruolo"));
-                if(!usr.getPassword().equals(password))
-                    usr = new Utente(null, null,  null);
+                if(!usr.getPassword().equals(password)) {
+                    usr = new Utente(null, null, null);
+                    usr.setStato(true); //utente esistente ma password errata
+                }
             }
             st.close();
         }catch (SQLException e){
@@ -581,13 +584,13 @@ public class DAO {
         }
     }
 
-    public ArrayList<Integer> docentiDisponibili(Corso c, String giorno, String ora){
+    public ArrayList<Integer> docentiDisponibili(Integer corso, String giorno, String ora){
         Connection conn = openConnection();
         ArrayList<Integer> docentiDisp = new ArrayList<>();
         try{
             String queryInternaInterna1 = "SELECT docente FROM prenotazione p WHERE p.stato = 1 AND p.docente = i.docente AND p.ora = '"+ora+"' AND p.giorno='"+giorno +"'";
-            String queryInternaInterna2 = "SELECT docente FROM prenotazione p WHERE p.stato = 1 AND P.corso ="+ c.getCodice() +" AND p.ora = '"+ora+"' AND p.giorno= '"+giorno+"'";
-            String queryInterna1 = "SELECT i.docente FROM insegna i WHERE i.stato  = 1 AND i.corso =" + c.getCodice() + " AND NOT EXISTS( " + queryInternaInterna1 + ") ";
+            String queryInternaInterna2 = "SELECT docente FROM prenotazione p WHERE p.stato = 1 AND P.corso ="+ corso +" AND p.ora = '"+ora+"' AND p.giorno= '"+giorno+"'";
+            String queryInterna1 = "SELECT i.docente FROM insegna i WHERE i.stato  = 1 AND i.corso =" + corso + " AND NOT EXISTS( " + queryInternaInterna1 + ") ";
             String queryInterna2 = "SELECT dd.docente  FROM ( " + queryInternaInterna2 + ") dd ";
             String queryEsterna = "SELECT dl.docente FROM ( " + queryInterna1 + " ) dl WHERE dl.docente NOT IN(" + queryInterna2 + ")";
             //System.out.println(queryEsterna);
@@ -615,7 +618,7 @@ public class DAO {
     // 1 == docente occupato
     // 2 == utente occupato
 
-    public int[][] prentoazioni_disp(Docente d, Corso c, Utente u){
+    public int[][] prentoazioni_disp(Integer docente, Integer corso, String utente){
         Connection conn = openConnection();
         ArrayList<Prenotazione> prenotazioni = null;
         int size = 5;
@@ -627,34 +630,31 @@ public class DAO {
                 griglia[i][j] = 0;
             }
         }
-        System.out.println("in prenotazioni disp");
         try {
-            prenotazioni = mostraPrenotazioni(d, c, u);
-            if (prenotazioni == null ) System.out.println("è null");
-            System.out.println("prenotazioni.length: " + prenotazioni.size());
-            if(d != null) {
-                System.out.println("in prenotazioni disp: prima del for");
+            prenotazioni = mostraPrenotazioni(docente, corso, utente);
+            //if (prenotazioni == null ) System.out.println("è null");
+            if(docente != null) {
                 for (Prenotazione p : prenotazioni) {
                     int x = DayToIndex(p.getGiorno());
                     System.out.println("break1");
                     int y = HourToIndex(p.getOra());
                     System.out.println("break2");
-                    if (p.getDocente() == d.getMatricola()) {
-                        griglia[x][y] = 1;
-                        System.out.println("break3");
-                    } else if (u != null && p.getUtente().equals(u.getNome_utente())) {
+                    if (utente != null && p.getUtente().equals(utente)) {
                         griglia[x][y] = 2;
                         System.out.println("break4");
+                    }else if (p.getDocente() == docente) {
+                        griglia[x][y] = 1;
+                        System.out.println("break3");
                     }
                 }
                 System.out.println("in prenotazioni disp: dopo il for");
             }
-            else if(c != null){
+            else if(corso != null){
                 String[] giorni = {"lunedì","martedì","mercoledì","giovedì","venerdì"};
                 String[] ore = {"15:00:00","16:00:00","17:00:00","18:00:00"};
                 for(int i = 0; i < 5; i++){
                     for(int j = 0; j < 4; j++){
-                        if(docentiDisponibili(c, giorni[i], ore[j]) == null){
+                        if(docentiDisponibili(corso, giorni[i], ore[j]) == null){
                             griglia[i][j] = 1;
                         }
                     }
@@ -662,7 +662,7 @@ public class DAO {
                 for (Prenotazione p : prenotazioni){
                     int x = DayToIndex(p.getGiorno());
                     int y = HourToIndex(p.getOra());
-                    if (u != null && p.getUtente().equals(u.getNome_utente())) {
+                    if (utente != null && p.getUtente().equals(utente)) {
                         griglia[x][y] = 2;
                     }
                 }
@@ -755,30 +755,31 @@ public class DAO {
         return prenotazioni;
     }
 
-    public ArrayList<Prenotazione> mostraPrenotazioni(Docente d,Corso c,Utente u){
-        System.out.println("dentro mostra prenotazioni");
-        String sql2="";
+    public ArrayList<Prenotazione> mostraPrenotazioni(Integer docente, Integer corso, String utente){
+        String sql2 = "";
         Connection conn = openConnection();
         ArrayList<Prenotazione> prenotazioni = null;
-        if(u != null && (c != null || d != null)){
+        if(corso != null || docente != null){
             prenotazioni = new ArrayList<Prenotazione>();
-            String sql = "SELECT * FROM prenotazione WHERE stato = true AND (utente = ";
-            sql += "'" + u.getNome_utente() + "'";
+            String sql = "SELECT * FROM prenotazione WHERE stato = true AND ( ";
+            if(utente != null)
+                sql += "utente = '" + utente + "' OR ";
             try{
                 Statement st = conn.createStatement();
-                if(d != null && c != null){
-                    sql2 = "SELECT * FROM insegna WHERE docente = " + d.getMatricola() + " and corso = " + c.getCodice();
+                if(docente != null && corso != null){
+                    sql2 = "SELECT * FROM insegna WHERE docente = " + docente + " and corso = " + corso;
                     ResultSet rs2 = st.executeQuery(sql2);
                     if(rs2.next()){
-                        sql += " OR docente= " + d.getMatricola() + ")";
+                        sql += "docente= " + docente + ")";
                     }
                 }
-                else if(d != null){
-                    sql += " OR docente= " + d.getMatricola() + ")";
+                else if(docente != null){
+                    sql += "docente= " + docente + ")";
                 }
-                else if(c != null){
-                    sql += " OR corso = " + c.getCodice() + ")";
+                else if(corso != null){
+                    sql += "corso = " + corso + ")";
                 }
+                System.out.println("mostraprenotazioni : " + sql);
                 ResultSet rs = st.executeQuery(sql);
                 while (rs.next()) {
                     Prenotazione prenotazione = new Prenotazione(rs.getInt("corso"), rs.getInt("docente"), rs.getString("utente"), rs.getString("giorno"), rs.getString("ora"));
@@ -786,7 +787,7 @@ public class DAO {
                 }
                 st.close();
             }catch (SQLException e){
-                System.out.println(e.getMessage());
+                System.out.println("mostraPrenotazioni:" + e.getMessage());
             }finally{
                 closeConnection(conn);
             }
