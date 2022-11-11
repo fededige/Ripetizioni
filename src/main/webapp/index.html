@@ -1,43 +1,74 @@
 <!DOCTYPE html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Cache-Control" content="no-store" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <title>Prova ajax con jQuery</title>
 </head>
-<body>
-<p>Insert Docenti</p>
-<form action="docenti-servlet" method="post">
-    Inserisci la matricola:
-    <input name="matricola" size="30" type="text" required /> <br>
-    Inserisci il nome:
-    <input name="nome" size="30" type="text"/><br>
-    Inserisci il cognome:
-    <input name="cognome" size="30" type="text"/><br>
-    <p><input type="submit" name="invia" value="OK"/></p>
-</form>
-<!-- action="ServletAuth" -->
+    <body>
+        <p>Insert Docenti</p>
+        <form action="docenti-servlet" method="post">
+            Inserisci la matricola:
+            <input name="matricola" size="30" type="text" required/> <br>
+            Inserisci il nome:
+            <input name="nome" size="30" type="text"/><br>
+            Inserisci il cognome:
+            <input name="cognome" size="30" type="text"/><br>
+            <p><input type="submit" name="invia" value="OK"/></p>
+        </form>
+        <form method="get">
+            Login:
+            <input id="nomeut" name="login" size="30" type="text" required/> <br>
+            Password:
+            <input id="pwd" name="password" size="30" type="text" required/><br>
+            <p><input id="log" type="button" name="accesso" value="Accedi"/></p>
+        </form>
+        <div id="info" class="outputTextArea"></div>
+        <form method="get">
+            Docente:
+            <input id="doc" name="docente" size="30" type="text" required/> <br>
+            Corso:
+            <input id="corso" name="corso" size="30" type="text" required/><br>
+            <p><input id="prenot" type="button" name="prenotazioni" value="Prenotazioni "/></p>
+        </form>
 
-<form method="get">
-    Login:
-    <input id="nomeut" name="login" size="30" type="text" required /> <br>
-    Password:
-    <input id="psw" name="password" size="30" type="text" required /><br>
-    <p><input id="log" type="button" name="accesso" value="Accedi"/></p>
-</form>
-<div id="info" class="outputTextArea"></div>
-<script type="text/javascript">
-    $(document).ready(function () { // When the DOM of this page is constructed
-        $("#log").click(function () {// on click of xx button do ...
-            var n = document.getElementById("nomeut").value;
-            var p = document.getElementById("psw").value;
-            $.get("ServletAuth", {login: n, password: p}, // GET to HelloServlet (hello-servlet)!
-                function (data) {      // callBack function
-                    $("#info").html(data);
-                    //(by ID) and insert dynamic content (data) into it
+        <script type="text/javascript">
+            $(document).ready(function () { // When the DOM of this page is constructed
+                var username = null;
+                $("#log").click(function () {// on click of xx button do ...
+                    var nomeUtente = document.getElementById("nomeut").value;
+                    var pwd = document.getElementById("pwd").value;
+                    $.get("ServletAuth", {login: nomeUtente, password: pwd}, // GET to HelloServlet (hello-servlet)!
+                        function (data) {   // callBack function
+                            console.log(data);
+                            console.log(data.hasOwnProperty('nome_utente'));
+                            if (data.hasOwnProperty('nome_utente') == false) {
+                                if (data.stato == true)
+                                    $("#info").html("Password sbagliata");
+                                else
+                                    $("#info").html("Utente inesistente");
+                            } else {
+                                username = data.nome_utente;
+                                $("#info").html("Ciao " + data.nome_utente + " sei un " + data.ruolo);
+                            }
+                        }
+                    );
                 });
-        });
-    });
-</script>
-</body>
+                $("#prenot").click(function () {
+                    var docente = document.getElementById("doc").value;
+                    console.log("docente " + docente);
+                    var corso = document.getElementById("corso").value;
+                    console.log("corso " + corso);
+                    console.log("utente " + username);
+                    $.get("ServletPrenotazioni", {docente: docente, corso: corso, utente: username},
+                        function (data) {
+                            var prenotazionDisp = data;
+                            console.log(prenotazionDisp[0][0]);
+                        }
+                    );
+                })
+            });
+        </script>
+    </body>
 </html>
 
