@@ -1,5 +1,6 @@
 package com.example.ripetizioni;
 
+import com.google.gson.Gson;
 import dao.Corso;
 import dao.DAO;
 import dao.Docente;
@@ -28,39 +29,20 @@ public class ServletAuth extends HttpServlet {
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        HttpSession s = request.getSession();
+        response.setContentType("application/json");
+        HttpSession session = request.getSession();
         String login =  request.getParameter("login");
         String password = request.getParameter("password");
         PrintWriter out = response.getWriter();
-        String url = response.encodeURL("ServletAuth");
         if (login != null && password != null) {
             Utente user = dao.utenteEsistente(login, password);
-            if(user != null && user.getNome_utente() != null) {
-                s.setAttribute("login", user.getNome_utente());
-                s.setAttribute("ruolo", user.getRuolo());
-                out.println("<h2>Sei loggato</h2>");
-            }else if(user == null){
-                out.println("<h2>Utente inesistente</h2>");
-            }
-            else {
-                out.println("<h2>Password errata</h2>");
-            }
+            session.setAttribute("login", user.getNome_utente());
+            session.setAttribute("ruolo", user.getRuolo());
+            Gson gson = new Gson();
+            String s = gson.toJson(user);
+            System.out.println(s);
+            out.print(s);
         }
         out.flush();
-        out.close();
-        }
-    public void destroy(){
     }
 }
-
-/*int[][] c = dao.prentoazioni_disp(null, new Corso(1234, "informatica"), new Utente("ema", "Pippo", "cliente"));
-                //out.println("prima del for" + c.length);
-                for(int i = 0; i < 5; i++){
-                    for(int j = 0; j < 4; j++){
-                        out.print(c[i][j] + " ");
-                        System.out.print("<p> ciao" + c[i][j] + "</p>");
-                    }
-                    out.println("<br>");
-                    System.out.println();
-                }*/
