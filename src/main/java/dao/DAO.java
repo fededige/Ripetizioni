@@ -412,7 +412,7 @@ public class DAO {
         return utente;
     }
 
-    public void insertUtente(ArrayList<Utente> utenti){
+    public boolean insertUtente(ArrayList<Utente> utenti){
         Connection conn = openConnection();
         int i = 0;
         try{
@@ -435,11 +435,13 @@ public class DAO {
         }finally {
             closeConnection(conn);
         }
+        return false; //TODO: temp, da modificare
     }
 
-    public void insertUtente(Utente utente){
+    public boolean insertUtente(Utente utente){
         Connection conn = openConnection();
         int i = 0;
+        boolean res = false;
         try{
             String sql = "INSERT INTO utente(nomeutente, password, ruolo, stato) VALUES (?, ?, ?, ?)";
             PreparedStatement st = conn.prepareStatement(sql);
@@ -447,14 +449,38 @@ public class DAO {
             st.setString(2, utente.getPassword());
             st.setString(3, utente.getRuolo());
             st.setBoolean(4, utente.isStato());
-            st.executeUpdate();
+            int n = st.executeUpdate();
+            System.out.println("n = " + n);
+            if(n == 1){
+                res = true;
+            }
             st.close();
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }finally {
             closeConnection(conn);
         }
+        return res;
     }
+
+    public boolean editPassword(String utente, String nuovaPassword){
+        boolean res = false;
+        Connection conn = openConnection();
+        try{
+            String sql = "UPDATE utente SET password = '"+nuovaPassword+"' WHERE nomeutente = '" + utente + "'";
+            Statement st = conn.createStatement();
+            if(st.executeUpdate(sql) == 1)
+                res = true;
+            st.close();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }finally {
+            closeConnection(conn);
+        }
+        return res;
+    }
+
+
 
     public ArrayList<Utente> mostraUtenti(){
         Connection conn = openConnection();
