@@ -30,6 +30,7 @@ DocentiServlet extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317");
         response.setContentType("text/html;charset=UTF-8");
         HttpSession s = request.getSession();
         PrintWriter out = response.getWriter();
