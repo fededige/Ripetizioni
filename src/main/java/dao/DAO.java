@@ -55,6 +55,7 @@ public class DAO {
             PreparedStatement st = c.prepareStatement(sql);
             st.setInt(1, codice);
             ResultSet rs = st.executeQuery();
+            rs.next();
             corso = new Corso(rs.getInt("codice"),rs.getString("titolocorso"));
             st.close();
         }catch (SQLException e){
@@ -169,6 +170,7 @@ public class DAO {
             PreparedStatement st = c.prepareStatement(sql);
             st.setInt(1, matricola);
             ResultSet rs = st.executeQuery();
+            rs.next();
             docente = new Docente(rs.getInt("matricola"),rs.getString("nome"),rs.getString("cognome"));
             st.close();
         }catch (SQLException e){
@@ -328,6 +330,29 @@ public class DAO {
                 Insegna insegna = new Insegna(rs.getInt("docente"),rs.getInt("corso"));
                 insegnamenti.add(insegna);
             }
+            st.close();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }finally {
+            closeConnection(conn);
+        }
+        return insegnamenti;
+    }
+
+    public ArrayList<Insegnamento> getInsegnamenti(){ //TODO: risolvere i problemi con mostraInsegnamenti
+        Connection conn = openConnection();
+        ArrayList<Insegnamento> insegnamenti = new ArrayList<>();
+        try{
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM insegna WHERE stato = true");
+            while (rs.next()){
+                System.out.println("DAO.getInsegnamenti");
+                System.out.println(getCorso(rs.getInt("corso")).getCodice());
+                Insegnamento insegnamento = new Insegnamento(getCorso(rs.getInt("corso")), getDocente(rs.getInt("docente")));
+                insegnamenti.add(insegnamento);
+            }
+            for(Insegnamento insegnamento:insegnamenti)
+                System.out.println(insegnamento.getCorso().getCodice());
             st.close();
         }catch (SQLException e){
             System.out.println(e.getMessage());

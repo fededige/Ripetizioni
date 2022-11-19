@@ -27,7 +27,7 @@ public class ServletImpostazioni extends HttpServlet {
         String mode =  request.getParameter("mode");
         PrintWriter out = response.getWriter();
         boolean res = false;
-        String nomeUtente = request.getParameter("nomeUtente");
+        String nomeUtente = request.getParameter("nomeUtente"); //TODO: questi parametri li possiamo recuperare dalla session
         String vecchiaPassword =  request.getParameter("vecchiaPassword");
         String nuovaPassword = request.getParameter("nuovaPassword");
         String confermaNuovaPassword = request.getParameter("confermaNuovaPassword");
