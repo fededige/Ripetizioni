@@ -703,10 +703,10 @@ public class DAO {
             else if(corso != null){
                 String[] giorni = {"lunedì","martedì","mercoledì","giovedì","venerdì"};
                 String[] ore = {"15:00:00","16:00:00","17:00:00","18:00:00"};
-                for(int i = 0; i < 4; i++){
-                    for(int j = 0; j < 5; j++){
+                for(int i = 0; i < 5; i++){
+                    for(int j = 0; j < 4; j++){
                         if(docentiDisponibili(corso, giorni[i], ore[j]) == null){
-                            griglia[i][j] = 1;
+                            griglia[j][i] = 1;
                         }
                     }
                 }
@@ -817,6 +817,7 @@ public class DAO {
                 sql += "utente = '" + utente + "' OR ";
             try{
                 Statement st = conn.createStatement();
+                System.out.println(corso);
                 if(docente != null && corso != null){
                     sql2 = "SELECT * FROM insegna WHERE docente = " + docente + " and corso = " + corso;
                     ResultSet rs2 = st.executeQuery(sql2);

@@ -23,7 +23,17 @@ public class ServletPrenotazioni extends HttpServlet {
         response.setContentType("application/json");
         //HttpSession session = request.getSession();
         PrintWriter out = response.getWriter();
-        int[][] prenotazioni = dao.prentoazioni_disp(Integer.parseInt(request.getParameter("docente")), Integer.parseInt(request.getParameter("corso")), request.getParameter("utente"));
+        Integer corso = null;
+        Integer docente = null;
+        System.out.println("kjnj "+request.getParameter("corso"));
+        System.out.println(request.getParameter("docente"));
+        if(!request.getParameter("corso").equals("null")){
+            corso = Integer.parseInt(request.getParameter("corso"));
+        }
+        if(!request.getParameter("docente").equals("null")){
+            docente = Integer.parseInt(request.getParameter("docente"));
+        }
+        int[][] prenotazioni = dao.prentoazioni_disp(docente , corso , request.getParameter("utente"));
         Gson gson = new Gson();
         String s = gson.toJson(prenotazioni);
         System.out.println(s);
