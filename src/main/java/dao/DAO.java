@@ -673,10 +673,10 @@ public class DAO {
         Connection conn = openConnection();
         ArrayList<Prenotazione> prenotazioni = null;
         int size = 5;
-        int griglia[][] = new int[size][size];
+        int griglia[][] = new int[size - 1][size];
 
         //rendiamo disponibili tutte le lezio
-        for(int i = 0; i < size; i++){
+        for(int i = 0; i < size- 1; i++){
             for(int j = 0; j < size; j++){
                 griglia[i][j] = 0;
             }
@@ -686,9 +686,9 @@ public class DAO {
             //if (prenotazioni == null ) System.out.println("è null");
             if(docente != null) {
                 for (Prenotazione p : prenotazioni) {
-                    int x = DayToIndex(p.getGiorno());
+                    int y = DayToIndex(p.getGiorno());
                     System.out.println("break1");
-                    int y = HourToIndex(p.getOra());
+                    int x = HourToIndex(p.getOra());
                     System.out.println("break2");
                     if (utente != null && p.getUtente().equals(utente)) {
                         griglia[x][y] = 2;
@@ -703,16 +703,16 @@ public class DAO {
             else if(corso != null){
                 String[] giorni = {"lunedì","martedì","mercoledì","giovedì","venerdì"};
                 String[] ore = {"15:00:00","16:00:00","17:00:00","18:00:00"};
-                for(int i = 0; i < 5; i++){
-                    for(int j = 0; j < 4; j++){
+                for(int i = 0; i < 4; i++){
+                    for(int j = 0; j < 5; j++){
                         if(docentiDisponibili(corso, giorni[i], ore[j]) == null){
                             griglia[i][j] = 1;
                         }
                     }
                 }
                 for (Prenotazione p : prenotazioni){
-                    int x = DayToIndex(p.getGiorno());
-                    int y = HourToIndex(p.getOra());
+                    int y = DayToIndex(p.getGiorno());
+                    int x = HourToIndex(p.getOra());
                     if (utente != null && p.getUtente().equals(utente)) {
                         griglia[x][y] = 2;
                     }
