@@ -594,8 +594,8 @@ public class DAO {
             String sql = "INSERT INTO prenotazione(corso, docente, utente, giorno, ora, stato) VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement st = conn.prepareStatement(sql);
             for (i = 0; i < prenotazioni.size(); i++) {
-                st.setInt(1, prenotazioni.get(i).getCorso());
-                st.setInt(2, prenotazioni.get(i).getDocente());
+                st.setInt(1, prenotazioni.get(i).getCorso().getCodice());
+                st.setInt(2, prenotazioni.get(i).getDocente().getMatricola());
                 st.setString(3, prenotazioni.get(i).getUtente());
                 st.setString(4, prenotazioni.get(i).getGiorno());
                 st.setString(5, prenotazioni.get(i).getOra());
@@ -620,8 +620,8 @@ public class DAO {
         try{
             String sql = "INSERT INTO prenotazione(corso, docente, utente, giorno, ora, stato) VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement st = conn.prepareStatement(sql);
-            st.setInt(1, prenotazione.getCorso());
-            st.setInt(2, prenotazione.getDocente());
+            st.setInt(1, prenotazione.getCorso().getCodice());
+            st.setInt(2, prenotazione.getDocente().getMatricola());
             st.setString(3,prenotazione.getUtente());
             st.setString(4, prenotazione.getGiorno());
             st.setString(5, prenotazione.getOra());
@@ -693,7 +693,7 @@ public class DAO {
                     if (utente != null && p.getUtente().equals(utente)) {
                         griglia[x][y] = 2;
                         System.out.println("break4");
-                    }else if (p.getDocente() == docente) {
+                    }else if (p.getDocente().getMatricola() == docente) {
                         griglia[x][y] = 1;
                         System.out.println("break3");
                     }
@@ -787,16 +787,20 @@ public class DAO {
         return indice;
     }
 
-    public ArrayList<Prenotazione> mostraPrenotazioni(){
+    public ArrayList<Prenotazione> mostraPrenotazioni(String usr){
         Connection conn = openConnection();
         ArrayList<Prenotazione> prenotazioni = new ArrayList<>();
         try{
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM prenotazione WHERE stato = true");
+            String sql= "SELECT * FROM prenotazione WHERE utente= '"+usr+"'";
+            System.out.println(sql);
+            Statement st = conn.createStatement();//SELECT * FROM prenotazione WHERE stato = true
+            ResultSet rs = st.executeQuery(sql);
             while (rs.next()){
-                Prenotazione prenotazione = new Prenotazione(rs.getInt("corso"),rs.getInt("docente"),rs.getString("utente"),rs.getString("giorno"),rs.getString("ora"));
+                Corso c=getCorso(rs.getInt("corso"));
+                Docente d=getDocente(rs.getInt("docente"));
+                Prenotazione prenotazione = new Prenotazione(c,d,rs.getString("utente"),rs.getString("giorno"),rs.getString("ora"),rs.getBoolean("stato"),rs.getBoolean("effettuata"));
                 prenotazioni.add(prenotazione);
-             }
+            }
             st.close();
         }catch (SQLException e){
             System.out.println(e.getMessage());
@@ -834,7 +838,9 @@ public class DAO {
                 System.out.println("mostraprenotazioni : " + sql);
                 ResultSet rs = st.executeQuery(sql);
                 while (rs.next()) {
-                    Prenotazione prenotazione = new Prenotazione(rs.getInt("corso"), rs.getInt("docente"), rs.getString("utente"), rs.getString("giorno"), rs.getString("ora"));
+                    Corso c=getCorso(rs.getInt("corso"));
+                    Docente d=getDocente(rs.getInt("docente"));
+                    Prenotazione prenotazione = new Prenotazione(c, d, rs.getString("utente"), rs.getString("giorno"), rs.getString("ora"),rs.getBoolean("stato"),rs.getBoolean("effettuata"));
                     prenotazioni.add(prenotazione);
                 }
                 st.close();
@@ -853,7 +859,7 @@ public class DAO {
             String sql = "UPDATE prenotazione SET stato = false WHERE (docente = ? and giorno = ? and ora = ?)";
             PreparedStatement st = conn.prepareStatement(sql);
             for (Prenotazione prenotazione : prenotazioni) {
-                st.setInt(1, prenotazione.getDocente());
+                st.setInt(1, prenotazione.getDocente().getMatricola());
                 st.setString(2, prenotazione.getGiorno());
                 st.setString(3, prenotazione.getOra());
                 if(st.executeUpdate() == 0){
@@ -873,7 +879,7 @@ public class DAO {
         try{
             String sql = "UPDATE prenotazione SET stato = false WHERE (docente = ? and giorno = ? and ora = ?)";
             PreparedStatement st = conn.prepareStatement(sql);
-            st.setInt(1, prenotazione.getDocente());
+            st.setInt(1, prenotazione.getDocente().getMatricola());
             st.setString(2, prenotazione.getGiorno());
             st.setString(3, prenotazione.getOra());
             if(st.executeUpdate() == 0){
