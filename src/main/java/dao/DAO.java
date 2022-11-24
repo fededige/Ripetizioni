@@ -635,9 +635,9 @@ public class DAO {
         }
     }
 
-    public ArrayList<Integer> docentiDisponibili(Integer corso, String giorno, String ora){
+    public ArrayList<Docente> docentiDisponibili(Integer corso, String giorno, String ora){
         Connection conn = openConnection();
-        ArrayList<Integer> docentiDisp = new ArrayList<>();
+        ArrayList<Docente> docentiDisp = new ArrayList<>();
         try{
             String queryInternaInterna1 = "SELECT docente FROM prenotazione p WHERE p.stato = 1 AND p.docente = i.docente AND p.ora = '"+ora+"' AND p.giorno='"+giorno +"'";
             String queryInternaInterna2 = "SELECT docente FROM prenotazione p WHERE p.stato = 1 AND P.corso ="+ corso +" AND p.ora = '"+ora+"' AND p.giorno= '"+giorno+"'";
@@ -648,7 +648,7 @@ public class DAO {
             PreparedStatement st = conn.prepareStatement(queryEsterna);
             ResultSet rs = st.executeQuery();
             while (rs.next()){
-                docentiDisp.add(rs.getInt("docente"));
+                docentiDisp.add(getDocente(rs.getInt("docente")));
             }
             System.out.println("docenti" + docentiDisp.size());
             st.close();
