@@ -20,6 +20,16 @@ public class Prenotazione {
         this.effettuata=effettuata;
     }
 
+    public Prenotazione(Corso corso, Docente docente, String utente, String giorno, String ora){
+        this.corso = corso;
+        this.docente = docente;
+        this.utente = utente;
+        this.giorno = giorno;
+        this.ora = ora;
+        this.stato = true;
+        this.effettuata = false;
+    }
+
     public Docente getDocente() {
         return docente;
     }

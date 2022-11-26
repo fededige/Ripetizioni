@@ -21,7 +21,7 @@ public class ServletRegistrazione extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317");
+        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317");
         response.setContentType("application/json");
         HttpSession session = request.getSession();
         String username =  request.getParameter("username");

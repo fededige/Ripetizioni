@@ -22,16 +22,14 @@ public class ServletRipetizionieff extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317");
+        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317");
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
         //HttpSession session = request.getSession();
         String usr =request.getParameter("utente");
         List<Prenotazione> RipetizioniEff = dao.mostraPrenotazioni(usr);
-        System.out.println("31"+RipetizioniEff.get(0).getCorso().getTitolo_corso());
         Gson gson = new Gson();
         String s = gson.toJson(RipetizioniEff);
-        System.out.println(s);
         out.print(s);
         out.flush();
     }

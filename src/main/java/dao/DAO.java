@@ -853,6 +853,26 @@ public class DAO {
         return prenotazioni;
     }
 
+    public Boolean PrenotazioneEff(Prenotazione p){
+        Connection conn = openConnection();
+        try{
+            if(p!=null){
+                String sql = "UPDATE prenotazione SET stato = false , effettuata = true WHERE (docente = "+p.getDocente().getMatricola() +" and giorno = '"+p.getGiorno() +"' and ora = '"+p.getOra()+"' and utente= '"+p.getUtente()+"')";
+                System.out.println(sql);
+                Statement st = conn.createStatement();
+                st.executeUpdate(sql);
+                //rs.next();
+                //System.out.println(rs);
+                st.close();
+            }
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }finally {
+            closeConnection(conn);
+        }
+        return true;
+    }
+
     public void rimuoviPrenotazioni(ArrayList<Prenotazione> prenotazioni){
         Connection conn = openConnection();
         try{
@@ -874,23 +894,20 @@ public class DAO {
         }
     }
 
-    public void rimuoviPrenotazioni(Prenotazione prenotazione){
+    public boolean rimuoviPrenotazioni(Prenotazione p){
         Connection conn = openConnection();
         try{
-            String sql = "UPDATE prenotazione SET stato = false WHERE (docente = ? and giorno = ? and ora = ?)";
-            PreparedStatement st = conn.prepareStatement(sql);
-            st.setInt(1, prenotazione.getDocente().getMatricola());
-            st.setString(2, prenotazione.getGiorno());
-            st.setString(3, prenotazione.getOra());
-            if(st.executeUpdate() == 0){
-                System.out.println("executeUpdate: Prenotazione inesistente");
-            }
+            String sql = "UPDATE prenotazione SET stato = false , effettuata = false WHERE (docente = "+p.getDocente().getMatricola() +" and giorno = '"+p.getGiorno() +"' and ora = '"+p.getOra()+"' and utente= '"+p.getUtente()+"')";
+            System.out.println(sql);
+            Statement st = conn.createStatement();
+            st.executeUpdate(sql);
             st.close();
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }finally {
             closeConnection(conn);
         }
+        return true;
     }
 
     public void svuota_tabelle(){
