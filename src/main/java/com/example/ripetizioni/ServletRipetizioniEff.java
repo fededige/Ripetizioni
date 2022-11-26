@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 @WebServlet(name = "ServletRipetizionieff", value = "/ServletRipetizionieff")
-public class ServletRipetizionieff extends HttpServlet {
+public class ServletRipetizioniEff extends HttpServlet {
 
     DAO dao = null;
     public void init(ServletConfig conf) throws ServletException{
