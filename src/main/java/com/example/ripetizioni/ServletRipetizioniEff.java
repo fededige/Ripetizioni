@@ -26,7 +26,12 @@ public class ServletRipetizioniEff extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
         //HttpSession session = request.getSession();
-        String usr =request.getParameter("utente");
+        String usr =null;
+        System.out.println("30 EFF"+ request.getParameter("utente"));
+        if(request.getParameter("utente") != null){
+            usr=request.getParameter("utente");
+        }
+        System.out.println("33 EFF"+ usr);
         List<Prenotazione> RipetizioniEff = dao.mostraPrenotazioni(usr);
         Gson gson = new Gson();
         String s = gson.toJson(RipetizioniEff);

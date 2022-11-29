@@ -791,7 +791,11 @@ public class DAO {
         Connection conn = openConnection();
         ArrayList<Prenotazione> prenotazioni = new ArrayList<>();
         try{
-            String sql= "SELECT * FROM prenotazione WHERE utente= '"+usr+"'";
+            String sql= "SELECT * FROM prenotazione";
+            System.out.println("795 "+usr);
+            if(usr != null){
+                sql +=" WHERE utente= '"+usr+"'";
+            }
             System.out.println(sql);
             Statement st = conn.createStatement();//SELECT * FROM prenotazione WHERE stato = true
             ResultSet rs = st.executeQuery(sql);
