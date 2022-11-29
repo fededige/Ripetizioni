@@ -1,74 +1,92 @@
 <!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta http-equiv="Cache-Control" content="no-store" />
+    <meta http-equiv="Cache-Control" content="no-store"/>
+    <meta charset="UTF-8">
+    <title>Ripetizioni</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+          integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+            integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"
+            integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s"
+            crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <title>Prova ajax con jQuery</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
-    <body>
-        <p>Insert Docenti</p>
-        <form action="docenti-servlet" method="post">
-            Inserisci la matricola:
-            <input name="matricola" size="30" type="text" required/> <br>
-            Inserisci il nome:
-            <input name="nome" size="30" type="text"/><br>
-            Inserisci il cognome:
-            <input name="cognome" size="30" type="text"/><br>
-            <p><input type="submit" name="invia" value="OK"/></p>
-        </form>
-        <form method="get">
-            Login:
-            <input id="nomeut" name="login" size="30" type="text" required/> <br>
-            Password:
-            <input id="pwd" name="password" size="30" type="text" required/><br>
-            <p><input id="log" type="button" name="accesso" value="Accedi"/></p>
-        </form>
-        <div id="info" class="outputTextArea"></div>
-        <form method="get">
-            Docente:
-            <input id="doc" name="docente" size="30" type="text" required/> <br>
-            Corso:
-            <input id="corso" name="corso" size="30" type="text" required/><br>
-            <p><input id="prenot" type="button" name="prenotazioni" value="Prenotazioni "/></p>
-        </form>
-
-        <script type="text/javascript">
-            $(document).ready(function () { // When the DOM of this page is constructed
-                var username = null;
-                $("#log").click(function () {// on click of xx button do ...
-                    var nomeUtente = document.getElementById("nomeut").value;
-                    var pwd = document.getElementById("pwd").value;
-                    $.get("ServletAuth", {login: nomeUtente, password: pwd}, // GET to HelloServlet (hello-servlet)!
-                        function (data) {   // callBack function
-                            console.log(data);
-                            console.log(data.hasOwnProperty('nome_utente'));
-                            if (data.hasOwnProperty('nome_utente') == false) {
-                                if (data.stato == true)
-                                    $("#info").html("Password sbagliata");
-                                else
-                                    $("#info").html("Utente inesistente");
+<body>
+<div id="spa">
+        <span v-if="paginaLogIn">
+            <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
+                <form method="get">
+                    <div class="mb-3">
+                        <label for="InputNomeUtente" class="form-label">Nome utente</label>
+                        <input v-model="InputNomeUtente" type="text" class="form-control" id="InputNomeUtente"
+                               aria-describedby="emailHelp">
+                    </div>
+                    <div class="mb-3">
+                        <label for="InputPassword" class="form-label">Password</label>
+                        <input v-model="InputPassword" type="password" class="form-control" id="InputPassword">
+                    </div>
+                    <div class="row justify-content-center">
+                        <button v-on:click="transit" type="button" class="btn btn-primary">Log in</button>
+                    </div>
+                </form>
+                <p>{{messaggio}}</p>
+            </div>
+        </span>
+    <span v-if="homeUtente">
+            <h1>CIAOO</h1>
+        </span>
+</div>
+<script type="text/javascript">
+    var app = new Vue({
+        el: '#spa',
+        data: {
+            utente: null,
+            InputNomeUtente: null,
+            InputPassword: null,
+            messaggio: "",
+            paginaLogIn: true,
+            homeUtente: false,
+        },
+        methods: {
+            transit: function () {
+                var self = this;
+                self.messaggio = "";
+                if (self.InputNomeUtente == null && self.InputPassword == null || self.InputNomeUtente === "" || self.InputPassword === "") {
+                    self.messaggio = "i campi sono vuoti";
+                } else {
+                    $.get("ServletAuth", {login: self.InputNomeUtente, password: self.InputPassword},
+                        function (data) {
+                            self.utente = data;
+                            if (self.utente != null) {
+                                if (self.utente.nome_utente == null) {
+                                    if (self.utente.stato === true) {
+                                        self.messaggio = "password errata";
+                                    } else {
+                                        self.messaggio = "utente inesistente";
+                                    }
+                                } else {
+                                    self.paginaLogIn = false;
+                                    self.homeUtente = true;
+                                }
                             } else {
-                                username = data.nome_utente;
-                                $("#info").html("Ciao " + data.nome_utente + " sei un " + data.ruolo);
+                                self.messaggio = "errore richiesta";
                             }
                         }
                     );
-                });
-                $("#prenot").click(function () {
-                    var docente = document.getElementById("doc").value;
-                    console.log("docente " + docente);
-                    var corso = document.getElementById("corso").value;
-                    console.log("corso " + corso);
-                    console.log("utente " + username);
-                    $.get("ServletPrenotazioni", {docente: docente, corso: corso, utente: username},
-                        function (data) {
-                            var prenotazionDisp = data;
-                            console.log(prenotazionDisp[0][0]);
-                        }
-                    );
-                })
-            });
-        </script>
-    </body>
+                }
+            }
+        }
+    })
+</script>
+</body>
 </html>
-
