@@ -1,3 +1,18 @@
+<!-- <div class="dropdown pt-4 pl-2">
+                                <button v-on:click="myFunctionOra" class="dropbtn">
+                                    {{ labelOraDropDown }}
+                                    <i class="fa fa-angle-down"></i>
+                                </button>
+                                    <div id="OrarioDropDown" class="dropdown-content">
+                                        <input type="text" placeholder="Search.." id="OrarioInput">
+                                        <a v-on:click="aggiornaOra('15:00')">15:00</a>
+                                        <a v-on:click="aggiornaOra('16:00')">16:00</a>
+                                        <a v-on:click="aggiornaOra('17:00')">17:00</a>
+                                        <a v-on:click="aggiornaOra('18:00')">18:00</a>
+                                    </div>
+                            </div>
+-->
+
 <!DOCTYPE html>
 <html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
@@ -115,7 +130,7 @@
                 </div>
             </div>
             <div class="row justify-content-center">
-                <button onclick="" type="submit" class="btn btn-primary btn-lg">Cerca</button>
+                <button v-on:click="caricaPrenotazioni" type="submit" class="btn btn-primary btn-lg">Cerca</button>
             </div>
         </div>
         <div class="container">
@@ -123,34 +138,21 @@
                 <div class="row">
                     <div class="col-lg-12 .d-sm-none .d-md-block">
                         <div class="row justify-content-center">
-                            <div class="dropdown pt-4 pl-2">
-                                <button v-on:click="myFunctionOra" class="dropbtn">
-                                    {{ labelOraDropDown }}
-                                    <i class="fa fa-angle-down"></i>
-                                </button>
-                                    <div id="OrarioDropDown" class="dropdown-content">
-                                        <input type="text" placeholder="Search.." id="OrarioInput">
-                                        <a v-on:click="aggiornaOra('15:00')">15:00</a>
-                                        <a v-on:click="aggiornaOra('16:00')">16:00</a>
-                                        <a v-on:click="aggiornaOra('17:00')">17:00</a>
-                                        <a v-on:click="aggiornaOra('18:00')">18:00</a>
-                                    </div>
-                            </div>
                             <ul class="nav custom-tab" id="myTab" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active show" id="tabLunedì" data-toggle="tab" role="tab" aria-selected="true">Lunedì</a>
+                                    <a class="nav-link active show" id="tabLunedì" data-toggle="tab" role="tab" aria-selected="true" v-on:click="aggiornaOrariDisp('Lunedì')">Lunedì</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="tabMartedì" data-toggle="tab" role="tab" aria-selected="false">Martedì</a>
+                                    <a class="nav-link" id="tabMartedì" data-toggle="tab" role="tab" aria-selected="false"  v-on:click="aggiornaOrariDisp('Martedì')">Martedì</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="tabMercoledì" data-toggle="tab" role="tab" aria-selected="false">Mercoledì</a>
+                                    <a class="nav-link" id="tabMercoledì" data-toggle="tab" role="tab" aria-selected="false" v-on:click="aggiornaOrariDisp('Mercoledì')">Mercoledì</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="tabGiovedì" data-toggle="tab" role="tab" aria-selected="false">Giovedì</a>
+                                    <a class="nav-link" id="tabGiovedì" data-toggle="tab" role="tab" aria-selected="false" v-on:click="aggiornaOrariDisp('Giovedì')">Giovedì</a>
                                 </li>
                                 <li class="nav-item mr-0">
-                                    <a class="nav-link" id="tabVenerdì" data-toggle="tab" role="tab" aria-selected="false">Venerdì</a>
+                                    <a class="nav-link d-none d-lg-block" id="tabVenerdì" data-toggle="tab" role="tab" aria-selected="false" v-on:click="aggiornaOrariDisp('Venerdì')">Venerdì</a>
                                 </li>
                             </ul>
                         </div>
@@ -158,44 +160,53 @@
                 </div>
             </div>
             <div class="col pl-5">
-                <table class="table ml-5">
-                    <thead>
-                        <tr>
-                            <th class="text-center" scope="col">Data</th>
-                            <th scope="col">Docente</th>
-                            <th scope="col">Materia</th>
-                            <th  scope="col">Aggiungi</th>
-                        </tr>
-                    </thead>
-                    <!--INIZIO CARD-->
-                    <tr class="inner-box">
-                        <th scope="row">
-                            <div class="event-date text-center">
-                                <span>16</span>
-                                <p>Novembar</p>
-                            </div>
-                        </th>
-                        <td>
-                            <div class="thumb">
-                                <img src="https://www.bootdey.com/app/webroot/img/Content/Manbrown2.png"/>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="event-wrap">
-                                <h3><a href="#">INF</a></h3>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="primary-btn" v-if="!ospite">
-                                <a class="btn btn-primary" href="#">Aggiungi al carrello</a>
-                            </div>
-                            <div class="primary-btn" v-else>
-                                <a class="btn btn-primary" href="#" v-on:click="AutenticazioneUtente">Loggati</a>
-                            </div>
-                        </td>
-                    </tr>
-                    <!--FINE CARD-->
-                </table>
+                <span v-if="mostraCards">
+                    <table class="table ml-5">
+                        <thead>
+                            <tr>
+                                <th class="text-center" scope="col">Data</th>
+                                <th scope="col">Docente</th>
+                                <th scope="col">Materia</th>
+                                <th  scope="col">Aggiungi</th>
+                            </tr>
+                        </thead>
+                        <!--INIZIO CARD-->
+                        <tbody>
+                            <tr class="inner-box" v-for="orarioDisp in orariDisp">
+                                <th scope="row">
+                                    <div class="event-date text-center">
+                                        <p>{{ giornoSelezionato }}</p>
+                                        <span>{{ orarioDisp }}</span>
+                                    </div>
+                                </th>
+                                <td>
+                                    <div class="thumb" v-if="true">
+                                        <img src="https://www.bootdey.com/app/webroot/img/Content/Manbrown2.png"/>
+                                    </div>
+                                    <div class="thumb" v-else>
+                                        <p>suidudfhfsiushud</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="event-wrap">
+                                        <h3><a>INF</a></h3>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="primary-btn" v-if="!ospite">
+                                        <a class="btn btn-primary">Aggiungi al carrello</a>
+                                    </div>
+                                    <div class="primary-btn" v-else>
+                                        <a class="btn btn-primary" v-on:click="AutenticazioneUtente">Loggati</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+
+                        <!--FINE CARD-->
+
+                    </table>
+                </span>
             </div>
         </div>
     </span>
@@ -236,7 +247,16 @@
             corsoScelto: null,
             labelDocentiDropDown: "Scegli Docente",
             labelCorsiDropDown: "Scegli Corso",
-            labelOraDropDown: "Scegli Ora"
+            labelOraDropDown: "Scegli Ora",
+            prenotazioni: null,
+            giornoSelezionato: null,
+            mostraCards: false,
+            orariDisp: [],
+            orariLun: [],
+            orariMar: [],
+            orariMer: [],
+            orariGio: [],
+            orariVen: [],
         },
         methods: {
             AutenticazioneUtente: function () {
@@ -265,6 +285,7 @@
                                     self.homeUtente = true;
                                     self.ospite = false;
                                     self.getInsegnamenti();
+                                    self.giornoSelezionato = "Lunedì";
                                 }
                             } else {
                                 self.messaggio = "errore richiesta";
@@ -332,14 +353,14 @@
             myFunctionCorso: function (){
                 document.getElementById("CorsiDropDown").classList.toggle("show");
             },
-            myFunctionOra: function (){
+            /*myFunctionOra: function (){
                 document.getElementById("OrarioDropDown").classList.toggle("show");
             },
-
             aggiornaOra: function (orario) {
                 var self = this;
                 self.labelOraDropDown = orario.toString();
-            },
+                document.getElementById("OrarioDropDown").classList.toggle("show");
+            },*/
 
             aggiornaDocenti: function (codice) {
                 var self = this;
@@ -442,6 +463,114 @@
                         a[i].style.display = "none";
                     }
                 }
+            },
+            caricaPrenotazioni: function () {
+                var self = this;
+                if((self.corsoScelto != null && self.corsoScelto.codice !== 0) || (self.docenteScelto != null && self.docenteScelto.matricola !== 0)) {
+                    var matricolaDoce = "null";
+                    var codCorso = "null";
+                    var usr = "null";
+
+                    if(self.docenteScelto != null){
+                        matricolaDoce = self.docenteScelto.matricola;
+                    }
+                    if(self.corsoScelto != null){
+                        codCorso = self.corsoScelto.codice;
+                    }
+                    if(self.utente != null){
+                        usr = self.utente.nome_utente;
+                    }
+
+                    console.log('matricolaDoce' + matricolaDoce);
+                    console.log('codCorso' + codCorso);
+                    console.log('usr' + usr);
+
+
+                    $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletPrenotazioni", {docente: matricolaDoce, corso: codCorso, utente: usr},
+                        function (data) {
+                            self.prenotazioni = data;
+                            for(let i = 0; i < self.prenotazioni.length; i++){
+                                for(let j = 0; j < self.prenotazioni[i].length; j++){
+                                    switch (j) {
+                                        case 0:
+                                            if( self.prenotazioni[i][j] === 0){
+                                                console.log(i + " " + j);
+                                                self.orariLun.push(self.indexToHour(i));
+                                                console.log(self.orariLun[0]);
+                                            }
+                                            break;
+                                        case 1:
+                                            if( self.prenotazioni[i][j] === 0){
+                                                self.orariMar.push(self.indexToHour(i));
+                                            }
+                                            break;
+                                        case 2:
+                                            if( self.prenotazioni[i][j] === 0){
+                                                self.orariMer.push(self.indexToHour(i));
+                                            }
+                                            break;
+                                        case 3:
+                                            if( self.prenotazioni[i][j] === 0){
+                                                self.orariGio.push(self.indexToHour(i));
+                                            }
+                                            break;
+                                        case 4:
+                                            if( self.prenotazioni[i][j] === 0){
+                                                self.orariVen.push(self.indexToHour(i));
+                                            }
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    );
+                    console.log(self.orariLun.length);
+                    console.log(self.orariMar.length);
+                    console.log(self.orariMer.length);
+                    for(let i = 0; i < self.orariLun.length; i++){
+                        console.log(self.orariLun[i]);
+                    }
+                }
+            },
+            indexToHour: function (indice){
+                let orario = "";
+                switch(indice){
+                    case 0:
+                        orario = "15:00:00";
+                        break;
+                    case 1:
+                        orario =  "16:00:00";
+                        break;
+                    case 2:
+                        orario =  "17:00:00";
+                        break;
+                    case 3:
+                        orario = "18:00:00";
+                        break;
+                }
+                return orario;
+            },
+            aggiornaOrariDisp: function (giorno){
+                var self = this;
+                self.giornoSelezionato = giorno;
+                switch (giorno) {
+                    case 'Lunedì':
+                        self.orariDisp = self.orariLun;
+                        break;
+                    case 'Martedì':
+                        self.orariDisp = self.orariMar;
+                        break;
+                    case 'Mercoldì':
+                        self.orariDisp = self.orariMer;
+                        break;
+                    case 'Giovedì':
+                        self.orariDisp = self.orariGio;
+                        break;
+                    case 'Venerdì':
+                        self.orariDisp = self.orariVen;
+                        break;
+                }
+                self.mostraCards = self.orariDisp.length > 0;
             }
         }
     })
