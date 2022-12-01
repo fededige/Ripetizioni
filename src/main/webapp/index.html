@@ -44,10 +44,10 @@
                 <p>{{messaggio}}</p>
             </div>
         </span>
-    <span v-if="homeUtente" > 
+    <span v-if="homeUtente">
         <div class="row justify-content-end" v-if="ospite">
             <div class="d-grid gap-2 d-md-block mx-4"> <!--mx-4 serve per mettere il margine-->
-                <button class="btn btn-secondary" type="button">Login</button>
+                <button class="btn btn-secondary" type="button" v-on:click="AutenticazioneUtente">Login</button>
             </div>
         </div>
         <div class="row justify-content-end" v-else>
@@ -56,7 +56,7 @@
                     NOME UTENTE
                     <i class="fa fa-angle-down"></i>
                 </button>
-                    <div id="myDropdown" class="dropdown-content">
+                    <div id="LoginDropDown" class="dropdown-content">
                         <a>Cambia Password</a>
                         <a>Logout</a>
                     </div>
@@ -88,65 +88,54 @@
             </div>
         </div>
         <div class="mx-auto" style="width: 45%;">
-            <div class="row justify-content-around pr-4">
+            <div class="row justify-content-around">
                 <div class="dropdown">
-                    <button onclick="myFunction()" class="dropbtn">
-                        Docente
+                    <button v-on:click="myFunctionDocenti" class="dropbtn">
+                        {{ labelDocentiDropDown }}
                         <i class="fa fa-angle-down"></i>
                     </button>
-                        <div id="myDropdown" class="dropdown-content">
-                            <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
-                            <a href="#about">About</a>
-                            <a href="#base">Base</a>
-                            <a href="#blog">Blog</a>
-                            <a href="#contact">Contact</a>
-                            <a href="#custom">Custom</a>
-                            <a href="#support">Support</a>
-                            <a href="#tools">Tools</a>
+                        <div id="DocentiDropDown" class="dropdown-content">
+                            <input type="text" placeholder="Search.." id="DocenteInput" v-on:keyup="filterFunctionDocente">
+                            <div v-for="docente in docentiL">
+                                <a v-on:click="aggiornaCorsi(docente.matricola)">{{ `${docente.matricola} ${docente.cognome}` }}</a>
+                            </div>
                         </div>
                 </div>
                 <div class="dropdown mx-2">
-                    <button onclick="myFunction()" class="dropbtn">
-                        Corso
+                    <button v-on:click="myFunctionCorso" class="dropbtn">
+                        {{ labelCorsiDropDown }}
                         <i class="fa fa-angle-down"></i>
                     </button>
-                        <div id="myDropdown" class="dropdown-content">
-                            <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
-                            <a href="#about">About</a>
-                            <a href="#base">Base</a>
-                            <a href="#blog">Blog</a>
-                            <a href="#contact">Contact</a>
-                            <a href="#custom">Custom</a>
-                            <a href="#support">Support</a>
-                            <a href="#tools">Tools</a>
+                        <div id="CorsiDropDown" class="dropdown-content">
+                            <input type="text" placeholder="Search.." id="CorsoInput" v-on:keyup="filterFunctionCorso">
+                            <div v-for="corso in corsiL">
+                                <a v-on:click="aggiornaDocenti(corso.codice)">{{ `${corso.codice} ${corso.titolo_corso}` }}</a>
+                            </div>
                         </div>
                 </div>
-                <div class="dropdown">
-                    <button onclick="myFunction()" class="dropbtn">
-                        Ora
-                        <i class="fa fa-angle-down"></i>
-                    </button>
-                        <div id="myDropdown" class="dropdown-content">
-                            <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
-                            <a href="#about">About</a>
-                            <a href="#base">Base</a>
-                            <a href="#blog">Blog</a>
-                            <a href="#contact">Contact</a>
-                            <a href="#custom">Custom</a>
-                            <a href="#support">Support</a>
-                            <a href="#tools">Tools</a>
-                        </div>
-                </div> 
             </div>
-            <div class="row justify-content-center mt-3 pl-2">
+            <div class="row justify-content-center">
                 <button onclick="" type="submit" class="btn btn-primary btn-lg">Cerca</button>
             </div>
         </div>
         <div class="container">
-            <div class="event-schedule-area-two bg-color pad100">   
+            <div class="event-schedule-area-two bg-color pad100">
                 <div class="row">
                     <div class="col-lg-12 .d-sm-none .d-md-block">
-                        <div class="row justify-content-center">                            
+                        <div class="row justify-content-center">
+                            <div class="dropdown pt-4 pl-2">
+                                <button v-on:click="myFunctionOra" class="dropbtn">
+                                    {{ labelOraDropDown }}
+                                    <i class="fa fa-angle-down"></i>
+                                </button>
+                                    <div id="OrarioDropDown" class="dropdown-content">
+                                        <input type="text" placeholder="Search.." id="OrarioInput">
+                                        <a v-on:click="aggiornaOra('15:00')">15:00</a>
+                                        <a v-on:click="aggiornaOra('16:00')">16:00</a>
+                                        <a v-on:click="aggiornaOra('17:00')">17:00</a>
+                                        <a v-on:click="aggiornaOra('18:00')">18:00</a>
+                                    </div>
+                            </div>
                             <ul class="nav custom-tab" id="myTab" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link active show" id="tabLunedì" data-toggle="tab" role="tab" aria-selected="true">Lunedì</a>
@@ -201,20 +190,17 @@
                                 <a class="btn btn-primary" href="#">Aggiungi al carrello</a>
                             </div>
                             <div class="primary-btn" v-else>
-                                <a class="btn btn-primary" href="#">Loggati</a>
+                                <a class="btn btn-primary" href="#" v-on:click="AutenticazioneUtente">Loggati</a>
                             </div>
                         </td>
                     </tr>
                     <!--FINE CARD-->
                 </table>
-            </div>    
+            </div>
+        </div>
     </span>
 </div>
 <script type="text/javascript">
-    function myFunction() {
-      document.getElementById("myDropdown").classList.toggle("show");
-    }
-
     function filterFunction() {
       var input, filter, ul, li, a, i;
       input = document.getElementById("myInput");
@@ -240,9 +226,24 @@
             messaggio: "",
             paginaLogIn: false,
             homeUtente: true,
-            ospite: false,
+            ospite: true,
+            insegnamenti: [],
+            docenti: [{"matricola":0,"nome":"","cognome":"Seleziona Docente","stato":true}],
+            docentiL: [{"matricola":0,"nome":"","cognome":"Seleziona Docente","stato":true}],
+            docentoScelto: null,
+            corsi: [{"codice":0,"titolo_corso":"Seleziona Corso","stato":true}],
+            corsiL: [{"codice":0,"titolo_corso":"Seleziona Corso","stato":true}],
+            corsoScelto: null,
+            labelDocentiDropDown: "Scegli Docente",
+            labelCorsiDropDown: "Scegli Corso",
+            labelOraDropDown: "Scegli Ora"
         },
         methods: {
+            AutenticazioneUtente: function () {
+                var self = this;
+                self.paginaLogIn = true;
+                self.homeUtente = false;
+            },
             transit: function () {
                 var self = this;
                 self.messaggio = "";
@@ -262,12 +263,184 @@
                                 } else {
                                     self.paginaLogIn = false;
                                     self.homeUtente = true;
+                                    self.ospite = false;
+                                    self.getInsegnamenti();
                                 }
                             } else {
                                 self.messaggio = "errore richiesta";
                             }
                         }
                     );
+                }
+            },
+            getInsegnamenti: function () {
+                var self = this;
+                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletInsegnamenti", {},
+                    function (data) {
+                        let i;
+                        let flag;
+                        console.log(data);
+                        self.insegnamenti = data;
+                        for(i = 0; i < self.insegnamenti.length; i++){
+                            flag = true;
+                            for(let j = 1; j < self.docenti.length; j++){
+                                if(self.docenti[j].matricola === self.insegnamenti[i].docente.matricola){
+                                    flag = false;
+                                    break;
+                                }
+                            }
+                            if(flag){
+                                self.docenti.push(self.insegnamenti[i].docente);
+                            }
+                        }
+
+                        for(i = 0; i < self.insegnamenti.length; i++){
+                            flag=true;
+                            for(let j = 1; j < self.corsi.length; j++){
+                                if(self.corsi[j].codice === self.insegnamenti[i].corso.codice){
+                                    flag=false;
+                                    break;
+                                }
+                            }
+                            if(flag){
+                                self.corsi.push(self.insegnamenti[i].corso);
+                            }
+                        }
+
+                        for(i = 1; i < self.docenti.length; i++){
+                            self.docentiL.push(self.docenti[i]);
+                        }
+
+                        for(i = 1; i < self.corsi.length; i++){
+                            self.corsiL.push(self.corsi[i]);
+                        }
+                        /*
+                        for(i = 1; i < self.docentiL.length; i++){
+                            console.log(self.docentiL[i].cognome);
+                        }
+
+                        for(i = 1; i < self.corsiL.length; i++){
+                            console.log(self.corsiL[i].titolo_corso);
+                        }
+                         */
+                    }
+                );
+            },
+            myFunctionDocenti: function () {
+                document.getElementById("DocentiDropDown").classList.toggle("show");
+            },
+            myFunctionCorso: function (){
+                document.getElementById("CorsiDropDown").classList.toggle("show");
+            },
+            myFunctionOra: function (){
+                document.getElementById("OrarioDropDown").classList.toggle("show");
+            },
+
+            aggiornaOra: function (orario) {
+                var self = this;
+                self.labelOraDropDown = orario.toString();
+            },
+
+            aggiornaDocenti: function (codice) {
+                var self = this;
+                for(let i = 0; i < self.corsi.length; i++){
+                    if(self.corsi[i].codice === codice){
+                        self.corsoScelto = self.corsi[i];
+                        document.getElementById("CorsiDropDown").classList.toggle("show");
+                        self.labelCorsiDropDown = self.corsoScelto.titolo_corso;
+                        break;
+                    }
+                }
+                if(self.corsoScelto != null){
+                    if(self.corsoScelto.codice !== 0){
+                        self.docentiL = [{"matricola":0,"nome":"","cognome":"Seleziona Docente","stato":true}];
+                        for(let i = 0; i < self.insegnamenti.length; i++){
+                            if(self.insegnamenti[i].corso.codice === self.corsoScelto.codice){
+                                self.docentiL.push(self.insegnamenti[i].docente);
+                            }
+                        }
+                    } else {
+                        self.corsoScelto = null;
+                        for(let i = 0; i < self.docenti.length; i++){
+                            let flag = true;
+                            for(let j = 0; j < self.docentiL.length; j++){
+                                if(self.docentiL[j].matricola === self.docenti[i].matricola){
+                                    flag = false;
+                                    break;
+                                }
+                            }
+                            if(flag){
+                                self.docentiL.push(self.docenti[i]);
+                            }
+                        }
+                    }
+                }
+            },
+            aggiornaCorsi : function (matricola){
+                var self = this;
+                var flag=true;
+                for(let i=0;i<self.docenti.length;i++){
+                    if(self.docenti[i].matricola === matricola){
+                        self.docenteScelto = self.docenti[i];
+                        document.getElementById("DocentiDropDown").classList.toggle("show");
+                        self.labelDocentiDropDown = self.docenteScelto.cognome;
+                        break;
+                    }
+                }
+
+                if(self.docenteScelto != null){
+                    if(self.docenteScelto.matricola !== 0){
+                        self.corsiL=[{"codice":0,"titolo_corso":"Seleziona Corso","stato":true}];
+                        for(let i=0;i<self.insegnamenti.length;i++){
+                            if(self.insegnamenti[i].docente.matricola === self.docenteScelto.matricola){
+                                self.corsiL.push(self.insegnamenti[i].corso);
+                            }
+                        }
+                    }else{
+                        self.docenteScelto=null;
+                        for(let i=0;i<self.corsi.length;i++){
+                            flag=true;
+                            for(let j = 0; j < self.corsiL.length; j++){
+                                if(self.corsiL[j].codice === self.corsi[i].codice){
+                                    flag=false;
+                                    break;
+                                }
+                            }
+                            if(flag){
+                                self.corsiL.push(self.corsi[i]);
+                            }
+                        }
+                    }
+                }
+            },
+            filterFunctionCorso: function () {
+                var input, filter, a, i, div;
+                input = document.getElementById("CorsoInput");
+                filter = input.value.toUpperCase();
+                div = document.getElementById("CorsiDropDown");
+                a = div.getElementsByTagName("a");
+                for (i = 0; i < a.length; i++) {
+                    txtValue = a[i].textContent || a[i].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        a[i].style.display = "";
+                    } else {
+                        a[i].style.display = "none";
+                    }
+                }
+            },
+            filterFunctionDocente: function () {
+                var input, filter, ul, li, a, i;
+                input = document.getElementById("DocenteInput");
+                filter = input.value.toUpperCase();
+                div = document.getElementById("DocentiDropDown");
+                a = div.getElementsByTagName("a");
+                for (i = 0; i < a.length; i++) {
+                    txtValue = a[i].textContent || a[i].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        a[i].style.display = "";
+                    } else {
+                        a[i].style.display = "none";
+                    }
                 }
             }
         }
