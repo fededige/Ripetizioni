@@ -180,16 +180,42 @@
                                     </div>
                                 </th>
                                 <td>
-                                    <div class="thumb" v-if="true">
+                                    <div class="thumb" v-if="(docenteScelto != null && docenteScelto.matricola !== 0)">
                                         <img src="https://www.bootdey.com/app/webroot/img/Content/Manbrown2.png"/>
+                                        <p pl-2>{{ docenteScelto.cognome }}</p>
                                     </div>
                                     <div class="thumb" v-else>
-                                        <p>suidudfhfsiushud</p>
+                                        <div class="dropdown">
+                                            <button v-on:click="myFunctionDocenti" class="dropbtn">
+                                                {{ labelDocentiDropDown }}
+                                                <i class="fa fa-angle-down"></i>
+                                            </button>
+                                                <div class="dropdown-content">
+                                                    <input type="text" placeholder="Search.." v-on:keyup="filterFunctionDocente">
+                                                    <div v-for="docente in docentiL">
+                                                        <a v-on:click="aggiornaCorsi(docente.matricola)">{{ `${docente.matricola} ${docente.cognome}` }}</a>
+                                                    </div>
+                                                </div>
+                                        </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="event-wrap">
-                                        <h3><a>INF</a></h3>
+                                    <div class="thumb" v-if="corsoScelto != null && corsoScelto.codice !== 0">
+                                        <p pl-2>{{ corsoScelto.titolo_corso }}</p>
+                                    </div>
+                                    <div class="thumb" v-else>
+                                        <div class="dropdown mx-2">
+                                            <button v-on:click="myFunctionCorso" class="dropbtn">
+                                                {{ labelCorsiDropDown }}
+                                                <i class="fa fa-angle-down"></i>
+                                            </button>
+                                                <div class="dropdown-content">
+                                                    <input type="text" placeholder="Search.."  v-on:keyup="filterFunctionCorso">
+                                                    <div v-for="corso in corsiL">
+                                                        <a v-on:click="aggiornaDocenti(corso.codice)">{{ `${corso.codice} ${corso.titolo_corso}` }}</a>
+                                                    </div>
+                                                </div>
+                                        </div>
                                     </div>
                                 </td>
                                 <td>
@@ -241,7 +267,7 @@
             insegnamenti: [],
             docenti: [{"matricola":0,"nome":"","cognome":"Seleziona Docente","stato":true}],
             docentiL: [{"matricola":0,"nome":"","cognome":"Seleziona Docente","stato":true}],
-            docentoScelto: null,
+            docenteScelto: null,
             corsi: [{"codice":0,"titolo_corso":"Seleziona Corso","stato":true}],
             corsiL: [{"codice":0,"titolo_corso":"Seleziona Corso","stato":true}],
             corsoScelto: null,
@@ -471,7 +497,7 @@
                     var codCorso = "null";
                     var usr = "null";
 
-                    if(self.docenteScelto != null){
+                    if(self.docenteScelto !=null ){
                         matricolaDoce = self.docenteScelto.matricola;
                     }
                     if(self.corsoScelto != null){
