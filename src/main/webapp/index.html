@@ -172,7 +172,7 @@
                         </thead>
                         <!--INIZIO CARD-->
                         <tbody>
-                            <tr class="inner-box" v-for="orarioDisp in orariDisp">
+                            <tr class="inner-box" v-for="(orarioDisp,index) in orariDisp" v-bind:id="`${orarioDisp}`">
                                 <th scope="row">
                                     <div class="event-date text-center">
                                         <p>{{ giornoSelezionato }}</p>
@@ -180,31 +180,32 @@
                                     </div>
                                 </th>
                                 <td>
-                                    <div class="thumb" v-if="(docenteScelto != null && docenteScelto.matricola !== 0)">
+                                    <div class="thumb" v-if="(labelDocenteScelto != null && labelDocenteScelto.matricola !== 0)">
                                         <img src="https://www.bootdey.com/app/webroot/img/Content/Manbrown2.png"/>
-                                        <p pl-2>{{ docenteScelto.cognome }}</p>
+                                        <p pl-2>{{ labelDocenteScelto.cognome }}</p>
                                     </div>
                                     <div class="thumb" v-else>
-                                        <div class="dropdown">
+                                        <div class="dropdown" v-bind:id="`DD ${orarioDisp}`">
                                             <button v-on:click="myFunctionDocenti" class="dropbtn">
-                                                {{ labelDocentiDropDown }}
+                                                {{ labelDocentiDropDown }} <!--labelDocentiDropDown[daytoindex(id)] -->
+                                                <p></p>
                                                 <i class="fa fa-angle-down"></i>
                                             </button>
-                                                <div class="dropdown-content">
-                                                    <input type="text" placeholder="Search.." v-on:keyup="filterFunctionDocente">
-                                                    <div v-for="docente in docentiL">
-                                                        <a v-on:click="aggiornaCorsi(docente.matricola)">{{ `${docente.matricola} ${docente.cognome}` }}</a>
-                                                    </div>
+                                            <div class="dropdown-content">
+                                                <input type="text" placeholder="Search.." v-on:keyup="filterFunctionDocente">
+                                                <div v-for="docente in docentiL">
+                                                    <a v-on:click="aggiornaCorsi(docente.matricola)">{{ `${docente.matricola} ${docente.cognome}` }}</a>
                                                 </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="thumb" v-if="corsoScelto != null && corsoScelto.codice !== 0">
-                                        <p pl-2>{{ corsoScelto.titolo_corso }}</p>
+                                    <div class="thumb" v-if="labelCorsoScelto != null && labelCorsoScelto.codice !== 0">
+                                        <p pl-2>{{ labelCorsoScelto.titolo_corso }}</p>
                                     </div>
                                     <div class="thumb" v-else>
-                                        <div class="dropdown mx-2">
+                                        <div class="dropdown mx-2" v-bind:id="`DC ${orarioDisp}`">
                                             <button v-on:click="myFunctionCorso" class="dropbtn">
                                                 {{ labelCorsiDropDown }}
                                                 <i class="fa fa-angle-down"></i>
@@ -219,7 +220,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="primary-btn" v-if="!ospite">
+                                    <div class="primary-btn" v-if="!ospite" v-bind:id="`B ${orarioDisp}`">
                                         <a class="btn btn-primary">Aggiungi al carrello</a>
                                     </div>
                                     <div class="primary-btn" v-else>
@@ -268,9 +269,11 @@
             docenti: [{"matricola":0,"nome":"","cognome":"Seleziona Docente","stato":true}],
             docentiL: [{"matricola":0,"nome":"","cognome":"Seleziona Docente","stato":true}],
             docenteScelto: null,
+            labelDocenteScelto: null,
             corsi: [{"codice":0,"titolo_corso":"Seleziona Corso","stato":true}],
             corsiL: [{"codice":0,"titolo_corso":"Seleziona Corso","stato":true}],
             corsoScelto: null,
+            labelCorsoScelto: null,
             labelDocentiDropDown: "Scegli Docente",
             labelCorsiDropDown: "Scegli Corso",
             labelOraDropDown: "Scegli Ora",
@@ -392,12 +395,15 @@
                 var self = this;
                 for(let i = 0; i < self.corsi.length; i++){
                     if(self.corsi[i].codice === codice){
+                        console.log(codice);
                         self.corsoScelto = self.corsi[i];
+                        console.log(self.corsoScelto.titolo_corso);
                         document.getElementById("CorsiDropDown").classList.toggle("show");
                         self.labelCorsiDropDown = self.corsoScelto.titolo_corso;
                         break;
                     }
                 }
+                console.log("405"+codice);
                 if(self.corsoScelto != null){
                     if(self.corsoScelto.codice !== 0){
                         self.docentiL = [{"matricola":0,"nome":"","cognome":"Seleziona Docente","stato":true}];
@@ -422,6 +428,7 @@
                         }
                     }
                 }
+                console.log("430"+ self.corsiL[0]);
             },
             aggiornaCorsi : function (matricola){
                 var self = this;
@@ -507,22 +514,21 @@
                         usr = self.utente.nome_utente;
                     }
 
-                    console.log('matricolaDoce' + matricolaDoce);
-                    console.log('codCorso' + codCorso);
-                    console.log('usr' + usr);
-
 
                     $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletPrenotazioni", {docente: matricolaDoce, corso: codCorso, utente: usr},
                         function (data) {
+                            self.orariLun = [];
+                            self.orariMar = [];
+                            self.orariMer = [];
+                            self.orariGio = [];
+                            self.orariVen=[];
                             self.prenotazioni = data;
                             for(let i = 0; i < self.prenotazioni.length; i++){
                                 for(let j = 0; j < self.prenotazioni[i].length; j++){
                                     switch (j) {
                                         case 0:
                                             if( self.prenotazioni[i][j] === 0){
-                                                console.log(i + " " + j);
                                                 self.orariLun.push(self.indexToHour(i));
-                                                console.log(self.orariLun[0]);
                                             }
                                             break;
                                         case 1:
@@ -548,14 +554,11 @@
                                     }
                                 }
                             }
+                            self.aggiornaOrariDisp(self.giornoSelezionato);
+                            self.labelCorsoScelto = self.corsoScelto;
+                            self.labelDocenteScelto = self.docenteScelto;
                         }
                     );
-                    console.log(self.orariLun.length);
-                    console.log(self.orariMar.length);
-                    console.log(self.orariMer.length);
-                    for(let i = 0; i < self.orariLun.length; i++){
-                        console.log(self.orariLun[i]);
-                    }
                 }
             },
             indexToHour: function (indice){
@@ -597,6 +600,9 @@
                         break;
                 }
                 self.mostraCards = self.orariDisp.length > 0;
+                for(let i = 0; i < self.orariDisp.length; i++){
+                    console.log(self.orariDisp[i]);
+                }
             }
         }
     })
