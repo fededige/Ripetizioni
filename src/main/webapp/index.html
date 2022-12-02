@@ -105,26 +105,26 @@
         <div class="mx-auto" style="width: 45%;">
             <div class="row justify-content-around">
                 <div class="dropdown">
-                    <button v-on:click="myFunctionDocenti" class="dropbtn">
+                    <button v-on:click="myFunctionDocenti('DocentiDropDown')" class="dropbtn">
                         {{ labelDocentiDropDown }}
                         <i class="fa fa-angle-down"></i>
                     </button>
-                        <div id="DocentiDropDown" class="dropdown-content">
-                            <input type="text" placeholder="Search.." id="DocenteInput" v-on:keyup="filterFunctionDocente">
-                            <div v-for="docente in docentiL">
-                                <a v-on:click="aggiornaCorsi(docente.matricola)">{{ `${docente.matricola} ${docente.cognome}` }}</a>
-                            </div>
+                    <div id="DocentiDropDown" class="dropdown-content">
+                        <input type="text" placeholder="Search.." id="DocenteInput" v-on:keyup="filterFunctionDocente">
+                        <div v-for="docente in docentiL">
+                            <a v-on:click="getElementoSel(docente.matricola, 'DocentiDropDown')">{{ `${docente.matricola} ${docente.cognome}` }}</a>
                         </div>
+                    </div>
                 </div>
                 <div class="dropdown mx-2">
-                    <button v-on:click="myFunctionCorso" class="dropbtn">
+                    <button v-on:click="myFunctionCorso('CorsiDropDown')" class="dropbtn">
                         {{ labelCorsiDropDown }}
                         <i class="fa fa-angle-down"></i>
                     </button>
                         <div id="CorsiDropDown" class="dropdown-content">
                             <input type="text" placeholder="Search.." id="CorsoInput" v-on:keyup="filterFunctionCorso">
                             <div v-for="corso in corsiL">
-                                <a v-on:click="aggiornaDocenti(corso.codice)">{{ `${corso.codice} ${corso.titolo_corso}` }}</a>
+                                <a v-on:click="getElementoSel(corso.codice, 'CorsiDropDown')">{{ `${corso.codice} ${corso.titolo_corso}` }}</a>
                             </div>
                         </div>
                 </div>
@@ -186,15 +186,15 @@
                                     </div>
                                     <div class="thumb" v-else>
                                         <div class="dropdown" v-bind:id="`DD ${orarioDisp}`">
-                                            <button v-on:click="myFunctionDocenti" class="dropbtn">
+                                            <button v-on:click="myFunctionDocenti(`DDC ${orarioDisp}`)" class="dropbtn">
                                                 {{ labelDocentiDropDown }} <!--labelDocentiDropDown[daytoindex(id)] -->
                                                 <p></p>
                                                 <i class="fa fa-angle-down"></i>
                                             </button>
-                                            <div class="dropdown-content">
+                                            <div v-bind:id="`DDC ${orarioDisp}`" class="dropdown-content">
                                                 <input type="text" placeholder="Search.." v-on:keyup="filterFunctionDocente">
                                                 <div v-for="docente in docentiL">
-                                                    <a v-on:click="aggiornaCorsi(docente.matricola)">{{ `${docente.matricola} ${docente.cognome}` }}</a>
+                                                    <a v-on:click="getElementoSel(docente.matricola, `DDC ${orarioDisp}`)">{{ `${docente.matricola} ${docente.cognome}` }}</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -206,14 +206,14 @@
                                     </div>
                                     <div class="thumb" v-else>
                                         <div class="dropdown mx-2" v-bind:id="`DC ${orarioDisp}`">
-                                            <button v-on:click="myFunctionCorso" class="dropbtn">
+                                            <button v-on:click="myFunctionCorso(`DCC ${orarioDisp}`)" class="dropbtn">
                                                 {{ labelCorsiDropDown }}
                                                 <i class="fa fa-angle-down"></i>
                                             </button>
-                                                <div class="dropdown-content">
+                                                <div v-bind:id="`DCC ${orarioDisp}`" class="dropdown-content">
                                                     <input type="text" placeholder="Search.."  v-on:keyup="filterFunctionCorso">
                                                     <div v-for="corso in corsiL">
-                                                        <a v-on:click="aggiornaDocenti(corso.codice)">{{ `${corso.codice} ${corso.titolo_corso}` }}</a>
+                                                        <a v-on:click="getElementoSel(corso.codice, `DCC ${orarioDisp}`)">{{ `${corso.codice} ${corso.titolo_corso}` }}</a>
                                                     </div>
                                                 </div>
                                         </div>
@@ -376,24 +376,44 @@
                     }
                 );
             },
-            myFunctionDocenti: function () {
-                document.getElementById("DocentiDropDown").classList.toggle("show");
+            myFunctionDocenti: function (id) {
+                document.getElementById(id).classList.toggle("show");
             },
-            myFunctionCorso: function (){
-                document.getElementById("CorsiDropDown").classList.toggle("show");
+            myFunctionCorso: function (id){
+                document.getElementById(id).classList.toggle("show");
             },
-            /*myFunctionOra: function (){
-                document.getElementById("OrarioDropDown").classList.toggle("show");
-            },
-            aggiornaOra: function (orario) {
-                var self = this;
-                self.labelOraDropDown = orario.toString();
-                document.getElementById("OrarioDropDown").classList.toggle("show");
-            },*/
 
+            getElementoSel: function (chiave, id) {
+                var self = this;
+                console.log(chiave);
+                console.log(id);
+                console.log(id.split(" ")[0]);
+                if(id.split(" ")[0] === "DDC" || id.split(" ")[0] === "DocentiDropDown"){ // Dropdown Docenti container
+                    for(let i = 0; i < self.docenti.length; i++){
+                        if(self.docenti[i].matricola === chiave){
+                            self.docenteScelto = self.docenti[i];
+                            document.getElementById(id).classList.toggle("show");
+                            self.labelDocentiDropDown = self.docenteScelto.cognome;
+                            break;
+                        }
+                    }
+                    self.aggiornaCorsi(chiave);
+                }else if(id.split(" ")[0] === "DCC" || id.split(" ")[0] === "CorsiDropDown"){//"DCC" (corsi)
+                    for(let i = 0; i < self.corsi.length; i++){
+                        if(self.corsi[i].codice === chiave){
+                            self.corsoScelto = self.corsi[i];
+                            console.log(self.corsoScelto.titolo_corso);
+                            document.getElementById(id).classList.toggle("show");
+                            self.labelCorsiDropDown = self.corsoScelto.titolo_corso;
+                            break;
+                        }
+                    }
+                    self.aggiornaDocenti(chiave);
+                }
+            },
             aggiornaDocenti: function (codice) {
                 var self = this;
-                for(let i = 0; i < self.corsi.length; i++){
+                /*for(let i = 0; i < self.corsi.length; i++){
                     if(self.corsi[i].codice === codice){
                         console.log(codice);
                         self.corsoScelto = self.corsi[i];
@@ -402,7 +422,7 @@
                         self.labelCorsiDropDown = self.corsoScelto.titolo_corso;
                         break;
                     }
-                }
+                }*/
                 console.log("405"+codice);
                 if(self.corsoScelto != null){
                     if(self.corsoScelto.codice !== 0){
@@ -433,14 +453,14 @@
             aggiornaCorsi : function (matricola){
                 var self = this;
                 var flag=true;
-                for(let i=0;i<self.docenti.length;i++){
+                /*for(let i=0;i<self.docenti.length;i++){
                     if(self.docenti[i].matricola === matricola){
                         self.docenteScelto = self.docenti[i];
                         document.getElementById("DocentiDropDown").classList.toggle("show");
                         self.labelDocentiDropDown = self.docenteScelto.cognome;
                         break;
                     }
-                }
+                }*/
 
                 if(self.docenteScelto != null){
                     if(self.docenteScelto.matricola !== 0){
