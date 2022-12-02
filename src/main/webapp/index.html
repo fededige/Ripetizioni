@@ -106,7 +106,7 @@
             <div class="row justify-content-around">
                 <div class="dropdown">
                     <button v-on:click="myFunctionDocenti('DocentiDropDown')" class="dropbtn">
-                        {{ labelDocentiDropDown }}
+                        {{ labelDocentiDropDown[4] }}
                         <i class="fa fa-angle-down"></i>
                     </button>
                     <div id="DocentiDropDown" class="dropdown-content">
@@ -118,7 +118,7 @@
                 </div>
                 <div class="dropdown mx-2">
                     <button v-on:click="myFunctionCorso('CorsiDropDown')" class="dropbtn">
-                        {{ labelCorsiDropDown }}
+                        {{ labelCorsiDropDown[4] }}
                         <i class="fa fa-angle-down"></i>
                     </button>
                         <div id="CorsiDropDown" class="dropdown-content">
@@ -187,8 +187,7 @@
                                     <div class="thumb" v-else>
                                         <div class="dropdown" v-bind:id="`DD ${orarioDisp}`">
                                             <button v-on:click="myFunctionDocenti(`DDC ${orarioDisp}`)" class="dropbtn">
-                                                {{ labelDocentiDropDown }} <!--labelDocentiDropDown[daytoindex(id)] -->
-                                                <p></p>
+                                                {{ labelDocentiDropDown[hourToIndex(`${orarioDisp}`)] }} <!--labelDocentiDropDown[daytoindex(id)] -->
                                                 <i class="fa fa-angle-down"></i>
                                             </button>
                                             <div v-bind:id="`DDC ${orarioDisp}`" class="dropdown-content">
@@ -207,7 +206,11 @@
                                     <div class="thumb" v-else>
                                         <div class="dropdown mx-2" v-bind:id="`DC ${orarioDisp}`">
                                             <button v-on:click="myFunctionCorso(`DCC ${orarioDisp}`)" class="dropbtn">
-                                                {{ labelCorsiDropDown }}
+                                                {{ labelCorsiDropDown[0] }}
+                                                {{ labelCorsiDropDown[1] }}
+                                                {{ labelCorsiDropDown[2] }}
+                                                {{ labelCorsiDropDown[3] }}
+                                                {{ labelCorsiDropDown[4] }}
                                                 <i class="fa fa-angle-down"></i>
                                             </button>
                                                 <div v-bind:id="`DCC ${orarioDisp}`" class="dropdown-content">
@@ -266,16 +269,16 @@
             homeUtente: true,
             ospite: true,
             insegnamenti: [],
-            docenti: [{"matricola":0,"nome":"","cognome":"Seleziona Docente","stato":true}],
-            docentiL: [{"matricola":0,"nome":"","cognome":"Seleziona Docente","stato":true}],
+            docenti: [{"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}],
+            docentiL: [{"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}],
             docenteScelto: null,
             labelDocenteScelto: null,
-            corsi: [{"codice":0,"titolo_corso":"Seleziona Corso","stato":true}],
-            corsiL: [{"codice":0,"titolo_corso":"Seleziona Corso","stato":true}],
+            corsi: [{"codice":0,"titolo_corso":"Scegli Corso","stato":true}],
+            corsiL: [{"codice":0,"titolo_corso":"Scegli Corso","stato":true}],
             corsoScelto: null,
             labelCorsoScelto: null,
-            labelDocentiDropDown: "Scegli Docente",
-            labelCorsiDropDown: "Scegli Corso",
+            labelDocentiDropDown: ["Scegli Docente", "Scegli Docente", "Scegli Docente", "Scegli Docente", "Scegli Docente"],
+            labelCorsiDropDown: ["Scegli Corso", "Scegli Corso", "Scegli Corso", "Scegli Corso", "Scegli Corso"],
             labelOraDropDown: "Scegli Ora",
             prenotazioni: null,
             giornoSelezionato: null,
@@ -364,15 +367,6 @@
                         for(i = 1; i < self.corsi.length; i++){
                             self.corsiL.push(self.corsi[i]);
                         }
-                        /*
-                        for(i = 1; i < self.docentiL.length; i++){
-                            console.log(self.docentiL[i].cognome);
-                        }
-
-                        for(i = 1; i < self.corsiL.length; i++){
-                            console.log(self.corsiL[i].titolo_corso);
-                        }
-                         */
                     }
                 );
             },
@@ -388,45 +382,71 @@
                 console.log(chiave);
                 console.log(id);
                 console.log(id.split(" ")[0]);
-                if(id.split(" ")[0] === "DDC" || id.split(" ")[0] === "DocentiDropDown"){ // Dropdown Docenti container
+                if(id.split(" ")[0] === "DDC" ){ // Dropdown Docenti content
+                    for(let i = 0; i < self.docenti.length; i++){
+                        if(self.docenti[i].matricola === chiave){
+                            //self.docenteScelto = self.docenti[i]; //da commentare
+                            document.getElementById(id).classList.toggle("show");
+                            self.labelDocentiDropDown[self.hourToIndex(id.split(" ")[1])] = self.docenti[i].cognome;
+                            console.log("label 387 " + self.docenti[i].cognome);
+                            console.log("label 388 " + self.labelDocentiDropDown[self.hourToIndex(id.split(" ")[1])]);
+                            break;
+                        }
+                    }
+                    //self.aggiornaCorsi(chiave);
+                }else if(id.split(" ")[0] === "DCC"){//Dropdown Corsi content
+                    console.log("errore");
+                    for(let i = 0; i < self.corsi.length; i++){
+                        if(self.corsi[i].codice === chiave){
+                            //self.corsoScelto = self.corsi[i];
+                            //console.log(self.corsoScelto.titolo_corso);
+                            document.getElementById(id).classList.toggle("show");
+                            self.labelCorsiDropDown[self.hourToIndex(id.split(" ")[1])] = self.corsi[i].titolo_corso;
+                            console.log("label 409 " + self.corsi[i].titolo_corso);
+                            console.log("label 410" + self.labelCorsiDropDown[self.hourToIndex(id.split(" ")[1])]);
+                            break;
+                        }
+                    }
+                    //self.aggiornaDocenti(chiave);
+                }else if(id.split(" ")[0] === "DocentiDropDown"){
                     for(let i = 0; i < self.docenti.length; i++){
                         if(self.docenti[i].matricola === chiave){
                             self.docenteScelto = self.docenti[i];
                             document.getElementById(id).classList.toggle("show");
-                            self.labelDocentiDropDown = self.docenteScelto.cognome;
+                            self.labelDocentiDropDown[4] = self.docenteScelto.cognome;
                             break;
                         }
                     }
                     self.aggiornaCorsi(chiave);
-                }else if(id.split(" ")[0] === "DCC" || id.split(" ")[0] === "CorsiDropDown"){//"DCC" (corsi)
+                }else if(id.split(" ")[0] === "CorsiDropDown"){
                     for(let i = 0; i < self.corsi.length; i++){
                         if(self.corsi[i].codice === chiave){
                             self.corsoScelto = self.corsi[i];
                             console.log(self.corsoScelto.titolo_corso);
                             document.getElementById(id).classList.toggle("show");
-                            self.labelCorsiDropDown = self.corsoScelto.titolo_corso;
+                            self.labelCorsiDropDown[4] = self.corsoScelto.titolo_corso;
                             break;
                         }
                     }
                     self.aggiornaDocenti(chiave);
                 }
+                console.log("stampa corsi");
+                for(let i = 0; i < self.labelCorsiDropDown.length; i++){
+                    console.log(self.labelCorsiDropDown[i]);
+                }
+                console.log("fine stampa corsi");
+                console.log("stampa docenti");
+                for(let i = 0; i < self.labelDocentiDropDown.length; i++){
+                    console.log(self.labelDocentiDropDown[i]);
+                }
+                console.log("fine stampa docenti");
             },
             aggiornaDocenti: function (codice) {
                 var self = this;
-                /*for(let i = 0; i < self.corsi.length; i++){
-                    if(self.corsi[i].codice === codice){
-                        console.log(codice);
-                        self.corsoScelto = self.corsi[i];
-                        console.log(self.corsoScelto.titolo_corso);
-                        document.getElementById("CorsiDropDown").classList.toggle("show");
-                        self.labelCorsiDropDown = self.corsoScelto.titolo_corso;
-                        break;
-                    }
-                }*/
                 console.log("405"+codice);
                 if(self.corsoScelto != null){
                     if(self.corsoScelto.codice !== 0){
-                        self.docentiL = [{"matricola":0,"nome":"","cognome":"Seleziona Docente","stato":true}];
+                        self.docentiL = [{"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}];
                         for(let i = 0; i < self.insegnamenti.length; i++){
                             if(self.insegnamenti[i].corso.codice === self.corsoScelto.codice){
                                 self.docentiL.push(self.insegnamenti[i].docente);
@@ -452,19 +472,11 @@
             },
             aggiornaCorsi : function (matricola){
                 var self = this;
-                var flag=true;
-                /*for(let i=0;i<self.docenti.length;i++){
-                    if(self.docenti[i].matricola === matricola){
-                        self.docenteScelto = self.docenti[i];
-                        document.getElementById("DocentiDropDown").classList.toggle("show");
-                        self.labelDocentiDropDown = self.docenteScelto.cognome;
-                        break;
-                    }
-                }*/
-
+                let flag = true;
+                console.log(matricola);
                 if(self.docenteScelto != null){
                     if(self.docenteScelto.matricola !== 0){
-                        self.corsiL=[{"codice":0,"titolo_corso":"Seleziona Corso","stato":true}];
+                        self.corsiL=[{"codice":0,"titolo_corso":"Scegli Corso","stato":true}];
                         for(let i=0;i<self.insegnamenti.length;i++){
                             if(self.insegnamenti[i].docente.matricola === self.docenteScelto.matricola){
                                 self.corsiL.push(self.insegnamenti[i].corso);
@@ -519,6 +531,10 @@
             },
             caricaPrenotazioni: function () {
                 var self = this;
+                for(let i = 0; i < self.labelCorsiDropDown.length - 1; i++){
+                    self.labelCorsiDropDown[i] = "Scegli Corso";
+                    self.labelDocentiDropDown[i] = "Scegli Docente";
+                }
                 if((self.corsoScelto != null && self.corsoScelto.codice !== 0) || (self.docenteScelto != null && self.docenteScelto.matricola !== 0)) {
                     var matricolaDoce = "null";
                     var codCorso = "null";
@@ -596,8 +612,34 @@
                     case 3:
                         orario = "18:00:00";
                         break;
+                    default:
+                        console.log("errore traduzione da indice a ora");
                 }
                 return orario;
+            },
+            hourToIndex: function (ora) {
+                let index = null;
+                switch(ora){
+                    case "15:00:00":
+                        index = 0;
+                        break;
+                    case "16:00:00":
+                        index =  1;
+                        break;
+                    case "17:00:00":
+                        index = 2;
+                        break;
+                    case "18:00:00":
+                        index = 3;
+                        break;
+                    default:
+                        console.log("627 " + ora);
+                        console.log("errore traduzione da ora a indice");
+                }
+                console.log("ora" + ora);
+                console.log("index" + index);
+                console.log( this.labelCorsiDropDown[index]);
+                return index;
             },
             aggiornaOrariDisp: function (giorno){
                 var self = this;
