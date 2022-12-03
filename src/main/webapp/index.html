@@ -99,14 +99,51 @@
         </div>
         <div class="row justify-content-end" v-if="!ospite">
             <div class="d-grid gap-2 d-md-block mx-4 pt-2"> <!--mx-4 serve per mettere il margine-->
-                <i class="fa fa-shopping-cart fa-xl" aria-hidden="true"></i>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#carrello" ><i class="fa fa-shopping-cart fa-xl" aria-hidden="true" ></i></button>
+            </div>
+        </div>
+        <div class="modal fade" id="carrello" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Carrello</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row " v-for="(ripetizione,index) in carrelloRipetizioni">
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <div class="col-6 col-sm-5 bg-blue" >
+                                            <p>{{ripetizione.giorno}}</p>
+                                            <span>{{ripetizione.ora}}</span>
+                                        </div>
+                                        <div class="col-4 col-sm-5">
+                                            <p>Corso: {{ripetizione.corso.codice}} {{ripetizione.corso.titolo_corso}}</p>
+                                            <p>Docente: {{ripetizione.docente.matricola }} {{ripetizione.docente.cognome}}</p>
+                                        </div>
+                                        <div class="col-2 col-sm-2">
+                                            <button type="button" v-on:click="rimuoviRipetizione(ripetizione)"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary " data-dismiss="modal" aria-label="Close" >Aggiungi prenotazione</button>
+                                <button type="button" class="btn btn-primary " data-dismiss="modal" aria-label="Close" v-on:click="confermaRipetizioni()">Conferma</button>
+                                </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="mx-auto" style="width: 45%;">
             <div class="row justify-content-around">
                 <div class="dropdown">
                     <button v-on:click="myFunction('DocentiDropDown')" class="dropbtn">
-                        {{ labelDocentiDropDown[4] }}
+                        {{ labelDocentiDropDown[4].cognome }}
                         <i class="fa fa-angle-down"></i>
                     </button>
                     <div id="DocentiDropDown" class="dropdown-content">
@@ -118,7 +155,7 @@
                 </div>
                 <div class="dropdown mx-2">
                     <button v-on:click="myFunction('CorsiDropDown')" class="dropbtn">
-                        {{ labelCorsiDropDown[4] }}
+                        {{ labelCorsiDropDown[4].titolo_corso }}
                         <i class="fa fa-angle-down"></i>
                     </button>
                         <div id="CorsiDropDown" class="dropdown-content">
@@ -187,7 +224,8 @@
                                     <div class="thumb" v-else>
                                         <div class="dropdown" v-bind:id="`DD ${orarioDisp}`">
                                             <button v-on:click="myFunction(`DDC ${orarioDisp}`)" class="dropbtn">
-                                                {{ labelDocentiDropDown[hourToIndex(`${orarioDisp}`)] }} <!--labelDocentiDropDown[daytoindex(id)] -->
+                                                 {{temp}}
+                                                {{ labelDocentiDropDown[hourToIndex(`${orarioDisp}`)].cognome }} <!--labelDocentiDropDown[daytoindex(id)] -->
                                                 <i class="fa fa-angle-down"></i>
                                             </button>
                                             <div v-bind:id="`DDC ${orarioDisp}`" class="dropdown-content">
@@ -207,7 +245,7 @@
                                         <div class="dropdown mx-2" v-bind:id="`DC ${orarioDisp}`">
                                             <button v-on:click="myFunction(`DCC ${orarioDisp}`)" class="dropbtn">
                                                 {{temp}}
-                                                {{labelCorsiDropDown[hourToIndex(`${orarioDisp}`)]}}
+                                                {{labelCorsiDropDown[hourToIndex(`${orarioDisp}`)].titolo_corso }}
                                                 <i class="fa fa-angle-down"></i>
                                             </button>
                                             <div v-bind:id="`DCC ${orarioDisp}`" class="dropdown-content">
@@ -221,17 +259,15 @@
                                 </td>
                                 <td>
                                     <div class="primary-btn" v-if="!ospite" v-bind:id="`B ${orarioDisp}`">
-                                        <a class="btn btn-primary">Aggiungi al carrello</a>
+                                        <button class="btn btn-primary" v-on:click="aggiungiCarrello(`${orarioDisp}`, `${giornoSelezionato}`)">Aggiungi al carrello</button>
                                     </div>
                                     <div class="primary-btn" v-else>
-                                        <a class="btn btn-primary" v-on:click="AutenticazioneUtente">Loggati</a>
+                                        <button class="btn btn-primary" v-on:click="AutenticazioneUtente">Loggati</button>
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
-
                         <!--FINE CARD-->
-
                     </table>
                 </span>
             </div>
@@ -299,6 +335,7 @@
             homeUtente: true,
             cambiaPwd: false,
             ospite: true,
+            carrelloPop: false,
             insegnamenti: [],
             docenti: [{"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}],
             docentiL: [{"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}],
@@ -308,8 +345,8 @@
             corsiL: [{"codice":0,"titolo_corso":"Scegli Corso","stato":true}],
             corsoScelto: null,
             labelCorsoScelto: null,
-            labelDocentiDropDown: ["Scegli Docente", "Scegli Docente", "Scegli Docente", "Scegli Docente", "Scegli Docente"],
-            labelCorsiDropDown: ["Scegli Corso", "Scegli Corso", "Scegli Corso", "Scegli Corso", "Scegli Corso"],
+            labelDocentiDropDown: [{"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}, {"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}, {"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}, {"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}, {"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}],
+            labelCorsiDropDown: [{"codice":0,"titolo_corso":"Scegli Corso","stato":true}, {"codice":0,"titolo_corso":"Scegli Corso","stato":true}, {"codice":0,"titolo_corso":"Scegli Corso","stato":true}, {"codice":0,"titolo_corso":"Scegli Corso","stato":true}, {"codice":0,"titolo_corso":"Scegli Corso","stato":true}],
             labelOraDropDown: "Scegli Ora",
             prenotazioni: null,
             giornoSelezionato: null,
@@ -324,6 +361,7 @@
             mostraVp: true,
             mostraNp: true,
             mostraCNp: true,
+            carrelloRipetizioni:[],
         },
         methods: {
             AutenticazioneUtente: function () {
@@ -419,9 +457,11 @@
                         if(self.docenti[i].matricola === chiave){
                             //self.docenteScelto = self.docenti[i]; //da commentare
                             document.getElementById(id).classList.toggle("show");
-                            self.labelDocentiDropDown[self.hourToIndex(id.split(" ")[1])] = self.docenti[i].cognome;
-                            console.log("label 387 " + self.docenti[i].cognome);
-                            console.log("label 388 " + self.labelDocentiDropDown[self.hourToIndex(id.split(" ")[1])]);
+                            self.labelDocentiDropDown[self.hourToIndex(id.split(" ")[1])] = self.docenti[i];
+                            /*console.log("label 387 " + self.docenti[i].cognome);
+                            console.log("label 388 " + self.labelDocentiDropDown[self.hourToIndex(id.split(" ")[1])]);*/
+                            self.temp = self.labelDocentiDropDown[self.hourToIndex(id.split(" ")[1])];
+                            self.temp = null;
                             break;
                         }
                     }
@@ -433,9 +473,9 @@
                             //self.corsoScelto = self.corsi[i];
                             //console.log(self.corsoScelto.titolo_corso);
                             document.getElementById(id).classList.toggle("show");
-                            self.labelCorsiDropDown[self.hourToIndex(id.split(" ")[1])] = self.corsi[i].titolo_corso;
-                            console.log("label 409 " + self.corsi[i].titolo_corso);
-                            console.log("label 410" + self.labelCorsiDropDown[self.hourToIndex(id.split(" ")[1])]);
+                            self.labelCorsiDropDown[self.hourToIndex(id.split(" ")[1])] = self.corsi[i];
+                            /*console.log("label 409 " + self.corsi[i].titolo_corso);
+                            console.log("label 410" + self.labelCorsiDropDown[self.hourToIndex(id.split(" ")[1])]);*/
                             self.temp = self.labelCorsiDropDown[self.hourToIndex(id.split(" ")[1])];
                             self.temp = null;
                             break;
@@ -447,7 +487,7 @@
                         if(self.docenti[i].matricola === chiave){
                             self.docenteScelto = self.docenti[i];
                             document.getElementById(id).classList.toggle("show");
-                            self.labelDocentiDropDown[4] = self.docenteScelto.cognome;
+                            self.labelDocentiDropDown[4] = self.docenteScelto;
                             break;
                         }
                     }
@@ -458,7 +498,7 @@
                             self.corsoScelto = self.corsi[i];
                             console.log(self.corsoScelto.titolo_corso);
                             document.getElementById(id).classList.toggle("show");
-                            self.labelCorsiDropDown[4] = self.corsoScelto.titolo_corso;
+                            self.labelCorsiDropDown[4] = self.corsoScelto;
                             break;
                         }
                     }
@@ -477,7 +517,6 @@
             },
             aggiornaDocenti: function (codice) {
                 var self = this;
-                console.log("405"+codice);
                 if(self.corsoScelto != null){
                     if(self.corsoScelto.codice !== 0){
                         self.docentiL = [{"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}];
@@ -507,7 +546,6 @@
             aggiornaCorsi : function (matricola){
                 var self = this;
                 let flag = true;
-                console.log(matricola);
                 if(self.docenteScelto != null){
                     if(self.docenteScelto.matricola !== 0){
                         self.corsiL=[{"codice":0,"titolo_corso":"Scegli Corso","stato":true}];
@@ -551,8 +589,8 @@
             caricaPrenotazioni: function () {
                 var self = this;
                 for(let i = 0; i < self.labelCorsiDropDown.length - 1; i++){
-                    self.labelCorsiDropDown[i] = "Scegli Corso";
-                    self.labelDocentiDropDown[i] = "Scegli Docente";
+                    self.labelCorsiDropDown[i] = {"codice":0,"titolo_corso":"Scegli Corso","stato":true};
+                    self.labelDocentiDropDown[i] = {"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true};
                 }
                 if((self.corsoScelto != null && self.corsoScelto.codice !== 0) || (self.docenteScelto != null && self.docenteScelto.matricola !== 0)) {
                     var matricolaDoce = "null";
@@ -655,16 +693,13 @@
                         console.log("627 " + ora);
                         console.log("errore traduzione da ora a indice");
                 }
-                console.log("ora" + ora);
-                console.log("index" + index);
-                console.log( this.labelCorsiDropDown[index]);
                 return index;
             },
             aggiornaOrariDisp: function (giorno){
                 var self = this;
                 for(let i = 0; i < self.labelCorsiDropDown.length - 1; i++){
-                    self.labelCorsiDropDown[i] = "Scegli Corso";
-                    self.labelDocentiDropDown[i] = "Scegli Docente";
+                    self.labelCorsiDropDown[i] = {"codice":0,"titolo_corso":"Scegli Corso","stato":true};
+                    self.labelDocentiDropDown[i] = {"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true};
                 }
                 self.giornoSelezionato = giorno;
                 switch (giorno) {
@@ -733,7 +768,53 @@
                         }
                     }
                 );
-            }
+            },
+            aggiungiCarrello: function (orario, giorno){
+                var self = this;
+                var ripetizione = {"utente": self.utente.nome_utente ,"giorno": giorno, "ora": orario, "docente": {"matricola":0,"nome":"","cognome":"","stato":true}, "corso": {"codice":0,"titolo_corso":"","stato":true}, "stato": true, "effettutata": false};
+                if(self.labelDocenteScelto != null && self.labelDocenteScelto.matricola !== 0){
+                    ripetizione.docente.cognome = self.labelDocenteScelto.cognome;
+                    ripetizione.docente.nome = self.labelDocenteScelto.nome;
+                    ripetizione.docente.matricola = self.labelDocenteScelto.matricola;
+                } else if(self.labelDocentiDropDown[self.hourToIndex(orario)].matricola !== 0){
+                    ripetizione.docente.cognome = self.labelDocentiDropDown[self.hourToIndex(orario)].cognome;
+                    ripetizione.docente.nome = self.labelDocentiDropDown[self.hourToIndex(orario)].nome;
+                    ripetizione.docente.matricola = self.labelDocentiDropDown[self.hourToIndex(orario)].matricola;
+                } else {
+                    return;
+                }
+
+                if(self.labelCorsoScelto != null && self.labelCorsoScelto.matricola !== 0){
+                    ripetizione.corso.titolo_corso=self.labelCorsoScelto.titolo_corso;
+                    ripetizione.corso.codice=self.labelCorsoScelto.codice;
+                } else if(self.labelCorsiDropDown[self.hourToIndex(orario)].codice !== 0){
+                    ripetizione.corso.titolo_corso=self.labelCorsiDropDown[self.hourToIndex(orario)].titolo_corso;
+                    ripetizione.corso.codice=self.labelCorsiDropDown[self.hourToIndex(orario)].codice;
+                } else {
+                    return;
+                }
+                self.carrelloRipetizioni.push(ripetizione);
+            },
+            rimuoviRipetizione: function (ripetizione){
+                var self = this;
+                self.carrelloRipetizioni.splice(self.carrelloRipetizioni.indexOf(ripetizione), 1);
+            },
+            mostraCarrello: function (){
+                var self = this;
+                self.carrelloPop = true;
+            },
+            confermaRipetizioni: function (){
+                var self = this;
+                var myJson = JSON.stringify(self.carrelloRipetizioni);
+                console.log(myJson);
+                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletInserimentoRipetizioni", {prenotazioni: myJson.toString()},
+                    function (data) {
+                        if(data){
+                            self.aggiungiCarrello=[];
+                            console.log("tutto ok");
+                        }
+                    });
+            },
         },
         mounted(){
             this.getInsegnamenti();

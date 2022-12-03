@@ -748,6 +748,7 @@ public class DAO {
 
     private static int DayToIndex(String giorno){
         int indice = -1;
+        giorno = giorno.toLowerCase();
         switch(giorno){
             case "lunedì":
                 indice = 0;
