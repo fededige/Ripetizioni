@@ -41,7 +41,7 @@
 <body>
 <div id="spa">
         <span v-if="paginaLogIn">
-            <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
+            <div class="d-flex flex-column min-vh-100 justify-content-center  align-items-center">
                 <form method="get">
                     <div class="mb-3">
                         <label for="InputNomeUtente" class="form-label">Nome utente</label>
@@ -66,15 +66,15 @@
             </div>
         </div>
         <div class="row justify-content-end" v-else>
-            <div class="dropdown dimDrop">
-                <button onclick="myFunction()" class="dropbtn">
+            <div class="dropdown dimDrop" id="DropDownUser">
+                <button v-on:click="myFunction('LoginDropDown')" class="dropbtn" >
                     NOME UTENTE
                     <i class="fa fa-angle-down"></i>
                 </button>
-                    <div id="LoginDropDown" class="dropdown-content">
-                        <a>Cambia Password</a>
-                        <a>Logout</a>
-                    </div>
+                <div id="LoginDropDown" class="dropdown-content pt-2" >
+                    <p v-on:click="transitCambioPassword" class="ml-2">Cambia Password</p>
+                    <p v-on:click="logOut" class="ml-2">Logout</p>
+                </div>
             </div>
         </div>
         <div class="event-schedule-area-two bg-color pad100">
@@ -105,24 +105,24 @@
         <div class="mx-auto" style="width: 45%;">
             <div class="row justify-content-around">
                 <div class="dropdown">
-                    <button v-on:click="myFunctionDocenti('DocentiDropDown')" class="dropbtn">
+                    <button v-on:click="myFunction('DocentiDropDown')" class="dropbtn">
                         {{ labelDocentiDropDown[4] }}
                         <i class="fa fa-angle-down"></i>
                     </button>
                     <div id="DocentiDropDown" class="dropdown-content">
-                        <input type="text" placeholder="Search.." id="DocenteInput" v-on:keyup="filterFunctionDocente">
+                        <input type="text" placeholder="Search.." id="DocenteInput" v-on:keyup="filterFunction('DocenteInput','DocentiDropDown')">
                         <div v-for="docente in docentiL">
                             <a v-on:click="getElementoSel(docente.matricola, 'DocentiDropDown')">{{ `${docente.matricola} ${docente.cognome}` }}</a>
                         </div>
                     </div>
                 </div>
                 <div class="dropdown mx-2">
-                    <button v-on:click="myFunctionCorso('CorsiDropDown')" class="dropbtn">
+                    <button v-on:click="myFunction('CorsiDropDown')" class="dropbtn">
                         {{ labelCorsiDropDown[4] }}
                         <i class="fa fa-angle-down"></i>
                     </button>
                         <div id="CorsiDropDown" class="dropdown-content">
-                            <input type="text" placeholder="Search.." id="CorsoInput" v-on:keyup="filterFunctionCorso">
+                            <input type="text" placeholder="Search.." id="CorsoInput" v-on:keyup="filterFunction('CorsoInput', 'CorsiDropDown')">
                             <div v-for="corso in corsiL">
                                 <a v-on:click="getElementoSel(corso.codice, 'CorsiDropDown')">{{ `${corso.codice} ${corso.titolo_corso}` }}</a>
                             </div>
@@ -186,12 +186,12 @@
                                     </div>
                                     <div class="thumb" v-else>
                                         <div class="dropdown" v-bind:id="`DD ${orarioDisp}`">
-                                            <button v-on:click="myFunctionDocenti(`DDC ${orarioDisp}`)" class="dropbtn">
+                                            <button v-on:click="myFunction(`DDC ${orarioDisp}`)" class="dropbtn">
                                                 {{ labelDocentiDropDown[hourToIndex(`${orarioDisp}`)] }} <!--labelDocentiDropDown[daytoindex(id)] -->
                                                 <i class="fa fa-angle-down"></i>
                                             </button>
                                             <div v-bind:id="`DDC ${orarioDisp}`" class="dropdown-content">
-                                                <input type="text" placeholder="Search.." v-on:keyup="filterFunctionDocente">
+                                                <input type="text" placeholder="Search.." v-on:keyup="filterFunction(' `input ${orarioDisp}` ',' `DDC ${orarioDisp}` ')" v-bind:id=" `input ${orarioDisp}`">
                                                 <div v-for="docente in docentiL">
                                                     <a v-on:click="getElementoSel(docente.matricola, `DDC ${orarioDisp}`)">{{ `${docente.matricola} ${docente.cognome}` }}</a>
                                                 </div>
@@ -205,20 +205,17 @@
                                     </div>
                                     <div class="thumb" v-else>
                                         <div class="dropdown mx-2" v-bind:id="`DC ${orarioDisp}`">
-                                            <button v-on:click="myFunctionCorso(`DCC ${orarioDisp}`)" class="dropbtn">
-                                                {{ labelCorsiDropDown[0] }}
-                                                {{ labelCorsiDropDown[1] }}
-                                                {{ labelCorsiDropDown[2] }}
-                                                {{ labelCorsiDropDown[3] }}
-                                                {{ labelCorsiDropDown[4] }}
+                                            <button v-on:click="myFunction(`DCC ${orarioDisp}`)" class="dropbtn">
+                                                {{temp}}
+                                                {{labelCorsiDropDown[hourToIndex(`${orarioDisp}`)]}}
                                                 <i class="fa fa-angle-down"></i>
                                             </button>
-                                                <div v-bind:id="`DCC ${orarioDisp}`" class="dropdown-content">
-                                                    <input type="text" placeholder="Search.."  v-on:keyup="filterFunctionCorso">
-                                                    <div v-for="corso in corsiL">
-                                                        <a v-on:click="getElementoSel(corso.codice, `DCC ${orarioDisp}`)">{{ `${corso.codice} ${corso.titolo_corso}` }}</a>
-                                                    </div>
+                                            <div v-bind:id="`DCC ${orarioDisp}`" class="dropdown-content">
+                                                <input type="text" placeholder="Search.." v-bind:id="`input ${orarioDisp}`" v-on:keyup="filterFunction(`input ${orarioDisp}`, `DCC ${orarioDisp}`)">
+                                                <div v-for="corso in corsiL">
+                                                    <a v-on:click="getElementoSel(corso.codice, `DCC ${orarioDisp}`)">{{ `${corso.codice} ${corso.titolo_corso}` }}</a>
                                                 </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
@@ -240,24 +237,57 @@
             </div>
         </div>
     </span>
+    <span v-if="cambiaPwd">
+        <div class="d-flex flex-column min-vh-100 justify-content-center  align-items-center">
+           <form method="get">
+                <div class="input-group mb-3">
+                    <input id="vecchiaPassword" type="password" class="form-control" placeholder="Inserisci Vecchia Password" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" v-on:click="mostraPassword('vecchiaPassword')">
+                            <span v-if="mostraVp">
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                            </span>
+                            <span v-else>
+                                <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <input id="nuovaPassword" type="password" class="form-control" placeholder="Inserisci Nuova Password" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button"  v-on:click="mostraPassword('nuovaPassword')">
+                            <span v-if="mostraNp">
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                            </span>
+                            <span v-else>
+                                <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+               <div class="input-group mb-3">
+                    <input id="CnuovaPassword" type="password" class="form-control" placeholder="Conferma Nuova Password" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" v-on:click="mostraPassword('CnuovaPassword')">
+                            <span v-if="mostraCNp">
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                            </span>
+                            <span v-else>
+                                <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <button v-on:click="postCambiaPwd('vecchiaPassword','nuovaPassword','CnuovaPassword')" type="button" class="btn btn-primary">Conferma</button>
+                </div>
+               <p>{{ messaggio }}</p>
+           </form>
+        </div>
+    </span>
 </div>
 <script type="text/javascript">
-    function filterFunction() {
-      var input, filter, ul, li, a, i;
-      input = document.getElementById("myInput");
-      filter = input.value.toUpperCase();
-      div = document.getElementById("myDropdown");
-      a = div.getElementsByTagName("a");
-      for (i = 0; i < a.length; i++) {
-        txtValue = a[i].textContent || a[i].innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-          a[i].style.display = "";
-        } else {
-          a[i].style.display = "none";
-        }
-      }
-    }
-
     var app = new Vue({
         el: '#spa',
         data: {
@@ -267,6 +297,7 @@
             messaggio: "",
             paginaLogIn: false,
             homeUtente: true,
+            cambiaPwd: false,
             ospite: true,
             insegnamenti: [],
             docenti: [{"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}],
@@ -283,12 +314,16 @@
             prenotazioni: null,
             giornoSelezionato: null,
             mostraCards: false,
+            temp: " ",
             orariDisp: [],
             orariLun: [],
             orariMar: [],
             orariMer: [],
             orariGio: [],
             orariVen: [],
+            mostraVp: true,
+            mostraNp: true,
+            mostraCNp: true,
         },
         methods: {
             AutenticazioneUtente: function () {
@@ -316,7 +351,7 @@
                                     self.paginaLogIn = false;
                                     self.homeUtente = true;
                                     self.ospite = false;
-                                    self.getInsegnamenti();
+                                    //self.getInsegnamenti();
                                     self.giornoSelezionato = "Lunedì";
                                 }
                             } else {
@@ -370,10 +405,7 @@
                     }
                 );
             },
-            myFunctionDocenti: function (id) {
-                document.getElementById(id).classList.toggle("show");
-            },
-            myFunctionCorso: function (id){
+            myFunction: function (id) {
                 document.getElementById(id).classList.toggle("show");
             },
 
@@ -393,7 +425,7 @@
                             break;
                         }
                     }
-                    //self.aggiornaCorsi(chiave);
+                    self.aggiornaCorsi(chiave);
                 }else if(id.split(" ")[0] === "DCC"){//Dropdown Corsi content
                     console.log("errore");
                     for(let i = 0; i < self.corsi.length; i++){
@@ -404,10 +436,12 @@
                             self.labelCorsiDropDown[self.hourToIndex(id.split(" ")[1])] = self.corsi[i].titolo_corso;
                             console.log("label 409 " + self.corsi[i].titolo_corso);
                             console.log("label 410" + self.labelCorsiDropDown[self.hourToIndex(id.split(" ")[1])]);
+                            self.temp = self.labelCorsiDropDown[self.hourToIndex(id.split(" ")[1])];
+                            self.temp = null;
                             break;
                         }
                     }
-                    //self.aggiornaDocenti(chiave);
+                    self.aggiornaDocenti(chiave);
                 }else if(id.split(" ")[0] === "DocentiDropDown"){
                     for(let i = 0; i < self.docenti.length; i++){
                         if(self.docenti[i].matricola === chiave){
@@ -499,26 +533,11 @@
                     }
                 }
             },
-            filterFunctionCorso: function () {
+            filterFunction: function (idInput, idDD) {
                 var input, filter, a, i, div;
-                input = document.getElementById("CorsoInput");
+                input = document.getElementById(idInput); // "CorsoInput"
                 filter = input.value.toUpperCase();
-                div = document.getElementById("CorsiDropDown");
-                a = div.getElementsByTagName("a");
-                for (i = 0; i < a.length; i++) {
-                    txtValue = a[i].textContent || a[i].innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        a[i].style.display = "";
-                    } else {
-                        a[i].style.display = "none";
-                    }
-                }
-            },
-            filterFunctionDocente: function () {
-                var input, filter, ul, li, a, i;
-                input = document.getElementById("DocenteInput");
-                filter = input.value.toUpperCase();
-                div = document.getElementById("DocentiDropDown");
+                div = document.getElementById(idDD); //"CorsiDropDown"
                 a = div.getElementsByTagName("a");
                 for (i = 0; i < a.length; i++) {
                     txtValue = a[i].textContent || a[i].innerText;
@@ -643,6 +662,10 @@
             },
             aggiornaOrariDisp: function (giorno){
                 var self = this;
+                for(let i = 0; i < self.labelCorsiDropDown.length - 1; i++){
+                    self.labelCorsiDropDown[i] = "Scegli Corso";
+                    self.labelDocentiDropDown[i] = "Scegli Docente";
+                }
                 self.giornoSelezionato = giorno;
                 switch (giorno) {
                     case 'Lunedì':
@@ -665,8 +688,56 @@
                 for(let i = 0; i < self.orariDisp.length; i++){
                     console.log(self.orariDisp[i]);
                 }
+            },
+            transitCambioPassword: function () {
+                var self = this;
+                console.log("ciao");
+                self.cambiaPwd = true;
+                self.homeUtente = false;
+            },
+            mostraPassword: function (id){
+                var self = this;
+                if(id === "vecchiaPassword"){
+                    self.mostraVp = !self.mostraVp;
+                } else if(id === "nuovaPassword"){
+                    self.mostraNp = !self.mostraNp;
+                } else if(id === "CnuovaPassword"){
+                    self.mostraCNp = !self.mostraCNp;
+                }
+                document.getElementById(id).setAttribute("type", document.getElementById(id).getAttribute("type") === "password" ? "text" : "password");
+            },
+            postCambiaPwd: function (idVp, idNp, idCNp){
+                var self = this;
+                var vp = document.getElementById(idVp).value;
+                var np = document.getElementById(idNp).value;
+                var cnp = document.getElementById(idCNp).value;
+                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletImpostazioni", {nomeUtente: self.utente.nome_utente, vecchiaPassword: vp.toString(), nuovaPassword: np.toString(), confermaNuovaPassword: cnp.toString()},
+                    function (data) {
+                        if(data){
+                            self.messaggio="Cambio andato a buonfine";
+                            self.homeUtente = true;
+                            self.cambiaPwd = false;
+                        } else {
+                            self.messaggio="Errore in cambio password";
+                        }
+                    }
+                );
+            },
+            logOut: function (){
+                var self = this;
+                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletLogOut", {},
+                    function (data) {
+                        if(data){
+                            self.homeUtente = true;
+                            self.ospite = true;
+                        }
+                    }
+                );
             }
-        }
+        },
+        mounted(){
+            this.getInsegnamenti();
+        },
     })
 </script>
 </body>

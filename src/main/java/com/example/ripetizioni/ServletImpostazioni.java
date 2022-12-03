@@ -31,8 +31,13 @@ public class ServletImpostazioni extends HttpServlet {
         String vecchiaPassword =  request.getParameter("vecchiaPassword");
         String nuovaPassword = request.getParameter("nuovaPassword");
         String confermaNuovaPassword = request.getParameter("confermaNuovaPassword");
+        System.out.println("stampe servlet impo");
+        System.out.println(nomeUtente);
+        System.out.println(vecchiaPassword);
         Utente utente = dao.utenteEsistente(nomeUtente, vecchiaPassword);
-        if(utente != null && !utente.getNome_utente().equals("")){
+        System.out.println("utente: " + utente.getNome_utente() + " " + utente.getPassword() + " " + utente.isStato());
+        System.out.println("fine stampe servlet impo");
+        if(utente != null && utente.getNome_utente() != null){
             if(confermaNuovaPassword.equals(nuovaPassword)){
                 res = dao.editPassword(nomeUtente, nuovaPassword);
             }
