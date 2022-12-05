@@ -43,7 +43,7 @@ public class ServletRipetizioniEffettuate extends HttpServlet {
         System.out.println(token);
         Prenotazione prenEff = gson.fromJson(String.valueOf(jb), token);
         System.out.println(prenEff);
-        boolean cambio = dao.PrenotazioneEff(prenEff);
+        boolean cambio = dao.prenotazioneEff(prenEff);
         System.out.println(prenEff);
         System.out.println(cambio);
         out.print(cambio);

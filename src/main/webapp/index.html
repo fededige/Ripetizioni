@@ -30,9 +30,6 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
             integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
             crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"
-            integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s"
-            crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
@@ -40,63 +37,63 @@
 </head>
 <body>
 <div id="spa">
-        <span v-if="paginaLogIn">
-            <div class="d-flex flex-column min-vh-100 justify-content-center  align-items-center">
-                <form method="get">
-                    <div class="mb-3">
-                        <label for="InputNomeUtente" class="form-label">Nome utente</label>
-                        <input v-model="InputNomeUtente" type="text" class="form-control" id="InputNomeUtente"
-                               aria-describedby="emailHelp">
-                    </div>
-                    <div class="mb-3">
-                        <label for="InputPassword" class="form-label">Password</label>
-                        <input v-model="InputPassword" type="password" class="form-control" id="InputPassword">
-                    </div>
-                    <div class="row justify-content-center">
-                        <button v-on:click="transit" type="button" class="btn btn-primary">Log in</button>
-                    </div>
-                </form>
-                <p>{{messaggio}}</p>
-            </div>
-        </span>
-    <span v-if="homeUtente">
-        <div class="row justify-content-end" v-if="ospite">
-            <div class="d-grid gap-2 d-md-block mx-4"> <!--mx-4 serve per mettere il margine-->
-                <button class="btn btn-secondary" type="button" v-on:click="AutenticazioneUtente">Login</button>
-            </div>
-        </div>
-        <div class="row justify-content-end" v-else>
-            <div class="dropdown dimDrop" id="DropDownUser">
-                <button v-on:click="myFunction('LoginDropDown')" class="dropbtn" >
-                    NOME UTENTE
-                    <i class="fa fa-angle-down"></i>
-                </button>
-                <div id="LoginDropDown" class="dropdown-content pt-2" >
-                    <p v-on:click="transitCambioPassword" class="ml-2">Cambia Password</p>
-                    <p v-on:click="logOut" class="ml-2">Logout</p>
+    <span v-if="paginaLogIn">
+        <div class="d-flex flex-column min-vh-100 justify-content-center  align-items-center">
+            <form method="get">
+                <div class="mb-3">
+                    <label for="InputNomeUtente" class="form-label">Nome utente</label>
+                    <input v-model="InputNomeUtente" type="text" class="form-control" id="InputNomeUtente"
+                           aria-describedby="emailHelp">
                 </div>
+                <div class="mb-3">
+                    <label for="InputPassword" class="form-label">Password</label>
+                    <input v-model="InputPassword" type="password" class="form-control" id="InputPassword">
+                </div>
+                <div class="row justify-content-center">
+                    <button v-on:click="transit" type="button" class="btn btn-primary">Log in</button>
+                </div>
+            </form>
+            <p>{{messaggio}}</p>
+        </div>
+    </span>
+    <div class="row justify-content-end" v-if="ospite">
+        <div class="d-grid gap-2 d-md-block mx-4"> <!--mx-4 serve per mettere il margine-->
+            <button class="btn btn-secondary" type="button" v-on:click="visualizzaPagina(false,true,false,false,false)">Login</button>
+        </div>
+    </div>
+    <div class="row justify-content-end" v-else>
+        <div class="dropdown dimDrop" id="DropDownUser">
+            <button v-on:click="myFunction('LoginDropDown')" class="dropbtn" >
+                NOME UTENTE
+                <i class="fa fa-angle-down"></i>
+            </button>
+            <div id="LoginDropDown" class="dropdown-content pt-2" >
+                <p v-on:click="transitCambioPassword" class="ml-2">Cambia Password</p>
+                <p v-on:click="logOut" class="ml-2">Logout</p>
             </div>
         </div>
-        <div class="event-schedule-area-two bg-color pad100">
-            <div class="row bg-light"> <!-- bg-light serve per far colorare tutta la riga-->
-                <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                    <!-- Serve per fare il menu a tendina-->
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <!-- FINE-->
-                    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                        <div class="navbar-nav sticky-bottom sticky-bottom bg-light">
-                            <div class="container-fluid">
-                                <a class="nav-item nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                                <a class="nav-item nav-link" href="#">Prenotazioni</a>
-                                <a class="nav-item nav-link" href="#">Storico</a>
-                            </div>
+    </div>
+    <div class="event-schedule-area-two bg-color pad100">
+        <div class="row bg-light"> <!-- bg-light serve per far colorare tutta la riga-->
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <!-- Serve per fare il menu a tendina-->
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <!-- FINE-->
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav sticky-bottom sticky-bottom bg-light">
+                        <div class="container-fluid">
+                            <a class="nav-item nav-link active show" aria-selected="true" v-on:click="visualizzaPagina(true,false,false,false,false)">Home <span class="sr-only">(current)</span></a>
+                            <a class="nav-item nav-link" aria-selected="false" v-if="!ospite" v-on:click="visualizzaPagina(false,false,true,false,false)">Prenotazioni</a>
+                            <a class="nav-item nav-link" aria-selected="false" v-if="!ospite" v-on:click="visualizzaPagina(false,false,false,true,false)">Storico</a>
                         </div>
                     </div>
-                </nav>
-            </div>
+                </div>
+            </nav>
         </div>
+    </div>
+    <span v-if="paginaHome">
         <div class="row justify-content-end" v-if="!ospite">
             <div class="d-grid gap-2 d-md-block mx-4 pt-2"> <!--mx-4 serve per mettere il margine-->
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#carrello" ><i class="fa fa-shopping-cart fa-xl" aria-hidden="true" ></i></button>
@@ -189,7 +186,7 @@
                                     <a class="nav-link" id="tabGiovedì" data-toggle="tab" role="tab" aria-selected="false" v-on:click="aggiornaOrariDisp('Giovedì')">Giovedì</a>
                                 </li>
                                 <li class="nav-item mr-0">
-                                    <a class="nav-link d-none d-lg-block" id="tabVenerdì" data-toggle="tab" role="tab" aria-selected="false" v-on:click="aggiornaOrariDisp('Venerdì')">Venerdì</a>
+                                    <a class="nav-link" id="tabVenerdì" data-toggle="tab" role="tab" aria-selected="false" v-on:click="aggiornaOrariDisp('Venerdì')">Venerdì</a>
                                 </li>
                             </ul>
                         </div>
@@ -259,10 +256,16 @@
                                 </td>
                                 <td>
                                     <div class="primary-btn" v-if="!ospite" v-bind:id="`B ${orarioDisp}`">
-                                        <button class="btn btn-primary" v-on:click="aggiungiCarrello(`${orarioDisp}`, `${giornoSelezionato}`)">Aggiungi al carrello</button>
+                                        <div v-if="flagBottoni[hourToIndex(`${orarioDisp}`)]">
+                                            <button class="btn btn-primary" v-on:click="aggiungiCarrello(`${orarioDisp}`, `${giornoSelezionato}`)">
+                                                Aggiungi al carrello
+                                            </button>
+                                        </div>
+                                        <div v-else><i class="fa fa-check fa-xl"></i></div>
+
                                     </div>
                                     <div class="primary-btn" v-else>
-                                        <button class="btn btn-primary" v-on:click="AutenticazioneUtente">Loggati</button>
+                                        <button class="btn btn-primary" v-on:click="visualizzaPagina(false, true, false, false, false)">Loggati</button>
                                     </div>
                                 </td>
                             </tr>
@@ -273,7 +276,7 @@
             </div>
         </div>
     </span>
-    <span v-if="cambiaPwd">
+    <span v-if="paginaCambioPwd">
         <div class="d-flex flex-column min-vh-100 justify-content-center  align-items-center">
            <form method="get">
                 <div class="input-group mb-3">
@@ -322,19 +325,140 @@
            </form>
         </div>
     </span>
+    <span v-if="paginaPrenotazioni">
+        <div class="col pl-5">
+                <table class="table ml-5">
+                    <thead>
+                        <tr>
+                            <th class="text-center" scope="col">Data</th>
+                            <th scope="col">Docente</th>
+                            <th scope="col">Materia</th>
+                            <th scope="col">Opzioni</th>
+                        </tr>
+                    </thead>
+                    <!--INIZIO CARD-->
+                    <tbody>
+                        <tr class="inner-box" v-for="(ripetizione,index) in ripetizioniDaFare">
+                            <th scope="row">
+                                <div class="event-date text-center">
+                                    <p>{{ ripetizione.giorno }}</p>
+                                    <span>{{ ripetizione.ora }}</span>
+                                </div>
+                            </th>
+                            <td>
+                                <div class="thumb">
+                                    <img src="https://www.bootdey.com/app/webroot/img/Content/Manbrown2.png"/>
+                                    <p pl-2>{{ripetizione.docente.matricola}} {{ripetizione.docente.cognome }}</p>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="thumb">
+                                    <p pl-2>{{ripetizione.corso.codice}} {{ripetizione.corso.titolo_corso }}</p>
+                                </div>
+                            </td>
+                            <td>
+                            <div class="primary-btn pb-3 pt-2">
+                                <div><i class="fa fa-check fa-xl"></i></div>
+                            </div>
+                                <div class="primary-btn">
+                                <div><i class="fa fa-trash fa-xl"></i></div>
+                            </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <!--FINE CARD-->
+                </table>
+            </div>
+    </span>
+    <span v-if="paginaStorico">
+        <p>Ripetizioni Effettuate</p>
+        <div class="col pl-5">
+                <table class="table ml-5">
+                    <thead>
+                        <tr>
+                            <th class="text-center" scope="col">Data</th>
+                            <th scope="col">Docente</th>
+                            <th scope="col">Materia</th>
+                        </tr>
+                    </thead>
+                    <!--INIZIO CARD-->
+                    <tbody>
+                        <tr class="inner-box" v-for="(ripetizione,index) in ripetizioniEffettuate">
+                            <th scope="row">
+                                <div class="event-date text-center">
+                                    <p>{{ ripetizione.giorno }}</p>
+                                    <span>{{ ripetizione.ora }}</span>
+                                </div>
+                            </th>
+                            <td>
+                                <div class="thumb">
+                                    <img src="https://www.bootdey.com/app/webroot/img/Content/Manbrown2.png"/>
+                                    <p pl-2>{{ripetizione.docente.matricola}} {{ripetizione.docente.cognome }}</p>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="thumb">
+                                    <p pl-2>{{ripetizione.corso.codice}} {{ripetizione.corso.titolo_corso }}</p>
+                                </div>
+                            </td>
+                            <td>
+                        </tr>
+                    </tbody>
+                    <!--FINE CARD-->
+                </table>
+            </div>
+        <p>Ripetizioni Cancellate</p>
+        <div class="col pl-5">
+                <table class="table ml-5">
+                    <thead>
+                        <tr>
+                            <th class="text-center" scope="col">Data</th>
+                            <th scope="col">Docente</th>
+                            <th scope="col">Materia</th>
+                        </tr>
+                    </thead>
+                    <!--INIZIO CARD-->
+                    <tbody>
+                        <tr class="inner-box" v-for="(ripetizione,index) in ripetizioniCancellate">
+                            <th scope="row">
+                                <div class="event-date text-center">
+                                    <p>{{ ripetizione.giorno }}</p>
+                                    <span>{{ ripetizione.ora }}</span>
+                                </div>
+                            </th>
+                            <td>
+                                <div class="thumb">
+                                    <img src="https://www.bootdey.com/app/webroot/img/Content/Manbrown2.png"/>
+                                    <p pl-2>{{ripetizione.docente.matricola}} {{ripetizione.docente.cognome }}</p>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="thumb">
+                                    <p pl-2>{{ripetizione.corso.codice}} {{ripetizione.corso.titolo_corso }}</p>
+                                </div>
+                            </td>
+                            <td>
+                        </tr>
+                    </tbody>
+                    <!--FINE CARD-->
+                </table>
+            </div>
+    </span>
 </div>
 <script type="text/javascript">
     var app = new Vue({
         el: '#spa',
         data: {
+            paginaHome: true,
+            paginaLogIn: false,
+            paginaPrenotazioni: false,
+            paginaStorico: false,
+            paginaCambioPwd: false,
+            ospite: true,
             utente: null,
             InputNomeUtente: null,
             InputPassword: null,
             messaggio: "",
-            paginaLogIn: false,
-            homeUtente: true,
-            cambiaPwd: false,
-            ospite: true,
             carrelloPop: false,
             insegnamenti: [],
             docenti: [{"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}],
@@ -349,7 +473,7 @@
             labelCorsiDropDown: [{"codice":0,"titolo_corso":"Scegli Corso","stato":true}, {"codice":0,"titolo_corso":"Scegli Corso","stato":true}, {"codice":0,"titolo_corso":"Scegli Corso","stato":true}, {"codice":0,"titolo_corso":"Scegli Corso","stato":true}, {"codice":0,"titolo_corso":"Scegli Corso","stato":true}],
             labelOraDropDown: "Scegli Ora",
             prenotazioni: null,
-            giornoSelezionato: null,
+            giornoSelezionato: "Lunedì",
             mostraCards: false,
             temp: " ",
             orariDisp: [],
@@ -358,17 +482,26 @@
             orariMer: [],
             orariGio: [],
             orariVen: [],
+            flagBottoni: [true,true,true,true,true],
+            flagBottoneLun: [true, true, true, true, true],
+            flagBottoneMar: [true, true, true, true, true],
+            flagBottoneMer: [true, true, true, true, true],
+            flagBottoneGio: [true, true, true, true, true],
+            flagBottoneVen: [true, true, true, true, true],
             mostraVp: true,
             mostraNp: true,
             mostraCNp: true,
             carrelloRipetizioni:[],
+            ripetizioniDaFare:[],
+            ripetizioniEffettuate:[],
+            ripetizioniCancellate:[],
         },
         methods: {
-            AutenticazioneUtente: function () {
-                var self = this;
-                self.paginaLogIn = true;
-                self.homeUtente = false;
-            },
+            // AutenticazioneUtente: function () {
+            //     var self = this;
+            //     self.paginaLogIn = true;
+            //     self.paginaHome = false;
+            // },
             transit: function () {
                 var self = this;
                 self.messaggio = "";
@@ -386,11 +519,13 @@
                                         self.messaggio = "utente inesistente";
                                     }
                                 } else {
-                                    self.paginaLogIn = false;
-                                    self.homeUtente = true;
-                                    self.ospite = false;
+                                    self.visualizzaPagina(true, false, false, false, false);
+                                    // self.paginaLogIn = false;
+                                    // self.paginaHome = true;
                                     //self.getInsegnamenti();
+                                    self.ospite = false;
                                     self.giornoSelezionato = "Lunedì";
+                                    self.getPrenotazioni();
                                 }
                             } else {
                                 self.messaggio = "errore richiesta";
@@ -676,6 +811,7 @@
             },
             hourToIndex: function (ora) {
                 let index = null;
+                console.log(ora);
                 switch(ora){
                     case "15:00:00":
                         index = 0;
@@ -690,13 +826,14 @@
                         index = 3;
                         break;
                     default:
-                        console.log("627 " + ora);
+                        console.log("703 " + ora);
                         console.log("errore traduzione da ora a indice");
                 }
                 return index;
             },
             aggiornaOrariDisp: function (giorno){
                 var self = this;
+                self.aggiornaFlagBottoni(giorno, null, false);
                 for(let i = 0; i < self.labelCorsiDropDown.length - 1; i++){
                     self.labelCorsiDropDown[i] = {"codice":0,"titolo_corso":"Scegli Corso","stato":true};
                     self.labelDocentiDropDown[i] = {"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true};
@@ -709,7 +846,7 @@
                     case 'Martedì':
                         self.orariDisp = self.orariMar;
                         break;
-                    case 'Mercoldì':
+                    case 'Mercoledì':
                         self.orariDisp = self.orariMer;
                         break;
                     case 'Giovedì':
@@ -724,11 +861,45 @@
                     console.log(self.orariDisp[i]);
                 }
             },
+            aggiornaFlagBottoni : function(giorno, ora, visibility){
+                var self = this;
+                switch (giorno) {
+                    case 'Lunedì':
+                        if(ora != null)
+                            self.flagBottoneLun[self.hourToIndex(ora)] = visibility;
+                        if(!visibility)
+                            self.flagBottoni = self.flagBottoneLun;
+                        break;
+                    case 'Martedì':
+                        if(ora != null)
+                            self.flagBottoneMar[self.hourToIndex(ora)] = visibility;
+                        if(!visibility)
+                            self.flagBottoni = self.flagBottoneMar;
+                        break;
+                    case 'Mercoledì':
+                        if(ora != null)
+                            self.flagBottoneMer[self.hourToIndex(ora)] = visibility;
+                        if(!visibility)
+                            self.flagBottoni = self.flagBottoneMer;
+                        break;
+                    case 'Giovedì':
+                        if(ora != null)
+                            self.flagBottoneGio[self.hourToIndex(ora)] = visibility;
+                        if(!visibility)
+                            self.flagBottoni = self.flagBottoneGio;
+                        break;
+                    case 'Venerdì':
+                        if(ora != null)
+                            self.flagBottoneVen[self.hourToIndex(ora)] = visibility;
+                        if(!visibility)
+                            self.flagBottoni = self.flagBottoneVen;
+                        break;
+                }
+            },
             transitCambioPassword: function () {
                 var self = this;
                 console.log("ciao");
-                self.cambiaPwd = true;
-                self.homeUtente = false;
+                self.visualizzaPagina(false, false, false, false, true);
             },
             mostraPassword: function (id){
                 var self = this;
@@ -750,8 +921,7 @@
                     function (data) {
                         if(data){
                             self.messaggio="Cambio andato a buonfine";
-                            self.homeUtente = true;
-                            self.cambiaPwd = false;
+                            self.visualizzaPagina(true, false, false, false, false);
                         } else {
                             self.messaggio="Errore in cambio password";
                         }
@@ -763,7 +933,14 @@
                 $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletLogOut", {},
                     function (data) {
                         if(data){
-                            self.homeUtente = true;
+                            self.orariDisp = [];
+                            self.docenteScelto = null;
+                            self.corsoScelto = null;
+                            self.labelDocentiDropDown = [{"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}, {"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}, {"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}, {"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}, {"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}];
+                            self.labelCorsiDropDown = [{"codice":0,"titolo_corso":"Scegli Corso","stato":true}, {"codice":0,"titolo_corso":"Scegli Corso","stato":true}, {"codice":0,"titolo_corso":"Scegli Corso","stato":true}, {"codice":0,"titolo_corso":"Scegli Corso","stato":true}, {"codice":0,"titolo_corso":"Scegli Corso","stato":true}];
+                            self.labelDocenteScelto = "Scegli Docente";
+                            self.labelCorsoScelto = "Scegli Corso";
+                            self.visualizzaPagina(true, false, false, false, false);
                             self.ospite = true;
                         }
                     }
@@ -771,7 +948,8 @@
             },
             aggiungiCarrello: function (orario, giorno){
                 var self = this;
-                var ripetizione = {"utente": self.utente.nome_utente ,"giorno": giorno, "ora": orario, "docente": {"matricola":0,"nome":"","cognome":"","stato":true}, "corso": {"codice":0,"titolo_corso":"","stato":true}, "stato": true, "effettutata": false};
+                console.log("INZIO AGGIUNGI CARRELLO");
+                var ripetizione = {"utente": self.utente.nome_utente ,"giorno": giorno, "ora": orario, "docente": {"matricola":0,"nome":"","cognome":"","stato":true}, "corso": {"codice":0,"titolo_corso":"","stato":true}, "stato": true, "effettuata": false};
                 if(self.labelDocenteScelto != null && self.labelDocenteScelto.matricola !== 0){
                     ripetizione.docente.cognome = self.labelDocenteScelto.cognome;
                     ripetizione.docente.nome = self.labelDocenteScelto.nome;
@@ -794,9 +972,18 @@
                     return;
                 }
                 self.carrelloRipetizioni.push(ripetizione);
+                console.log("fine aggiungiCarrello");
+                self.aggiornaFlagBottoni(giorno, orario, false);
             },
             rimuoviRipetizione: function (ripetizione){
                 var self = this;
+                var giorno = ripetizione.giorno;
+                var ora = ripetizione.ora;
+                console.log("trash");
+                console.log(giorno);
+                console.log(ora);
+                console.log("fine trash");
+                self.aggiornaFlagBottoni(giorno, ora, true);
                 self.carrelloRipetizioni.splice(self.carrelloRipetizioni.indexOf(ripetizione), 1);
             },
             mostraCarrello: function (){
@@ -815,6 +1002,56 @@
                         }
                     });
             },
+            visualizzaPagina: function (home, login, prenotazioni, storico, cambioPassword) {
+                var self = this;
+                self.paginaHome = home;
+                self.paginaLogIn = login;
+                self.paginaPrenotazioni = prenotazioni;
+                self.paginaStorico = storico;
+                self.paginaCambioPwd = cambioPassword;
+                if(self.paginaPrenotazioni || self.paginaStorico){
+                    self.getPrenotazioni();
+                }
+            },
+            getPrenotazioni: function () {
+                var self=this;
+                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletRipetizionieff",{utente: self.utente.nome_utente},
+                    function (data){
+                        self.ripetizioniEffettuate=[];
+                        self.ripetizioniDaFare=[];
+                        self.ripetizioniCancellate=[];
+                        // console.log("903 "+data.length);
+                        for(let i=0;i<data.length;i++){
+                            // console.log("inizio eff");
+                            // console.log(data[i].stato);
+                            // console.log(data[i].effettuata);
+                            // console.log(data[i].stato);
+                            if(data[i].stato === true && data[i].effettuata===false){
+                                // console.log("dentro")
+                                // console.log(data[i]);
+                                self.ripetizioniDaFare.push(data[i]);
+                            }else if(data[i].stato === false && data[i].effettuata===true){
+                                self.ripetizioniEffettuate.push(data[i]);
+                            }else if(data[i].stato === false && data[i].effettuata===false){
+                                self.ripetizioniCancellate.push(data[i]);
+                            }
+                        }
+
+                        // console.log("ripetizioniDaFare:"+self.ripetizioniDaFare.length);
+                        // for(let i = 0; i < self.ripetizioniDaFare.length; i++){
+                        //     console.log(self.ripetizioniDaFare[i].effettuata);
+                        // }
+                        // console.log("ripetizioniEffettuate:" + self.ripetizioniEffettuate.length);
+                        // for(let i = 0; i < self.ripetizioniEffettuate.length; i++){
+                        //     console.log(self.ripetizioniEffettuate[i].effettuata);
+                        // }
+                        // console.log("ripetizioniCancellate:"+self.ripetizioniCancellate.length);
+                        // for(let i = 0; i < self.ripetizioniCancellate.length; i++){
+                        //     console.log(self.ripetizioniCancellate[i].stato);
+                        // }
+                    }
+                );
+            }
         },
         mounted(){
             this.getInsegnamenti();

@@ -111,15 +111,15 @@ body{margin-top:20px;}
     transition: all 0.4s;
 }
 
-/* colore del giorno selezionato */
-.event-schedule-area-two ul.custom-tab li a.active {
-    color: #4125dd;
-}
+/*!* colore del giorno selezionato *!*/
+/*.event-schedule-area-two ul.custom-tab li a.active {*/
+/*    color: #1234dd;*/
+/*}*/
 
-/*aggiunta io*/
-.event-schedule-area-one ul.custom-tab li a.active {
-    color: #4125dd;
-}
+/*!*aggiunta io*!*/
+/*.event-schedule-area-one ul.custom-tab li a.active {*/
+/*    color: #4125dd;*/
+/*}*/
 
 /* Dropdown Button */
 .dropbtn {
@@ -140,7 +140,6 @@ body{margin-top:20px;}
 /* The search field */
 #myInput {
   box-sizing: border-box;
-  background-image: url('searchicon.png');
   background-position: 14px 12px;
   background-repeat: no-repeat;
   font-size: 16px;
@@ -148,6 +147,11 @@ body{margin-top:20px;}
   border: none;
   border-bottom: 1px solid #ddd;
 }
+
+/*
+#myInput:before {
+    content: "\f002";
+}*/
 
 /* The search field when it gets focus/clicked on */
 #myInput:focus {outline: 3px solid #ddd;}

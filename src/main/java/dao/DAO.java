@@ -858,7 +858,7 @@ public class DAO {
         return prenotazioni;
     }
 
-    public Boolean PrenotazioneEff(Prenotazione p){
+    public Boolean prenotazioneEff(Prenotazione p){
         Connection conn = openConnection();
         try{
             if(p!=null){
