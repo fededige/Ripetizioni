@@ -30,23 +30,29 @@ public class ServletRipetizioniEffettuate extends HttpServlet {
         response.setContentType("application/json");
         System.out.println("siamo in effettuate");
         StringBuffer jb = new StringBuffer();
-        String line = null;
         PrintWriter out = response.getWriter();
+        /*String line = null;
         try {
             BufferedReader reader = request.getReader();
             while ((line = reader.readLine()) != null)
                 jb.append(line);
         } catch (Exception e) { System.out.println("errore"); }
-        System.out.println("siamo in 40"+jb);
+        System.out.println("siamo in 40"+jb);*/
         Gson gson =  new Gson();
         Type token = new TypeToken<Prenotazione>(){}.getType();
         System.out.println(token);
-        Prenotazione prenEff = gson.fromJson(String.valueOf(jb), token);
+        Prenotazione prenEff = gson.fromJson(request.getParameter("prenotazione"), token);
         System.out.println(prenEff);
         boolean cambio = dao.prenotazioneEff(prenEff);
         System.out.println(prenEff);
         System.out.println(cambio);
         out.print(cambio);
         out.flush();
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("ciao");
+        doPost(request, response);
     }
 }

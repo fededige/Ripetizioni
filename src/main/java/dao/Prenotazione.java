@@ -24,7 +24,7 @@ public class Prenotazione {
         this.corso = corso;
         this.docente = docente;
         this.utente = utente;
-        this.giorno = giorno;
+        this.giorno = giorno.toLowerCase();
         this.ora = ora;
         this.stato = true;
         this.effettuata = false;
@@ -63,7 +63,7 @@ public class Prenotazione {
     }
 
     public String getGiorno() {
-        return giorno;
+        return giorno.toLowerCase();
     }
 
     public void setGiorno(String giorno) {

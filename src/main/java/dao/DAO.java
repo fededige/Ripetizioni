@@ -597,7 +597,7 @@ public class DAO {
                 st.setInt(1, prenotazioni.get(i).getCorso().getCodice());
                 st.setInt(2, prenotazioni.get(i).getDocente().getMatricola());
                 st.setString(3, prenotazioni.get(i).getUtente());
-                st.setString(4, prenotazioni.get(i).getGiorno());
+                st.setString(4, prenotazioni.get(i).getGiorno().toLowerCase());
                 st.setString(5, prenotazioni.get(i).getOra());
                 st.setBoolean(6, prenotazioni.get(i).isStato());
                 st.executeUpdate();
@@ -793,8 +793,10 @@ public class DAO {
         ArrayList<Prenotazione> prenotazioni = new ArrayList<>();
         try{
             String sql= "SELECT * FROM prenotazione";
-            System.out.println("795 "+usr);
-            if(usr != null){
+            System.out.println("795 ."+ usr + ".");
+            System.out.println(usr.length());
+            if(usr != null && usr.length() != 0){
+                System.out.println(usr.length());
                 sql +=" WHERE utente= '"+usr+"'";
             }
             System.out.println(sql);
@@ -885,7 +887,7 @@ public class DAO {
             PreparedStatement st = conn.prepareStatement(sql);
             for (Prenotazione prenotazione : prenotazioni) {
                 st.setInt(1, prenotazione.getDocente().getMatricola());
-                st.setString(2, prenotazione.getGiorno());
+                st.setString(2, prenotazione.getGiorno().toLowerCase());
                 st.setString(3, prenotazione.getOra());
                 if(st.executeUpdate() == 0){
                     System.out.println("executeUpdate: Prenotazione inesistente");

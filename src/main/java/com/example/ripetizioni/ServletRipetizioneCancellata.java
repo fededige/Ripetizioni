@@ -27,23 +27,28 @@ public class ServletRipetizioneCancellata extends HttpServlet {
         //response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317");
         response.setContentType("application/json");
         System.out.println("siamo in effettuate");
-        StringBuffer jb = new StringBuffer();
-        String line = null;
         PrintWriter out = response.getWriter();
+        /*StringBuffer jb = new StringBuffer();
+        String line = null;
         try {
             BufferedReader reader = request.getReader();
             while ((line = reader.readLine()) != null)
                 jb.append(line);
-        } catch (Exception e) { /*report an error*/ }
-        System.out.println("siamo in 38"+jb);
+        } catch (Exception e) {  }
+        System.out.println("siamo in 38"+jb);*/
         Gson gson =  new Gson();
         Type token = new TypeToken<Prenotazione>(){}.getType();
-        System.out.println(token);
-        Prenotazione prenEff = gson.fromJson(String.valueOf(jb), token);
+        System.out.println(request.getParameter("prenotazione"));
+        Prenotazione prenEff = gson.fromJson(request.getParameter("prenotazione"), token);
         boolean cambio = dao.rimuoviPrenotazioni(prenEff);
         System.out.println(prenEff);
         System.out.println(cambio);
         out.print(cambio);
         out.flush();
+    }
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("ciao");
+        doPost(request, response);
     }
 }
