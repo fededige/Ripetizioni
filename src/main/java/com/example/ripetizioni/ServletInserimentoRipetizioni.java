@@ -32,7 +32,6 @@ public class ServletInserimentoRipetizioni extends HttpServlet {
         response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
         response.setContentType("application/json");
         HttpSession session = request.getSession();
-
         StringBuffer jb = new StringBuffer();
         String line = null;
         try {
@@ -59,13 +58,14 @@ public class ServletInserimentoRipetizioni extends HttpServlet {
         out.flush();
     }
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("ciao");
+        System.out.println("ciao get");
+        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317");
         response.addHeader("Access-Control-Allow-Headers","origin, content-type, accept, authorization");
         response.addHeader("Access-Control-Allow-Credentials", "true");
         response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
         response.setContentType("application/json");
         HttpSession session = request.getSession();
-
+        System.out.println(request.getParameter("prenotazioni"));
         StringBuffer jb = new StringBuffer();
         String line = null;
         try {
@@ -75,16 +75,16 @@ public class ServletInserimentoRipetizioni extends HttpServlet {
                 System.out.println(line);
             }
         } catch (Exception e) {
-            System.out.println("Erroreee");
+            System.out.println("errore in post");
         }
+        System.out.println("valore di jb: " + jb);
         Gson gson =  new Gson();
-        System.out.println(jb);
-        Type token = new TypeToken<List<Prenotazione>>(){}.getType();
-        List<Prenotazione> pp = gson.fromJson(String.valueOf(jb), token);
+        Type token = new TypeToken<ArrayList<Prenotazione>>(){}.getType();
+        System.out.println("token = " + token);
+        ArrayList<Prenotazione> prenotazioni = gson.fromJson(request.getParameter("prenotazioni"), token);
+        System.out.println("lunghezza di pp: " + prenotazioni.size());
+        dao.insertPrenotazione(prenotazioni);
 
-        /*for(Prenotazione p : pp){
-            System.out.println(p.getDocente());
-        }*/
         PrintWriter out = response.getWriter();
         gson = new Gson();
         String s = gson.toJson(true);

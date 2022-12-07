@@ -26,27 +26,9 @@ body{margin-top:20px;}
     margin-right: auto;
 }
 
-/*aggiunta io per prova*/
-.event-schedule-area-one ul.custom-tab { 
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    /*justify-content: center;*/ /*non serve giustificare la colonna perché fa schifo*/
-    /*border-bottom: 1px solid #dee2e6;*/
-    margin-bottom: 30px;
-    position: absolute;
-    left:0;
-    top:0;
-}
-
 /*distanza tra i giorni*/
 
 .event-schedule-area-two ul.custom-tab li {
-    margin-right: 70px;
-    position: relative;
-}
-
-/*aggiunta io*/
-.event-schedule-area-one ul.custom-tab li {
     margin-right: 70px;
     position: relative;
 }
@@ -62,24 +44,8 @@ body{margin-top:20px;}
     position: relative;
 }
 
-/*aggiunta io*/
-.event-schedule-area-one ul.custom-tab li a {
-    color: #252525;
-    font-size: 25px;
-    line-height: 25px;
-    font-weight: 600;
-    text-transform: capitalize;
-    padding: 35px 0;
-    position: relative;
-}
-
 /* questo non so a che serve*/
 .event-schedule-area-two ul.custom-tab li a:hover:before {
-    width: 100%;
-}
-
-/*aggiunta io*/
-.event-schedule-area-one ul.custom-tab li a:hover:before {
     width: 100%;
 }
 
@@ -97,27 +63,8 @@ body{margin-top:20px;}
     transition: all 0.4s;
 }
 
-/*aggiunta io*/
-.event-schedule-area-one ul.custom-tab li a:before {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    content: "";
-    background: #4125dd;
-    width: 0;
-    height: 2px;
-    -webkit-transition: all 0.4s;
-    -o-transition: all 0.4s;
-    transition: all 0.4s;
-}
-
 /* colore del giorno selezionato */
 .event-schedule-area-two ul.custom-tab li a.active {
-    color: #4125dd;
-}
-
-/*aggiunta io*/
-.event-schedule-area-one ul.custom-tab li a.active {
     color: #4125dd;
 }
 
@@ -140,7 +87,6 @@ body{margin-top:20px;}
 /* The search field */
 #myInput {
   box-sizing: border-box;
-  background-image: url('searchicon.png');
   background-position: 14px 12px;
   background-repeat: no-repeat;
   font-size: 16px;
@@ -148,6 +94,11 @@ body{margin-top:20px;}
   border: none;
   border-bottom: 1px solid #ddd;
 }
+
+/*
+#myInput:before {
+    content: "\f002";
+}*/
 
 /* The search field when it gets focus/clicked on */
 #myInput:focus {outline: 3px solid #ddd;}
