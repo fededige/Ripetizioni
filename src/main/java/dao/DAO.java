@@ -594,17 +594,20 @@ public class DAO {
             String sql = "INSERT INTO prenotazione(corso, docente, utente, giorno, ora, stato) VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement st = conn.prepareStatement(sql);
             for (i = 0; i < prenotazioni.size(); i++) {
-                st.setInt(1, prenotazioni.get(i).getCorso().getCodice());
-                st.setInt(2, prenotazioni.get(i).getDocente().getMatricola());
-                st.setString(3, prenotazioni.get(i).getUtente());
-                st.setString(4, prenotazioni.get(i).getGiorno().toLowerCase());
-                st.setString(5, prenotazioni.get(i).getOra());
-                st.setBoolean(6, prenotazioni.get(i).isStato());
-                st.executeUpdate();
+                if(controlloPrenotazioniEsistenti(prenotazioni.get(i).getDocente().getMatricola(), prenotazioni.get(i).getGiorno().toLowerCase(), prenotazioni.get(i).getOra())){
+                    st.setInt(1, prenotazioni.get(i).getCorso().getCodice());
+                    st.setInt(2, prenotazioni.get(i).getDocente().getMatricola());
+                    st.setString(3, prenotazioni.get(i).getUtente());
+                    st.setString(4, prenotazioni.get(i).getGiorno().toLowerCase());
+                    st.setString(5, prenotazioni.get(i).getOra());
+                    st.setBoolean(6, prenotazioni.get(i).isStato());
+                    st.executeUpdate();
+                }
             }
             st.close();
         }catch (SQLException e){
             if(e.getErrorCode() == 1062){ //tupla già presente
+                System.out.println("qualcosa che non dove succedere");
                 prenotazioni.remove(i);
                 insertPrenotazione(prenotazioni);
             }
@@ -612,6 +615,25 @@ public class DAO {
         }finally {
             closeConnection(conn);
         }
+    }
+
+    public boolean controlloPrenotazioniEsistenti(int docente,String giorno,String ora){
+        Connection conn = openConnection();
+        try{
+            String sql = "SELECT * FROM prenotazione WHERE docente = " + docente + " AND giorno = '" + giorno + "' AND ora = '" + ora + "' AND stato = true";
+            System.out.println(sql);
+            Statement st =  conn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            if(rs.next()){
+                return false;
+            }
+            st.close();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }finally {
+            closeConnection(conn);
+        }
+        return true;
     }
 
     public void insertPrenotazione(Prenotazione prenotazione){

@@ -56,45 +56,50 @@
             <p>{{messaggio}}</p>
         </div>
     </span>
-    <div class="row justify-content-end" v-if="ospite">
-        <div class="d-grid gap-2 d-md-block mx-4"> <!--mx-4 serve per mettere il margine-->
-            <button class="btn btn-secondary" type="button" v-on:click="visualizzaPagina(false,true,false,false,false)">Login</button>
-        </div>
-    </div>
-    <div class="row justify-content-end" v-else>
-        <div class="dropdown dimDrop" id="DropDownUser">
-            <button v-on:click="myFunction('LoginDropDown')" class="dropbtn" >
-                NOME UTENTE
-                <i class="fa fa-angle-down"></i>
-            </button>
-            <div id="LoginDropDown" class="dropdown-content pt-2" >
-                <p v-on:click="transitCambioPassword" class="ml-2">Cambia Password</p>
-                <p v-on:click="logOut" class="ml-2">Logout</p>
+    <span v-else>
+        <div class="row justify-content-end" v-if="ruolo == 'ospite'">
+            <div class="d-grid gap-2 d-md-block mx-4"> <!--mx-4 serve per mettere il margine-->
+                <button class="btn btn-secondary" type="button" v-on:click="visualizzaPagina('login')">Login</button>
             </div>
         </div>
-    </div>
-    <div class="event-schedule-area-two bg-color pad100">
-        <div class="row bg-light"> <!-- bg-light serve per far colorare tutta la riga-->
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <!-- Serve per fare il menu a tendina-->
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+        <div class="row justify-content-end" v-else>
+            <div class="dropdown dimDrop" id="DropDownUser">
+                <button v-on:click="myFunction('LoginDropDown')" class="dropbtn" >
+                    NOME UTENTE
+                    <i class="fa fa-angle-down"></i>
                 </button>
-                <!-- FINE-->
-                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                    <div class="navbar-nav sticky-bottom sticky-bottom bg-light">
-                        <div class="container-fluid">
-                            <a class="nav-item nav-link active show" aria-selected="true" v-on:click="visualizzaPagina(true,false,false,false,false)">Home <span class="sr-only">(current)</span></a>
-                            <a class="nav-item nav-link" aria-selected="false" v-if="!ospite" v-on:click="visualizzaPagina(false,false,true,false,false)">Prenotazioni</a>
-                            <a class="nav-item nav-link" aria-selected="false" v-if="!ospite" v-on:click="visualizzaPagina(false,false,false,true,false)">Storico</a>
+                <div id="LoginDropDown" class="dropdown-content pt-2" >
+                    <p v-on:click="transitCambioPassword" class="ml-2">Cambia Password</p>
+                    <p v-on:click="logOut" class="ml-2">Logout</p>
+                </div>
+            </div>
+        </div>
+        <div class="event-schedule-area-two bg-color pad100">
+            <div class="row bg-light"> <!-- bg-light serve per far colorare tutta la riga-->
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    <!-- Serve per fare il menu a tendina-->
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <!-- FINE-->
+                    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                        <div class="navbar-nav sticky-bottom sticky-bottom bg-light">
+                            <div class="container-fluid">
+                                <a class="nav-item nav-link active show" aria-selected="true" v-on:click="visualizzaPagina('home')">Home <span class="sr-only">(current)</span></a>
+                                <a class="nav-item nav-link" aria-selected="false" v-if="ruolo != 'ospite'" v-on:click="visualizzaPagina('prenotazioni')">Prenotazioni</a>
+                                <a class="nav-item nav-link" aria-selected="false" v-if="ruolo != 'ospite'" v-on:click="visualizzaPagina('storico')">Storico</a>
+                                <a class="nav-item nav-link" aria-selected="false" v-if="ruolo == 'admin'" v-on:click="visualizzaPagina('modDocente')">Modifica Docente</a>
+                                <a class="nav-item nav-link" aria-selected="false" v-if="ruolo == 'admin'" v-on:click="visualizzaPagina('modCorso')">Modifica Corso</a>
+                                <a class="nav-item nav-link" aria-selected="false" v-if="ruolo == 'admin'" v-on:click="visualizzaPagina('modInsegnamento')">Modifica Insegnamento</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </nav>
+                </nav>
+            </div>
         </div>
-    </div>
+    </span>
     <span v-if="paginaHome">
-        <div class="row justify-content-end" v-if="!ospite">
+        <div class="row justify-content-end" v-if="ruolo == 'cliente'">
             <div class="d-grid gap-2 d-md-block mx-4 pt-2"> <!--mx-4 serve per mettere il margine-->
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#carrello" ><i class="fa fa-shopping-cart fa-xl" aria-hidden="true" ></i> {{ carrelloRipetizioni.length }} </button>
             </div>
@@ -201,7 +206,7 @@
                                 <th class="text-center" scope="col">Data</th>
                                 <th scope="col">Docente</th>
                                 <th scope="col">Materia</th>
-                                <th  scope="col">Aggiungi</th>
+                                <th v-if="ruolo != 'admin'" scope="col">Aggiungi</th>
                             </tr>
                         </thead>
                         <!--INIZIO CARD-->
@@ -255,17 +260,16 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="primary-btn" v-if="!ospite" v-bind:id="`B ${orarioDisp}`">
+                                    <div class="primary-btn" v-if="ruolo == 'cliente'" v-bind:id="`B ${orarioDisp}`">
                                         <div v-if="flagBottoni[hourToIndex(`${orarioDisp}`)]">
                                             <button class="btn btn-primary" v-on:click="aggiungiCarrello(`${orarioDisp}`, `${giornoSelezionato}`)">
                                                 Aggiungi al carrello
                                             </button>
                                         </div>
                                         <div v-else><p>Orario prenotato</p></i></div>
-
                                     </div>
-                                    <div class="primary-btn" v-else>
-                                        <button class="btn btn-primary" v-on:click="visualizzaPagina(false, true, false, false, false)">Loggati</button>
+                                    <div class="primary-btn" v-else-if="ruolo == 'ospite'">
+                                        <button class="btn btn-primary" v-on:click="visualizzaPagina('login')">Loggati</button>
                                     </div>
                                 </td>
                             </tr>
@@ -333,6 +337,7 @@
                             <th class="text-center" scope="col">Data</th>
                             <th scope="col">Docente</th>
                             <th scope="col">Materia</th>
+                            <th v-if="ruolo == 'admin'" scope="col">Utente </th>
                             <th scope="col">Opzioni</th>
                         </tr>
                     </thead>
@@ -354,6 +359,11 @@
                             <td>
                                 <div class="thumb">
                                     <p pl-2>{{ripetizione.corso.codice}} {{ripetizione.corso.titolo_corso }}</p>
+                                </div>
+                            </td>
+                            <td v-if="ruolo == 'admin' ">
+                                <div class="thumb">
+                                    <p pl-2> {{ripetizione.utente}}</p>
                                 </div>
                             </td>
                             <td>
@@ -379,6 +389,7 @@
                             <th class="text-center" scope="col">Data</th>
                             <th scope="col">Docente</th>
                             <th scope="col">Materia</th>
+                            <th v-if="ruolo == 'admin'" scope="col">Utente </th>
                         </tr>
                     </thead>
                     <!--INIZIO CARD-->
@@ -401,7 +412,11 @@
                                     <p pl-2>{{ripetizione.corso.codice}} {{ripetizione.corso.titolo_corso }}</p>
                                 </div>
                             </td>
-                            <td>
+                            <td v-if="ruolo == 'admin' ">
+                                <div class="thumb">
+                                    <p pl-2> {{ripetizione.utente}}</p>
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
                     <!--FINE CARD-->
@@ -415,6 +430,7 @@
                             <th class="text-center" scope="col">Data</th>
                             <th scope="col">Docente</th>
                             <th scope="col">Materia</th>
+                            <th v-if="ruolo == 'admin'" scope="col">Utente </th>
                         </tr>
                     </thead>
                     <!--INIZIO CARD-->
@@ -437,7 +453,11 @@
                                     <p pl-2>{{ripetizione.corso.codice}} {{ripetizione.corso.titolo_corso }}</p>
                                 </div>
                             </td>
-                            <td>
+                            <td v-if="ruolo == 'admin' ">
+                                <div class="thumb">
+                                    <p pl-2> {{ripetizione.utente}}</p>
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
                     <!--FINE CARD-->
@@ -454,7 +474,10 @@
             paginaPrenotazioni: false,
             paginaStorico: false,
             paginaCambioPwd: false,
-            ospite: true,
+            paginaModificaDocente: false,
+            paginaModificaCorso: false,
+            paginaModificaInsegnamenti: false,
+            ruolo: "ospite",
             utente: null,
             InputNomeUtente: null,
             InputPassword: null,
@@ -519,13 +542,13 @@
                                         self.messaggio = "utente inesistente";
                                     }
                                 } else {
-                                    self.visualizzaPagina(true, false, false, false, false);
+                                    self.visualizzaPagina("home");
+                                    self.ruolo = self.utente.ruolo.toLowerCase();
+                                    self.giornoSelezionato = "Lunedì";
+                                    self.getPrenotazioni();
                                     // self.paginaLogIn = false;
                                     // self.paginaHome = true;
                                     //self.getInsegnamenti();
-                                    self.ospite = false;
-                                    self.giornoSelezionato = "Lunedì";
-                                    self.getPrenotazioni();
                                 }
                             } else {
                                 self.messaggio = "errore richiesta";
@@ -863,43 +886,47 @@
             },
             aggiornaFlagBottoni : function(giorno, ora, visibility){
                 var self = this;
-                switch (giorno) {
-                    case 'Lunedì':
+                // console.log(giorno);
+                // console.log(ora);
+                switch (giorno.toLowerCase()) {
+                    case 'lunedì':
                         if(ora != null)
                             self.flagBottoneLun[self.hourToIndex(ora)] = visibility;
                         if(!visibility)
                             self.flagBottoni = self.flagBottoneLun;
                         break;
-                    case 'Martedì':
+                    case 'martedì':
                         if(ora != null)
                             self.flagBottoneMar[self.hourToIndex(ora)] = visibility;
                         if(!visibility)
                             self.flagBottoni = self.flagBottoneMar;
                         break;
-                    case 'Mercoledì':
+                    case 'mercoledì':
                         if(ora != null)
                             self.flagBottoneMer[self.hourToIndex(ora)] = visibility;
                         if(!visibility)
                             self.flagBottoni = self.flagBottoneMer;
                         break;
-                    case 'Giovedì':
+                    case 'giovedì':
                         if(ora != null)
                             self.flagBottoneGio[self.hourToIndex(ora)] = visibility;
                         if(!visibility)
                             self.flagBottoni = self.flagBottoneGio;
                         break;
-                    case 'Venerdì':
+                    case 'venerdì':
                         if(ora != null)
                             self.flagBottoneVen[self.hourToIndex(ora)] = visibility;
                         if(!visibility)
                             self.flagBottoni = self.flagBottoneVen;
                         break;
+                    default:
+                        console.log("errore in aggiornaFlagBottoni");
                 }
             },
             transitCambioPassword: function () {
                 var self = this;
                 console.log("ciao");
-                self.visualizzaPagina(false, false, false, false, true);
+                self.visualizzaPagina("password");
             },
             mostraPassword: function (id){
                 var self = this;
@@ -921,7 +948,7 @@
                     function (data) {
                         if(data){
                             self.messaggio="Cambio andato a buonfine";
-                            self.visualizzaPagina(true, false, false, false, false);
+                            self.visualizzaPagina("home");
                         } else {
                             self.messaggio="Errore in cambio password";
                         }
@@ -940,8 +967,8 @@
                             self.labelCorsiDropDown = [{"codice":0,"titolo_corso":"Scegli Corso","stato":true}, {"codice":0,"titolo_corso":"Scegli Corso","stato":true}, {"codice":0,"titolo_corso":"Scegli Corso","stato":true}, {"codice":0,"titolo_corso":"Scegli Corso","stato":true}, {"codice":0,"titolo_corso":"Scegli Corso","stato":true}];
                             self.labelDocenteScelto = "Scegli Docente";
                             self.labelCorsoScelto = "Scegli Corso";
-                            self.visualizzaPagina(true, false, false, false, false);
-                            self.ospite = true;
+                            self.visualizzaPagina("home");
+                            self.ruolo = "ospite";
                         }
                     }
                 );
@@ -1003,13 +1030,47 @@
                         }
                     });
             },
-            visualizzaPagina: function (home, login, prenotazioni, storico, cambioPassword) {
+            /*visualizzaPagina: function (home, login, prenotazioni, storico, cambioPassword) {
                 var self = this;
                 self.paginaHome = home;
                 self.paginaLogIn = login;
                 self.paginaPrenotazioni = prenotazioni;
                 self.paginaStorico = storico;
                 self.paginaCambioPwd = cambioPassword;
+                if(self.paginaPrenotazioni || self.paginaStorico){
+                    self.getPrenotazioni();
+                }
+            },*/
+            visualizzaPagina: function (pagina) {
+                console.log("pagina: ");
+                console.log(pagina);
+                var self = this;
+                self.paginaHome = false;
+                self.paginaLogIn = false;
+                self.paginaPrenotazioni = false;
+                self.paginaStorico = false;
+                self.paginaCambioPwd = false;
+                self.paginaModificaDocente = false;
+                self.paginaModificaCorso= false;
+                self.paginaModificaInsegnamenti = false;
+                switch (pagina) {
+                    case "home": self.paginaHome = true;
+                        break;
+                    case "login": self.paginaLogIn = true;
+                        break;
+                    case "prenotazioni": self.paginaPrenotazioni = true;
+                        break;
+                    case "storico": self.paginaStorico = true;
+                        break;
+                    case "password": self.paginaCambioPwd = true;
+                        break;
+                    case "modDocente": self.paginaModificaDocente = true;
+                        break;
+                    case "modCorso": self.paginaModificaCorso = true;
+                        break;
+                    case "modInsegnamento": self.paginaModificaInsegnamenti = true;
+                        break;
+                }
                 if(self.paginaPrenotazioni || self.paginaStorico){
                     self.getPrenotazioni();
                 }
@@ -1053,6 +1114,7 @@
                             } else {
                                 console.log("errore in modificaListaPren, trash");
                             }
+                            self.aggiornaFlagBottoni(ripetizione.giorno, ripetizione.ora, true);
                             self.getPrenotazioni();
                         }
                     );
@@ -1060,10 +1122,11 @@
                     $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRipetizioniEffettuate", {prenotazione: myJson.toString()},
                         function (data) {
                             if(data){
-                                console.log("cancellazione andata a buon fine");
+                                console.log("prenotazione andata a buon fine");
                             } else {
                                 console.log("errore in modificaListaPren, check");
                             }
+                            self.aggiornaFlagBottoni(ripetizione.giorno, ripetizione.ora, true);
                             self.getPrenotazioni();
                         }
                     );
