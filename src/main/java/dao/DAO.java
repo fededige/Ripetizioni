@@ -311,7 +311,7 @@ public class DAO {
         }
     }
 
-    public void insertInsegnamento(Insegna insegnamento){
+    public boolean insertInsegnamento(Insegna insegnamento){
         Connection conn = openConnection();
         try{
             String sql = "INSERT INTO insegna(corso, docente,stato) VALUES (?, ?, ?)";
@@ -322,10 +322,12 @@ public class DAO {
             st.executeUpdate();
             st.close();
         }catch (SQLException e){
-            System.out.println(e.getMessage());
+            System.out.println("insertInsegnamento(Insegna Insegnamento) " + e.getMessage());
+            return false;
         }finally {
             closeConnection(conn);
         }
+        return true;
     }
 
     public ArrayList<Insegna> mostraInsegnamenti(){
@@ -409,7 +411,7 @@ public class DAO {
         }
     }
 
-    public void rimuoviInsegnamento(Insegna insegnamento){
+    public boolean rimuoviInsegnamento(Insegna insegnamento){
         Connection conn = openConnection();
         try{
             String sql = "UPDATE insegna SET stato = false WHERE docente = ? and corso= ?";
@@ -422,9 +424,11 @@ public class DAO {
             st.close();
         }catch (SQLException e){
             System.out.println(e.getMessage());
+            return false;
         }finally {
             closeConnection(conn);
         }
+        return true;
     }
 
     public Utente getUtente(String nomeutente){

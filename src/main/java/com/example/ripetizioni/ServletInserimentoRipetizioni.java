@@ -65,7 +65,7 @@ public class ServletInserimentoRipetizioni extends HttpServlet {
         response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
         response.setContentType("application/json");
         HttpSession session = request.getSession();
-        System.out.println(request.getParameter("prenotazioni"));
+        System.out.println("68" + request.getParameter("prenotazioni"));
         StringBuffer jb = new StringBuffer();
         String line = null;
         try {

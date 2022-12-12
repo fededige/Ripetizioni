@@ -488,7 +488,7 @@
 
         <div class="dropdown">
             <button class="dropbtn" v-on:click="myFunction('RimuoviDocentiDropDown')">
-                Scegli Docente
+                {{ docenteSceltoDaEliminare.cognome }}
                 <i class="fa fa-angle-down"></i>
             </button>
             <div id="RimuoviDocentiDropDown" class="dropdown-content">
@@ -507,24 +507,24 @@
     <span v-if="paginaModificaCorso">
         <p>PAGINA MODIFICA CORSO</p>
         <div class="d-flex flex-column min-vh-100 justify-content-center  align-items-center">
-        <div class="mb-3">
-            <label class="form-label">Codice Corso</label>
-            <p>{{CodiceUltimoCorso}} </p>
-        </div>
             <div class="mb-3">
-                <label for="InputCodiceCorso" class="form-label">Titolo Corso </label>
-                <input v-model="InputCodiceCorso" type="text" class="form-control" id="InputCodiceCorso">
+                <label class="form-label">Codice Corso</label>
+                <p>{{CodiceUltimoCorso}} </p>
             </div>
-            <div class="d-grid gap-2 d-md-block mx-4"> <!--mx-4 serve per mettere il margine-->
-                <button class="btn btn-secondary" type="button" v-on:click="insertCorso()">Aggiungi Corso</button>
-        </div>
+                <div class="mb-3">
+                    <label for="InputCodiceCorso" class="form-label">Titolo Corso </label>
+                    <input v-model="InputCodiceCorso" type="text" class="form-control" id="InputCodiceCorso">
+                </div>
+                <div class="d-grid gap-2 d-md-block mx-4"> <!--mx-4 serve per mettere il margine-->
+                    <button class="btn btn-secondary" type="button" v-on:click="insertCorso()">Aggiungi Corso</button>
+            </div>
         </div>
 
         <p>Rimuovi CORSO</p>
 
         <div class="dropdown">
             <button class="dropbtn" v-on:click="myFunction('RimuoviCorsiDropDown')">
-                Scegli Corso
+                {{ corsoSceltoDaEliminare.titolo_corso }}
                 <i class="fa fa-angle-down"></i>
             </button>
             <div id="RimuoviCorsiDropDown" class="dropdown-content">
@@ -541,7 +541,56 @@
         </div>
     </span>
     <span v-if="paginaModificaInsegnamenti">
+        <div class="row justify-content-center">
+            <div class="dropdown">
+                <button class="dropbtn" v-on:click="myFunction('corsiTotaliDropDown')">
+                    Scegli Corso
+                    <i class="fa fa-angle-down"></i>
+                </button>
+                <div id="corsiTotaliDropDown" class="dropdown-content">
+                    <input type="text" placeholder="Search..." id="corsiTotaliInput" v-on:keyup="filterFunction('corsiTotaliInput','corsiTotaliDropDown')">
+                    <div v-for="corso in corsiTot">
+                        <a v-on:click="FunCorsoSceltoDaAggiungere(corso)">{{ `${corso.codice} ${corso.titolo_corso }` }}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropbtn" v-on:click="myFunction('docentiTotaliDropDown')">
+                    Scegli Docente
+                    <i class="fa fa-angle-down"></i>
+                </button>
+                <div id="docentiTotaliDropDown" class="dropdown-content">
+                    <input type="text" placeholder="Search..." id="docentiTotaliInput" v-on:keyup="filterFunction('docentiTotaliInput','docentiTotaliDropDown')">
+                    <div v-for="docente in docentiTot">
+                        <a v-on:click="FunDocenteSceltoDaAggiungere(docente)">{{ `${docente.matricola} ${docente.cognome }` }}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="d-grid gap-2 d-md-block mx-4">
+                  <button class="btn btn-secondary" type="button" v-on:click="insertInsegnamenti()">Aggiungi</button>
+            </div>
 
+        </div>
+        <p>Rimuovi Insegnamento</p>
+
+        <div class="dropdown">
+            <button class="dropbtn" v-on:click="myFunction('RimuoviInsegnamentiDropDown')">
+                <!--{{insegnamentoSceltoDaEliminare.corso.titolo_corso}} {{insegnamentoSceltoDaEliminare.docente.cognome}}-->
+                Scegli insegnamento
+                <i class="fa fa-angle-down"></i>
+            </button>
+            <div id="RimuoviInsegnamentiDropDown" class="dropdown-content">
+                <input type="text" placeholder="Search.." id="RimInsegnamentiInput" v-on:keyup="filterFunction('RimInsegnamentiInput','RimuoviInsegnamentiDropDown')">
+                <div v-for="ins in insegnamenti">
+                    <a v-on:click="FunInsegnamentoSceltoDaEliminare(ins)">{{ `${ins.corso.codice} ${ins.corso.titolo_corso } ${ins.docente.matricola} ${ins.docente.cognome }`}}</a>
+                </div>
+            </div>
+        </div>
+
+        <p>Sei sicuro di voler eliminare l'insegnamento: {{ corsoSceltoDaEliminare.titolo_corso }} {{ docenteSceltoDaEliminare.cognome }}</p>
+        <div class="d-grid gap-2 d-md-block mx-4"> <!--mx-4 serve per mettere il margine-->
+            <button class="btn btn-secondary" type="button" v-on:click="rimuoviInsegnamento()">Conferma eliminazione</button>
+        </div>
     </span>
 </div>
 <script type="text/javascript">
@@ -572,8 +621,11 @@
             NuovoCorso: {"codice":0,"titolo_corso":" ","stato":true},
             docenteScelto: null,
             labelDocenteScelto: null,
-            docenteSceltoDaEliminare:[{"matricola":-1,"nome":"","cognome":" ","stato":true}],
-            corsoSceltoDaEliminare:  [{"codice":-1,"titolo_corso":"aaaaa","stato":true}],
+            docenteSceltoDaEliminare:[{"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}],
+            corsoSceltoDaEliminare:  [{"codice":0,"titolo_corso":"Scegli Corso","stato":true}],
+            insegnamentoSceltoDaEliminare: [{"corso":{"codice":0,"titolo_corso":"Scegli Corso","stato":true},"docente":{"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}, "stato":true}],
+            docenteSceltoDaAggiungere: [{"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}],
+            corsoSceltoDaAggiungere: [{"codice":0,"titolo_corso":"Scegli Corso","stato":true}],
             corsi: [{"codice":0,"titolo_corso":"Scegli Corso","stato":true}],
             corsiL: [{"codice":0,"titolo_corso":"Scegli Corso","stato":true}],
             corsoScelto: null,
@@ -657,6 +709,7 @@
                         console.log(data);
                         self.insegnamenti = data;
                         for(i = 0; i < self.insegnamenti.length; i++){
+                            // console.log(JSON.stringify(self.insegnamenti[i]));
                             flag = true;
                             for(let j = 1; j < self.docenti.length; j++){
                                 if(self.docenti[j].matricola === self.insegnamenti[i].docente.matricola){
@@ -681,7 +734,8 @@
                                 self.corsi.push(self.insegnamenti[i].corso);
                             }
                         }
-
+                        self.docentiL.splice(1, self.docentiL.length);
+                        self.corsiL.splice(1, self.corsiL.length);
                         for(i = 1; i < self.docenti.length; i++){
                             self.docentiL.push(self.docenti[i]);
                         }
@@ -1146,6 +1200,7 @@
                 self.paginaModificaInsegnamenti = false;
                 switch (pagina) {
                     case "home": self.paginaHome = true;
+                        self.getInsegnamenti();
                         break;
                     case "login": self.paginaLogIn = true;
                         break;
@@ -1163,7 +1218,10 @@
                         self.caricaCorsi();
                         self.paginaModificaCorso = true;
                         break;
-                    case "modInsegnamento": self.paginaModificaInsegnamenti = true;
+                    case "modInsegnamento":
+                        self.caricaCorsi();
+                        self.caricaDocenti();
+                        self.paginaModificaInsegnamenti = true;
                         break;
                 }
                 if(self.paginaPrenotazioni || self.paginaStorico){
@@ -1281,6 +1339,23 @@
                     }
                 );
             },
+            rimuoviInsegnamento: function (){
+                var self=this;
+                console.log("Sono in rimuovi Corso "+ self.insegnamentoSceltoDaEliminare);
+                var insegnamentoDaEliminare = {"corso": self.insegnamentoSceltoDaEliminare.corso.codice, "docente": self.insegnamentoSceltoDaEliminare.docente.matricola, "stato": true};
+                var myJson = JSON.stringify(insegnamentoDaEliminare);
+                console.log("rimuovi insegnamento: " + myJson);
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRimuoviInsegnamento", {insegnamento: myJson.toString()},
+                    function (data) {
+                        if(data){
+                            console.log("cancellazione andata a buon fine");
+                        } else {
+                            console.log("errore in rimuoviInsegnamento, check");
+                        }
+                        self.getInsegnamenti();
+                    }
+                );
+            },
             insertDocente: function (){
                 var self=this;
                 self.NuovoDocente= {"matricola":self.MatricolaDocente,"nome":self.InputNomeDocente,"cognome":self.InputCognomeDocente,"stato":true};
@@ -1320,6 +1395,37 @@
             FunCorsoSceltoDaEliminare: function(corso){
                 var self=this;
                 self.corsoSceltoDaEliminare = corso;
+            },
+            FunInsegnamentoSceltoDaEliminare: function(insegnamento){
+                var self=this;
+                console.log(insegnamento.corso.titolo_corso);
+                self.insegnamentoSceltoDaEliminare = insegnamento;
+                self.corsoSceltoDaEliminare = self.insegnamentoSceltoDaEliminare.corso;
+                self.docenteSceltoDaEliminare = self.insegnamentoSceltoDaEliminare.docente;
+                console.log(self.insegnamentoSceltoDaEliminare);
+                console.log(self.insegnamentoSceltoDaEliminare.corso.titolo_corso);
+            },
+            FunCorsoSceltoDaAggiungere: function (corso){
+                var self=this;
+                self.corsoSceltoDaAggiungere = corso;
+            },
+            FunDocenteSceltoDaAggiungere: function (docente){
+                var self=this;
+                self.docenteSceltoDaAggiungere = docente;
+            },
+            insertInsegnamenti: function (){
+                var self=this;
+                var nuovoInsegnamento = {"corso": self.corsoSceltoDaAggiungere.codice, "docente": self.docenteSceltoDaAggiungere.matricola, "stato": true};
+                var myJs = JSON.stringify(nuovoInsegnamento);
+                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletInserimentoInsegnamenti", {insegnamento: myJs.toString()},
+                    function (data) {
+                        if(data){
+                            console.log("inserimento andato a buon fine");
+                        } else {
+                            console.log("errore in insertInsegnamenti");
+                        }
+                    }
+                );
             }
         },
         mounted(){
