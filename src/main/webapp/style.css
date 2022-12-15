@@ -6,12 +6,9 @@ body{margin-top:20px;}
     width: 60px;  
   }
 
-  .dimDrop{ /* Dimensione dropdown button utente loggato */
-    height: 15px;
-    width: 160px;  
-    margin-bottom: 50px;
-    margin-right: 15px;
-  }
+.coloreSfondo{
+    background-color: #04AA6D;
+}
 /*FIne*/
 
 /*barra grigia verticale*/
