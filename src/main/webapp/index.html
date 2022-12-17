@@ -21,29 +21,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 </head>
 <body>
-<div id="spa" class="coloreSfondo">
-    <span v-if="paginaLogIn">
+<div id="spa">
+    <span v-if="paginaLogIn" class="bg-light">
         <div class="d-flex flex-column min-vh-100 justify-content-center  align-items-center">
-            <form method="get">
-                <div class="mb-3">
-                    <label for="InputNomeUtente" class="form-label">Nome utente</label>
-                    <input v-model="InputNomeUtente" type="text" class="form-control" id="InputNomeUtente"
-                           aria-describedby="emailHelp">
-                </div>
-                <div class="mb-3">
-                    <label for="InputPassword" class="form-label">Password</label>
-                    <input v-model="InputPassword" type="password" class="form-control" id="InputPassword">
-                </div>
-                <div class="row justify-content-center">
-                    <button v-on:click="transit" type="button" class="btn btn-primary">Log in</button>
-                </div>
-            </form>
+            <div class="mb-3">
+                <label for="InputNomeUtente" class="form-label">Nome utente</label>
+                <input v-model="InputNomeUtente" type="text" class="form-control" id="InputNomeUtente"
+                       aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3">
+                <label for="InputPassword" class="form-label">Password</label>
+                <input v-model="InputPassword" type="password" class="form-control" id="InputPassword">
+            </div>
+            <div class="row justify-content-center">
+                <button v-on:click="transit" type="button" class="btn btn-primary">Log in</button>
+            </div>
             <p>{{messaggio}}</p>
         </div>
     </span>
     <span v-else>
         <div class="row justify-content-end" v-if="ruolo == 'ospite'">
-            <div class="d-grid gap-2 d-md-block mx-4"> <!--mx-4 serve per mettere il margine-->
+            <div class="d-grid gap-2 d-md-block mx-4">
                 <button class="btn btn-secondary" type="button" v-on:click="visualizzaPagina('login')">Login</button>
             </div>
         </div>
@@ -51,10 +49,10 @@
             <div class="dropdown" id="DropDownUser">
                 <button id="Userbtn" class="btn-lg btn-success dropdown-toggle" v-on:click="myFunction('LoginDropDown')" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa-solid fa-user"></i>
-                    {{ Userutente }}
+                    {{ utente.nome_utente }}
                 </button>
                 <div id="LoginDropDown" class="dropdown-content" >
-                    <p v-on:click="transitCambioPassword" class="ml-1">Cambia Password</p>
+                    <p v-on:click="transitCambioPassword" class="ml-1 mt-3">Cambia Password</p>
                     <p v-on:click="logOut" class="ml-1">Logout</p>
                 </div>
             </div>
@@ -307,7 +305,7 @@
         </div>
     </span>
     <span v-if="paginaCambioPwd">
-        <div class="d-flex flex-column min-vh-100 justify-content-center  align-items-center">
+        <div class="d-flex flex-column mt-5 justify-content-center  align-items-center">
            <form method="get">
                 <div class="input-group mb-3">
                     <input id="vecchiaPassword" type="password" class="form-control" placeholder="Inserisci Vecchia Password" aria-label="Recipient's username" aria-describedby="basic-addon2">
@@ -349,8 +347,11 @@
                     </div>
                 </div>
                 <div class="row justify-content-center">
-                    <button v-on:click="postCambiaPwd('vecchiaPassword','nuovaPassword','CnuovaPassword')" type="button" class="btn btn-primary">Conferma</button>
+                    <button v-on:click="postCambiaPwd('vecchiaPassword','nuovaPassword','CnuovaPassword')" type="button" class="btn btn-success">Conferma</button>
                 </div>
+               <div class="row justify-content-center">
+                    <button v-on:click="visualizzaPagina('home')" type="button" class="btn btn-danger mt-2">Annulla</button>
+               </div>
                <p>{{ messaggio }}</p>
            </form>
         </div>
@@ -492,28 +493,28 @@
             </div>
     </span>
     <span v-if="paginaAggiungiDocente">
-         <p class="h3 text-center mx-auto"> PAGINA AGGIUNGI DOCENTE</p>
-        <div class="col-sm-6 mx-auto">
+        <p class="h3 text-center mt-3"> PAGINA AGGIUNGI DOCENTE</p>
+        <div class="col-sm-6 mx-auto ">
             <div>
-                <label class="form-label">Matricola</label>
+                <label class="form-label font-weight-bold">Matricola</label>
                 <p>{{MatricolaDocente}} </p>
             </div>
             <div class="mb-3">
-                <label for="InputNomeDocente" class="form-label">Nome docente</label>
+                <label for="InputNomeDocente" class="form-label font-weight-bold">Nome docente</label>
                 <input v-model="InputNomeDocente" type="text" class="form-control" id="InputNomeDocente">
             </div>
             <div class="mb-3">
-                <label for="InputCognomeDocente" class="form-label">Cognome Docente</label>
+                <label for="InputCognomeDocente" class="form-label font-weight-bold">Cognome Docente</label>
                 <input v-model="InputCognomeDocente" type="text" class="form-control" id="InputCognomeDocente">
             </div>
-            <div class="d-grid gap-2 d-md-block mx-4"> <!--mx-4 serve per mettere il margine-->
+            <div class="row justify-content-center">
                 <button class="btn btn-secondary" type="button" v-on:click="insertDocente()">Aggiungi Docente</button>
-        </div>
+            </div>
         </div>
     </span>
     <span v-if="paginaEliminaDocente">
-        <p class="h3 text-center mx-auto"> Elimina docente</p>
-        <div class="col-sm-6 mx-auto">
+        <p class="h3 text-center mt-3"> Elimina docente</p>
+        <div class="d-flex flex-column justify-content-center align-items-center mt-3">
             <div class="dropdown">
                 <button class="dropbtn" v-on:click="myFunction('RimuoviDocentiDropDown')">
                     {{ docenteSceltoDaEliminare.cognome }}
@@ -526,31 +527,31 @@
                     </div>
                 </div>
             </div>
-            <p>Sei sicuro di voler eliminare il docente: {{ docenteSceltoDaEliminare.cognome }}</p>
-            <div class="d-grid gap-2 d-md-block mx-4"> <!--mx-4 serve per mettere il margine-->
+            <p class="h5 mt-4">Sei sicuro di voler eliminare il docente: <span v-if="docenteSceltoDaEliminare.cognome != 'Scegli Docente'">{{ docenteSceltoDaEliminare.cognome }}</span></p>
+            <div class="d-grid gap-2 d-md-block mt-4"> <!--mx-4 serve per mettere il margine-->
                     <button class="btn btn-secondary" type="button" v-on:click="rimuoviDocente()">Conferma eliminazione</button>
             </div>
         </div>
     </span>
     <span v-if="paginaAggiungiCorso">
-         <p class="h3 text-center mx-auto">PAGINA AGGIUNGI CORSO</p>
+         <p class="h3 text-center mt-3">PAGINA AGGIUNGI CORSO</p>
         <div class="col-sm-6 mx-auto">
             <div>
-                <label class="form-label">Codice Corso</label>
+                <label class="form-label font-weight-bold">Codice Corso</label>
                 <p>{{CodiceUltimoCorso}} </p>
             </div>
-                <div class="mb-3">
-                    <label for="InputCodiceCorso" class="form-label">Titolo Corso </label>
-                    <input v-model="InputCodiceCorso" type="text" class="form-control" id="InputCodiceCorso">
-                </div>
-                <div class="d-grid gap-2 d-md-block mx-4"> <!--mx-4 serve per mettere il margine-->
-                    <button class="btn btn-secondary" type="button" v-on:click="insertCorso()">Aggiungi Corso</button>
+            <div class="mb-3">
+                <label for="InputCodiceCorso" class="form-label font-weight-bold">Titolo Corso </label>
+                <input v-model="InputCodiceCorso" type="text" class="form-control" id="InputCodiceCorso">
+            </div>
+            <div class="row justify-content-center">
+                <button class="btn btn-secondary" type="button" v-on:click="insertCorso()">Aggiungi Corso</button>
             </div>
         </div>
     </span>
     <span v-if="paginaEliminaCorso">
-         <p class="h3 text-center mx-auto">ELIMINA CORSO</p>
-        <div class="col-sm-6 mx-auto">
+         <p class="h3 text-center mt-3">ELIMINA CORSO</p>
+        <div class="d-flex flex-column justify-content-center align-items-center mt-3">
             <div class="dropdown ">
                 <button class="dropbtn" v-on:click="myFunction('RimuoviCorsiDropDown')">
                     {{ corsoSceltoDaEliminare.titolo_corso }}
@@ -563,63 +564,68 @@
                     </div>
                 </div>
             </div>
-            <p>Sei sicuro di voler eliminare il corso: {{ corsoSceltoDaEliminare.titolo_corso }}</p>
-            <div class="d-grid gap-2 d-md-block mx-4"> <!--mx-4 serve per mettere il margine-->
+            <p class="h5 mt-4">Sei sicuro di voler eliminare il corso: <span v-if="corsoSceltoDaEliminare.titolo_corso != 'Scegli Corso'">{{ corsoSceltoDaEliminare.titolo_corso }}</span></p>
+            <div class="d-grid gap-2 d-md-block mt-4">
                     <button class="btn btn-secondary" type="button" v-on:click="rimuoviCorso()">Conferma eliminazione</button>
             </div>
         </div>
     </span>
     <span v-if="paginaAggiungiInsegnamenti">
-        <p class="h3 text-center mx-auto"> AGGIUNGI INSEGNAMENTO</p>
-        <div class="col-sm-6 mx-auto">
-            <div class="dropdown ">
-                <button class="dropbtn" v-on:click="myFunction('corsiTotaliDropDown')">
-                    Scegli Corso
-                    <i class="fa fa-angle-down"></i>
-                </button>
-                <div id="corsiTotaliDropDown" class="dropdown-content">
-                    <input type="text" placeholder="Search..." id="corsiTotaliInput" v-on:keyup="filterFunction('corsiTotaliInput','corsiTotaliDropDown')">
-                    <div v-for="corso in corsiTot">
-                        <a v-on:click="FunCorsoSceltoDaAggiungere(corso)">{{ `${corso.codice} ${corso.titolo_corso }` }}</a>
+        <p class="h3 text-center mt-3"> AGGIUNGI INSEGNAMENTO</p>
+        <div class="col-6 mx-auto">
+            <div class="row justify-content-around mt-4">
+                <div class="dropdown ">
+                    <button class="dropbtn" v-on:click="myFunction('corsiTotaliDropDown')">
+                        {{ corsoSceltoDaAggiungere.titolo_corso }}
+                        <i class="fa fa-angle-down"></i>
+                    </button>
+                    <div id="corsiTotaliDropDown" class="dropdown-content">
+                        <input type="text" placeholder="Search..." id="corsiTotaliInput" v-on:keyup="filterFunction('corsiTotaliInput','corsiTotaliDropDown')">
+                        <div v-for="corso in corsiTot">
+                            <a v-on:click="FunCorsoSceltoDaAggiungere(corso)">{{ `${corso.codice} ${corso.titolo_corso }` }}</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="dropdown ml-2">
+                    <button class="dropbtn" v-on:click="myFunction('docentiTotaliDropDown')">
+                        {{ docenteSceltoDaAggiungere.cognome }}
+                        <i class="fa fa-angle-down"></i>
+                    </button>
+                    <div id="docentiTotaliDropDown" class="dropdown-content">
+                        <input type="text" placeholder="Search..." id="docentiTotaliInput" v-on:keyup="filterFunction('docentiTotaliInput','docentiTotaliDropDown')">
+                        <div v-for="docente in docentiTot">
+                            <a v-on:click="FunDocenteSceltoDaAggiungere(docente)">{{ `${docente.matricola} ${docente.cognome }` }}</a>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="dropdown ml-2">
-                <button class="dropbtn" v-on:click="myFunction('docentiTotaliDropDown')">
-                    Scegli Docente
-                    <i class="fa fa-angle-down"></i>
-                </button>
-                <div id="docentiTotaliDropDown" class="dropdown-content">
-                    <input type="text" placeholder="Search..." id="docentiTotaliInput" v-on:keyup="filterFunction('docentiTotaliInput','docentiTotaliDropDown')">
-                    <div v-for="docente in docentiTot">
-                        <a v-on:click="FunDocenteSceltoDaAggiungere(docente)">{{ `${docente.matricola} ${docente.cognome }` }}</a>
-                    </div>
+            <div class="row justify-content-center mt-3">
+                <div class="row justify-content-center">
+                      <button class="btn btn-secondary" type="button" v-on:click="insertInsegnamenti()">Aggiungi</button>
                 </div>
             </div>
-            <div class="d-grid gap-2 d-md-block mt-3">
-                  <button class="btn btn-secondary" type="button" v-on:click="insertInsegnamenti()">Aggiungi</button>
-            </div>
-
         </div>
         </span>
         <span v-if="paginaEliminaInsegnamenti">
-        <p class="h3 text-center mx-auto"> ELIMINA INSEGNAMENTO</p>
-        <div class="col-sm-6 mx-auto">
-            <div class="dropdown mx-auto">
-                <button class="dropbtn" v-on:click="myFunction('RimuoviInsegnamentiDropDown')">
-                    Scegli insegnamento
-                    <i class="fa fa-angle-down"></i>
-                </button>
-                <div id="RimuoviInsegnamentiDropDown" class="dropdown-content">
-                    <input type="text" placeholder="Search.." id="RimInsegnamentiInput" v-on:keyup="filterFunction('RimInsegnamentiInput','RimuoviInsegnamentiDropDown')">
-                    <div v-for="ins in insegnamenti">
-                        <a v-on:click="FunInsegnamentoSceltoDaEliminare(ins)">{{ `${ins.corso.codice} ${ins.corso.titolo_corso } ${ins.docente.matricola} ${ins.docente.cognome }`}}</a>
+        <div class="conteiner">
+            <p class="h3 text-center mt-3"> ELIMINA INSEGNAMENTO</p>
+            <div class="d-flex flex-column justify-content-center align-items-center mt-3">
+                    <div class="dropdown">
+                        <button class="dropbtn" v-on:click="myFunction('RimuoviInsegnamentiDropDown')">
+                            Scegli insegnamento
+                            <i class="fa fa-angle-down"></i>
+                        </button>
+                        <div id="RimuoviInsegnamentiDropDown" class="dropdown-content">
+                            <input type="text" placeholder="Search.." id="RimInsegnamentiInput" v-on:keyup="filterFunction('RimInsegnamentiInput','RimuoviInsegnamentiDropDown')">
+                            <div v-for="ins in insegnamenti">
+                                <a v-on:click="FunInsegnamentoSceltoDaEliminare(ins)">{{ `${ins.corso.codice} ${ins.corso.titolo_corso } ${ins.docente.matricola} ${ins.docente.cognome }`}}</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <p>Sei sicuro di voler eliminare l'insegnamento: {{ corsoSceltoDaEliminare.titolo_corso }} {{ docenteSceltoDaEliminare.cognome }}</p>
-            <div class="d-grid gap-2 d-md-block mx-4"> <!--mx-4 serve per mettere il margine-->
-                <button class="btn btn-secondary" type="button" v-on:click="rimuoviInsegnamento()">Conferma eliminazione</button>
+                    <p class="font-weight-bold mt-4">Sei sicuro di voler eliminare l'insegnamento: <span v-if="corsoSceltoDaEliminare.titolo_corso != 'Scegli Corso'">{{ corsoSceltoDaEliminare.titolo_corso }} {{ docenteSceltoDaEliminare.cognome }}</span></p>
+                    <div class="row justify-content-center d-grid gap-2 d-md-block mt-4">
+                        <button class="btn btn-secondary" type="button" v-on:click="rimuoviInsegnamento()">Conferma eliminazione</button>
+                    </div>
             </div>
         </div>
     </span>
@@ -628,7 +634,6 @@
     var app = new Vue({
         el: '#spa',
         data: {
-            Userutente: "Nome Utente",
             paginaHome: true,
             paginaLogIn: false,
             paginaPrenotazioni: false,
@@ -656,11 +661,11 @@
             NuovoCorso: {"codice":0,"titolo_corso":" ","stato":true},
             docenteScelto: null,
             labelDocenteScelto: null,
-            docenteSceltoDaEliminare:[{"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}],
-            corsoSceltoDaEliminare:  [{"codice":0,"titolo_corso":"Scegli Corso","stato":true}],
+            docenteSceltoDaEliminare:{"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true},
+            corsoSceltoDaEliminare:{"codice":0,"titolo_corso":"Scegli Corso","stato":true},
             insegnamentoSceltoDaEliminare: [{"corso":{"codice":0,"titolo_corso":"Scegli Corso","stato":true},"docente":{"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}, "stato":true}],
-            docenteSceltoDaAggiungere: [{"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}],
-            corsoSceltoDaAggiungere: [{"codice":0,"titolo_corso":"Scegli Corso","stato":true}],
+            docenteSceltoDaAggiungere: {"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true},
+            corsoSceltoDaAggiungere: {"codice":0,"titolo_corso":"Scegli Corso","stato":true},
             corsi: [{"codice":0,"titolo_corso":"Scegli Corso","stato":true}],
             corsiL: [{"codice":0,"titolo_corso":"Scegli Corso","stato":true}],
             corsoScelto: null,
@@ -716,7 +721,6 @@
                                     }
                                 } else {
                                     self.visualizzaPagina("home");
-                                    self.Userutente = self.utente.nome_utente;
                                     self.ruolo = self.utente.ruolo.toLowerCase();
                                     self.giornoSelezionato = "Lunedì";
                                     self.getPrenotazioni();
@@ -1177,7 +1181,6 @@
                     return;
                 }
                 self.carrelloRipetizioni.push(ripetizione);
-                console.log("fine aggiungiCarrello");
                 self.aggiornaFlagBottoni(giorno, orario, false);
             },
             rimuoviRipetizione: function (ripetizione){
@@ -1209,8 +1212,6 @@
                     });
             },
             visualizzaPagina: function (pagina) {
-                console.log("pagina: ");
-                console.log(pagina);
                 var self = this;
                 self.paginaHome = false;
                 self.paginaLogIn = false;
@@ -1223,6 +1224,10 @@
                 self.paginaEliminaCorso=false;
                 self.paginaAggiungiInsegnamenti= false;
                 self.paginaEliminaInsegnamenti= false;
+                self.docenteSceltoDaEliminare={"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true};
+                self.corsoSceltoDaEliminare={"codice":0,"titolo_corso":"Scegli Corso","stato":true};
+                self.insegnamentoSceltoDaEliminare= [{"corso":{"codice":0,"titolo_corso":"Scegli Corso","stato":true},"docente":{"matricola":0,"nome":"","cognome":"Scegli Docente","stato":true}, "stato":true}];
+
                 switch (pagina) {
                     case "home": self.paginaHome = true;
                         self.getInsegnamenti();
@@ -1429,12 +1434,9 @@
             },
             FunInsegnamentoSceltoDaEliminare: function(insegnamento){
                 var self=this;
-                console.log(insegnamento.corso.titolo_corso);
                 self.insegnamentoSceltoDaEliminare = insegnamento;
                 self.corsoSceltoDaEliminare = self.insegnamentoSceltoDaEliminare.corso;
                 self.docenteSceltoDaEliminare = self.insegnamentoSceltoDaEliminare.docente;
-                console.log(self.insegnamentoSceltoDaEliminare);
-                console.log(self.insegnamentoSceltoDaEliminare.corso.titolo_corso);
             },
             FunCorsoSceltoDaAggiungere: function (corso){
                 var self=this;
