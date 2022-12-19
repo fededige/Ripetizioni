@@ -22,8 +22,8 @@
 </head>
 <body>
 <div id="spa">
-    <span v-if="paginaLogIn" class="bg-light">
-        <div class="d-flex flex-column min-vh-100 justify-content-center  align-items-center">
+    <span v-if="paginaLogIn">
+        <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
             <div class="mb-3">
                 <label for="InputNomeUtente" class="form-label">Nome utente</label>
                 <input v-model="InputNomeUtente" type="text" class="form-control" id="InputNomeUtente"
@@ -58,7 +58,7 @@
             </div>
         </div>
         <div class="event-schedule-area-two bg-color pad100 mt-3">
-            <div class="row bg-light"> <!-- bg-light serve per far colorare tutta la riga-->
+            <div class="row border bg-light">
                 <nav class="navbar navbar-expand-lg navbar-light bg-light">
                     <!-- Serve per fare il menu a tendina-->
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,7 +68,7 @@
                     <div class="collapse navbar-collapse m-auto" id="navbarNavAltMarkup">
                         <div class="navbar-nav sticky-bottom sticky-bottom bg-light">
                             <div class="container-fluid">
-                                <button id="Homebtn" class="btn btn-light btn-sm border" v-on:click="visualizzaPagina('home')" type="button" aria-expanded="false">
+                                <button id="Homebtn" class="btn btn-light btn-sm border " v-on:click="visualizzaPagina('home')" type="button" aria-expanded="false">
                                             Home
                                 </button>
                                 <div class="row justify-content-end m-auto" v-if="ruolo != 'ospite'">
@@ -124,7 +124,7 @@
     </span>
     <span v-if="paginaHome">
         <div class="row justify-content-end" v-if="ruolo == 'cliente'">
-            <div class="d-grid gap-2 d-md-block mx-4 pt-2"> <!--mx-4 serve per mettere il margine-->
+            <div class="d-grid gap-2 d-md-block mx-4 pt-2">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#carrello" ><i class="fa fa-shopping-cart fa-xl" aria-hidden="true" ></i> {{ carrelloRipetizioni.length }} </button>
             </div>
         </div>
@@ -199,8 +199,8 @@
         <div class="container">
             <div class="event-schedule-area-two bg-color pad100">
                 <div class="row">
-                    <div class="col-lg-12 .d-sm-none .d-md-block">
-                        <div class="row justify-content-center">
+                    <div class="col-lg-12 d-none d-lg-block">
+                        <div class="row justify-cnotent-center">
                             <ul class="nav custom-tab" id="myTab" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link active show" id="tabLunedì" data-toggle="tab" role="tab" aria-selected="true" v-on:click="aggiornaOrariDisp('Lunedì')">Lunedì</a>
@@ -219,6 +219,30 @@
                                 </li>
                             </ul>
                         </div>
+                    </div>
+                    <!--PROVO A FARE DROPDOWN PER I GIORNI SU SCHERMI PICCOLI-->
+                    <div class="row" >
+                        <div class="dropdown d-lg-none" id="DropDownScegliGiorno">
+                            <button class="btn btn-light btn-sm dropdown-toggle border" v-on:click="myFunction('scegliGiornoDropDown')" type="button" id="scegliGIornobtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                SCEGLI GIORNO
+                            </button>
+                            <div id="scegliGiornoDropDown" class="dropdown-content pt-2" >
+                                <li class="nav-item">
+                                    <a class="nav-link active show" id="rowLunedi" data-toggle="tab" role="tab" aria-selected="true" v-on:click="aggiornaOrariDisp('Lunedì')">Lunedì</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="rowMartedì" data-toggle="tab" role="tab" aria-selected="false"  v-on:click="aggiornaOrariDisp('Martedì')">Martedì</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="rowMercoledì" data-toggle="tab" role="tab" aria-selected="false" v-on:click="aggiornaOrariDisp('Mercoledì')">Mercoledì</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="rowGiovedì" data-toggle="tab" role="tab" aria-selected="false" v-on:click="aggiornaOrariDisp('Giovedì')">Giovedì</a>
+                                </li>
+                                <li class="nav-item mr-0">
+                                    <a class="nav-link" id="rowVenerdì" data-toggle="tab" role="tab" aria-selected="false" v-on:click="aggiornaOrariDisp('Venerdì')">Venerdì</a>
+                                </li></div>
+                            </div>
                     </div>
                 </div>
             </div>
