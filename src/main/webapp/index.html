@@ -43,90 +43,83 @@
         </div>
     </span>
     <span v-else>
-    <!--qui-->
-        <div class="row justify-content-end" v-if="ruolo == 'ospite'">
-            <div class="mt-2 mr-3">
-                <button class="btn btn-secondary" type="button" v-on:click="visualizzaPagina('login')">Login</button>
-            </div>
-        </div>
-        <div class="row justify-content-end mr-4" v-else>
-            <div class="dropdown" id="DropDownUser">
-                <button id="Userbtn" class="btn-lg btn-success dropdown-toggle" v-on:click="myFunction('LoginDropDown')" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fa-solid fa-user"></i>
-                    {{ utente.nome_utente }}
-                </button>
-                <div id="LoginDropDown" class="dropdown-content" >
-                    <p v-on:click="transitCambioPassword" class="ml-1 mt-3">Cambia Password</p>
-                    <p v-on:click="logOut" class="ml-1">Logout</p>
-                </div>
-            </div>
-        </div>
-
-    <!--fine-->
-        <!--div class="event-schedule-area-two bg-color pad100 mt-3"-->
-            <div class="row border bg-light">
-                <nav class="navbar navbar-expand-md navbar-light bg-light">
-                    <!-- Serve per fare il menu a tendina-->
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
+        <span v-if="ruolo == 'ospite'">
+             <div class="row justify-content-end mt-2 mr-3">
+                    <button class="btn btn-secondary" type="button" v-on:click="visualizzaPagina('login')">Login</button>
+             </div>
+        </span>
+         <span class="row justify-content-end mr-4" v-else>
+                <div class="dropdown" id="DropDownUser">
+                    <button id="Userbtn" class="btn-lg btn-success dropdown-toggle" v-on:click="myFunction('LoginDropDown')" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-user"></i>
+                        {{ utente.nome_utente }}
                     </button>
-                    <!-- FINE-->
-                    <div class="collapse navbar-collapse m-auto" id="navbarNavAltMarkup">
-                        <div class="navbar-nav sticky-bottom sticky-bottom bg-light">
-                            <div class="container-fluid">
-                                <button id="Homebtn" class="btn btn-light btn-sm border " v-on:click="visualizzaPagina('home')" type="button" aria-expanded="false">
-                                            Home
-                                </button>
-                                <div class="row justify-content-end m-auto" v-if="ruolo != 'ospite'">
-                                    <div class="dropdown" id="DropDownPrenotazioni">
-                                        <button id="Prenotazionibtn" class="btn btn-light btn-sm dropdown-toggle border" v-on:click="myFunction('PrenotazioniDocenteDropDown')" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Prenotazioni
-                                        </button>
-                                        <div id="PrenotazioniDocenteDropDown" class="dropdown-content pt-2" >
-                                            <p v-if="ruolo != 'ospite'" v-on:click="visualizzaPagina('prenotazioni')" class="ml-2">Prenotazioni Da Fare</p>
-                                            <p v-if="ruolo != 'ospite'" v-on:click="visualizzaPagina('storico')" class="ml-2">Storico</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row justify-content-end m-auto" v-if="ruolo == 'admin'">
-                                    <div class="dropdown" id="DropDownModificaDocente">
-                                        <button id="ModificaDocentebtn" class="btn btn-light btn-sm dropdown-toggle border" v-on:click="myFunction('ModificaDocenteDropDown')" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Modifica Docente
-                                        </button>
-                                        <div id="ModificaDocenteDropDown" class="dropdown-content pt-2" >
-                                            <p v-on:click="visualizzaPagina('aggiungiDocente')" class="ml-2">Aggiungi Docente</p>
-                                            <p v-on:click="visualizzaPagina('eliminaDocente')" class="ml-2">Elimina Docente</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row justify-content-end m-auto" v-if="ruolo == 'admin'">
-                                    <div class="dropdown" id="DropDownModificaCorso">
-                                        <button class="btn btn-light btn-sm dropdown-toggle border" v-on:click="myFunction('ModificaCorsoDropDown')" type="button" id="ModificaCorsobtn" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Modifica Corso
-                                        </button>
-                                        <div id="ModificaCorsoDropDown" class="dropdown-content pt-2" >
-                                            <p v-on:click="visualizzaPagina('aggiungiCorso')" class="ml-2">Aggiungi Corso</p>
-                                            <p v-on:click="visualizzaPagina('eliminaCorso')" class="ml-2">Elimina Corso</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row justify-content-end m-auto" v-if="ruolo == 'admin'">
-                                    <div class="dropdown" id="DropDownModificaInsegnamento">
-                                        <button class="btn btn-light btn-sm dropdown-toggle border" v-on:click="myFunction('ModificaInsegnamentoDropDown')" type="button" id="ModificaInsegnamentobtn" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Modifica Insegnamento
-                                        </button>
-                                        <div id="ModificaInsegnamentoDropDown" class="dropdown-content pt-2" >
-                                            <p v-on:click="visualizzaPagina('aggiungiInsegnamento')" class="ml-2">Aggiungi Insegnamento</p>
-                                            <p v-on:click="visualizzaPagina('eliminaInsegnamento')" class="ml-2">Elimina Insegnamento</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div id="LoginDropDown" class="dropdown-content" >
+                        <p v-on:click="transitCambioPassword" class="ml-1 mt-3">Cambia Password</p>
+                        <p v-on:click="logOut" class="ml-1">Logout</p>
                     </div>
-                </nav>
-                <!--/div-->
-        </div>
+                </div>
+         </span>
+        <nav class="navbar navbar-expand-md navbar-light bg-light">
+            <!-- Serve per fare il menu a tendina-->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- FINE-->
+            <div class="collapse navbar-collapse m-auto" id="navbarNavAltMarkup">
+              <div class="navbar-nav sticky-bottom sticky-bottom bg-light">
+                <div class="container-fluid">
+                  <button id="Homebtn" class="btn btn-light btn-sm border " v-on:click="visualizzaPagina('home')" type="button" aria-expanded="false">
+                    Home
+                  </button>
+                  <div class="row justify-content-end m-auto" v-if="ruolo != 'ospite'">
+                    <div class="dropdown" id="DropDownPrenotazioni">
+                      <button id="Prenotazionibtn" class="btn btn-light btn-sm dropdown-toggle border" v-on:click="myFunction('PrenotazioniDocenteDropDown')" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Prenotazioni
+                      </button>
+                      <div id="PrenotazioniDocenteDropDown" class="dropdown-content pt-2" >
+                        <p v-if="ruolo != 'ospite'" v-on:click="visualizzaPagina('prenotazioni')" class="ml-2">Prenotazioni Da Fare</p>
+                        <p v-if="ruolo != 'ospite'" v-on:click="visualizzaPagina('storico')" class="ml-2">Storico</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row justify-content-end m-auto" v-if="ruolo == 'admin'">
+                    <div class="dropdown" id="DropDownModificaDocente">
+                      <button id="ModificaDocentebtn" class="btn btn-light btn-sm dropdown-toggle border" v-on:click="myFunction('ModificaDocenteDropDown')" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Modifica Docente
+                      </button>
+                      <div id="ModificaDocenteDropDown" class="dropdown-content pt-2" >
+                        <p v-on:click="visualizzaPagina('aggiungiDocente')" class="ml-2">Aggiungi Docente</p>
+                        <p v-on:click="visualizzaPagina('eliminaDocente')" class="ml-2">Elimina Docente</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row justify-content-end m-auto" v-if="ruolo == 'admin'">
+                    <div class="dropdown" id="DropDownModificaCorso">
+                      <button class="btn btn-light btn-sm dropdown-toggle border" v-on:click="myFunction('ModificaCorsoDropDown')" type="button" id="ModificaCorsobtn" data-bs-toggle="dropdown" aria-expanded="false">
+                        Modifica Corso
+                      </button>
+                      <div id="ModificaCorsoDropDown" class="dropdown-content pt-2" >
+                        <p v-on:click="visualizzaPagina('aggiungiCorso')" class="ml-2">Aggiungi Corso</p>
+                        <p v-on:click="visualizzaPagina('eliminaCorso')" class="ml-2">Elimina Corso</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row justify-content-end m-auto" v-if="ruolo == 'admin'">
+                    <div class="dropdown" id="DropDownModificaInsegnamento">
+                      <button class="btn btn-light btn-sm dropdown-toggle border" v-on:click="myFunction('ModificaInsegnamentoDropDown')" type="button" id="ModificaInsegnamentobtn" data-bs-toggle="dropdown" aria-expanded="false">
+                        Modifica Insegnamento
+                      </button>
+                      <div id="ModificaInsegnamentoDropDown" class="dropdown-content pt-2" >
+                        <p v-on:click="visualizzaPagina('aggiungiInsegnamento')" class="ml-2">Aggiungi Insegnamento</p>
+                        <p v-on:click="visualizzaPagina('eliminaInsegnamento')" class="ml-2">Elimina Insegnamento</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+         </nav>
     </span>
     <span v-if="paginaHome">
         <div class="row justify-content-end" v-if="ruolo == 'cliente'">
@@ -335,8 +328,7 @@
         </div>
     </span>
     <span v-if="paginaCambioPwd">
-        <div class="d-flex flex-column mt-5 justify-content-center  align-items-center">
-           <form method="get">
+         <div class="col-sm-6 mx-auto mt-5">
                 <div class="input-group mb-3">
                     <input id="vecchiaPassword" type="password" class="form-control" placeholder="Inserisci Vecchia Password" aria-label="Recipient's username" aria-describedby="basic-addon2">
                     <div class="input-group-append">
@@ -383,23 +375,23 @@
                     <button v-on:click="visualizzaPagina('home')" type="button" class="btn btn-danger mt-2">Annulla</button>
                </div>
                <p>{{ messaggio }}</p>
-           </form>
         </div>
     </span>
     <span v-if="paginaPrenotazioni">
         <p class="h3 text-center">Ripetizioni Da Effettuare</p>
-        <div class="col pl-5">
-                <table class="table ml-5">
-                    <thead>
-                        <tr>
-                            <th class="text-center" scope="col">Data</th>
-                            <th scope="col">Docente</th>
-                            <th scope="col">Materia</th>
-                            <th v-if="ruolo == 'admin'" scope="col">Utente </th>
-                            <th scope="col">Opzioni</th>
-                        </tr>
-                    </thead>
-                    <!--INIZIO CARD-->
+        <div class="col-9 mx-auto">
+            <table class="table ml-5">
+                <thead>
+                    <tr>
+                        <th class="text-center" scope="col">Data</th>
+                        <th scope="col">Docente</th>
+                        <th scope="col">Materia</th>
+                        <th v-if="ruolo == 'admin'" scope="col">Utente </th>
+                        <th scope="col">Opzioni</th>
+                    </tr>
+                </thead>
+                <!--INIZIO CARD-->
+                <tbody>
                     <tbody>
                         <tr class="inner-box" v-for="(ripetizione,index) in ripetizioniDaFare">
                             <th scope="row">
@@ -434,13 +426,14 @@
                             </td>
                         </tr>
                     </tbody>
-                    <!--FINE CARD-->
-                </table>
-            </div>
+                </tbody>
+                <!--FINE CARD-->
+            </table>
+        </div>
     </span>
     <span v-if="paginaStorico">
         <p class="h3 text-center">Ripetizioni Effettuate</p>
-        <div class="col pl-5">
+        <div class="col-9 mx-auto">
                 <table class="table ml-5">
                     <thead>
                         <tr>
@@ -481,7 +474,7 @@
                 </table>
             </div>
         <p class="h3 text-center">Ripetizioni Cancellate</p>
-        <div class="col pl-5">
+        <div class="col-9 mx-auto">
                 <table class="table ml-5">
                     <thead>
                         <tr>
@@ -731,6 +724,11 @@
             CodiceCorso: 0,
             docentiTot: [],
             corsiTot: [],
+            docentiImmagini:[
+                'https://www.bootdey.com/app/webroot/img/Content/Manbrown2.png', //informatica
+                'https://www.crushpixel.com/big-static16/preview4/tutor-black-glyph-icon-freelance-2238248.jpg', //matematica
+                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV3avmPzm4OttpgzOKalZgAr_cWlZrxEw-8_Nk_A9Rs2VUQSB3cXi4y9V5CfJktjTv0k4&usqp=CAU'//resto
+            ]
         },
         methods: {
             transit: function () {
@@ -1491,6 +1489,15 @@
                         }
                     }
                 );
+            },
+            immagineDocente: function (materia){
+                var self=this;
+                if(materia==='informatica'){
+                    return self.docenteImmagine[0];
+                }else if(materia ==='matematica'){
+                    return self.docenteImmagine[1];
+                }
+                return self.docenteImmagine[2];
             }
         },
         mounted(){
