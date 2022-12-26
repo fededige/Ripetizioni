@@ -723,12 +723,7 @@
             CodiceUltimoCorso:0,
             CodiceCorso: 0,
             docentiTot: [],
-            corsiTot: [],
-            docentiImmagini:[
-                'https://www.bootdey.com/app/webroot/img/Content/Manbrown2.png', //informatica
-                'https://www.crushpixel.com/big-static16/preview4/tutor-black-glyph-icon-freelance-2238248.jpg', //matematica
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV3avmPzm4OttpgzOKalZgAr_cWlZrxEw-8_Nk_A9Rs2VUQSB3cXi4y9V5CfJktjTv0k4&usqp=CAU'//resto
-            ]
+            corsiTot: []
         },
         methods: {
             transit: function () {
@@ -1489,15 +1484,6 @@
                         }
                     }
                 );
-            },
-            immagineDocente: function (materia){
-                var self=this;
-                if(materia==='informatica'){
-                    return self.docenteImmagine[0];
-                }else if(materia ==='matematica'){
-                    return self.docenteImmagine[1];
-                }
-                return self.docenteImmagine[2];
             }
         },
         mounted(){
