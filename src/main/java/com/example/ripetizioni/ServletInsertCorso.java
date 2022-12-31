@@ -24,20 +24,21 @@ public class ServletInsertCorso extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
-        System.out.println("siamo in insert Corso");
+        HttpSession session = request.getSession();
         PrintWriter out = response.getWriter();
-        Gson gson =  new Gson();
-        Type token = new TypeToken<Corso>(){}.getType();
-        System.out.println("31" + request.getParameter("corso"));
-        Corso corso = gson.fromJson(request.getParameter("corso"), token);
-        boolean cancellazione = dao.insertCorsi(corso);
-        System.out.println("34 insert corso "+cancellazione);
-        out.print(cancellazione);
+        Gson gson = new Gson();
+        boolean res = false;
+
+        if(session.getAttribute("ruolo").equals("admin")){
+            Corso corso = gson.fromJson(request.getParameter("corso"), Corso.class);
+            res = dao.insertCorsi(corso);
+        }
+        out.print(res);
         out.flush();
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("ciao");
-        doPost(request, response);
-    }
+//    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        System.out.println("ciao");
+//        doPost(request, response);
+//    }
 }

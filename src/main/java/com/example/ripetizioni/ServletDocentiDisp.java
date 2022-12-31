@@ -38,21 +38,4 @@ public class ServletDocentiDisp extends HttpServlet {
         out.print(s);
         out.flush();
     }
-
-    private String convertUrlStr(String str){
-        String giorno = null;
-        switch (str){
-            case "luned%C3%AC": giorno = "lunedì";
-                break;
-            case "marted%C3%AC": giorno = "lunedì";
-                break;
-            case "mercoled%C3%AC": giorno = "lunedì";
-                break;
-            case "gioved%C3%AC": giorno = "lunedì";
-                break;
-            case "venerd%C3%AC": giorno = "lunedì";
-                break;
-        }
-        return giorno;
-    }
 }

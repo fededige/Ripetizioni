@@ -2,6 +2,7 @@ package com.example.ripetizioni;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import dao.Corso;
 import dao.DAO;
 import dao.Docente;
 
@@ -23,16 +24,15 @@ public class ServletInsertDocente extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
-        System.out.println("siamo in inserttt");
+        HttpSession session = request.getSession();
         PrintWriter out = response.getWriter();
         Gson gson =  new Gson();
-        Type token = new TypeToken<Docente>(){}.getType();
-        System.out.println(request.getParameter("docente"));
-        Docente docente = gson.fromJson(request.getParameter("docente"), token);
-        System.out.println("vediamo qua"+docente);
-        boolean cancellazione = dao.insertDocenti(docente);
-        System.out.println("39 insert "+cancellazione);
-        out.print(cancellazione);
+        boolean res = false;
+        if(session.getAttribute("ruolo").equals("admin")){
+            Docente docente = gson.fromJson(request.getParameter("docente"), Docente.class);
+            res = dao.insertDocenti(docente);
+        }
+        out.print(res);
         out.flush();
     }
 

@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
+import java.nio.file.FileStore;
 import java.util.List;
 
 @WebServlet(name = "ServletRipetizioniEffettuate", value = "/ServletRipetizioniEffettuate")
@@ -26,27 +27,16 @@ public class ServletRipetizioniEffettuate extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317");
-        System.out.println("siamo in 29");
         response.setContentType("application/json");
-        System.out.println("siamo in effettuate");
-        StringBuffer jb = new StringBuffer();
         PrintWriter out = response.getWriter();
-        /*String line = null;
-        try {
-            BufferedReader reader = request.getReader();
-            while ((line = reader.readLine()) != null)
-                jb.append(line);
-        } catch (Exception e) { System.out.println("errore"); }
-        System.out.println("siamo in 40"+jb);*/
         Gson gson =  new Gson();
-        Type token = new TypeToken<Prenotazione>(){}.getType();
-        System.out.println(token);
-        Prenotazione prenEff = gson.fromJson(request.getParameter("prenotazione"), token);
-        System.out.println(prenEff);
-        boolean cambio = dao.prenotazioneEff(prenEff);
-        System.out.println(prenEff);
-        System.out.println(cambio);
-        out.print(cambio);
+        boolean res = false;
+        HttpSession session = request.getSession();
+        if(session.getAttribute("ruolo").equals("admin") || session.getAttribute("ruolo").equals("cliente")){
+            Prenotazione prenEff = gson.fromJson(request.getParameter("prenotazione"), Prenotazione.class);
+            res = dao.prenotazioneEff(prenEff);
+        }
+        out.print(res);
         out.flush();
     }
 

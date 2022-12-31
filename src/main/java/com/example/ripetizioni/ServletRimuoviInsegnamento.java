@@ -34,11 +34,13 @@ public class ServletRimuoviInsegnamento extends HttpServlet {
         System.out.println("siamo in ServletRimuoviInsegnamento");
         PrintWriter out = response.getWriter();
         Gson gson =  new Gson();
-        System.out.println(request.getParameter("insegnamento"));
-        Insegna insegnamento = gson.fromJson(request.getParameter("insegnamento"), Insegna.class);
-        boolean cancellazione = dao.rimuoviInsegnamento(insegnamento);
-        System.out.println("39 cancella " + cancellazione);
-        out.print(cancellazione);
+        HttpSession session = request.getSession();
+        boolean res = false;
+        if(session.getAttribute("ruolo").equals("admin")){
+            Insegna insegnamento = gson.fromJson(request.getParameter("insegnamento"), Insegna.class);
+            res = dao.rimuoviInsegnamento(insegnamento);
+        }
+        out.print(res);
         out.flush();
     }
 }

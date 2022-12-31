@@ -28,22 +28,14 @@ public class ServletRipetizioneCancellata extends HttpServlet {
         response.setContentType("application/json");
         System.out.println("siamo in effettuate");
         PrintWriter out = response.getWriter();
-        /*StringBuffer jb = new StringBuffer();
-        String line = null;
-        try {
-            BufferedReader reader = request.getReader();
-            while ((line = reader.readLine()) != null)
-                jb.append(line);
-        } catch (Exception e) {  }
-        System.out.println("siamo in 38"+jb);*/
         Gson gson =  new Gson();
-        Type token = new TypeToken<Prenotazione>(){}.getType();
-        System.out.println(request.getParameter("prenotazione"));
-        Prenotazione prenEff = gson.fromJson(request.getParameter("prenotazione"), token);
-        boolean cambio = dao.rimuoviPrenotazioni(prenEff);
-        System.out.println(prenEff);
-        System.out.println(cambio);
-        out.print(cambio);
+        boolean res = false;
+        HttpSession session = request.getSession();
+        if(session.getAttribute("ruolo").equals("admin") || session.getAttribute("ruolo").equals("cliente")){
+            Prenotazione prenEff = gson.fromJson(request.getParameter("prenotazione"), Prenotazione.class);
+            res = dao.rimuoviPrenotazioni(prenEff);
+        }
+        out.print(res);
         out.flush();
     }
     @Override

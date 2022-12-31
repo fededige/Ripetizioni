@@ -3,6 +3,7 @@ package com.example.ripetizioni;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import dao.DAO;
+import dao.Insegna;
 import dao.Prenotazione;
 
 import javax.servlet.*;
@@ -24,70 +25,37 @@ public class ServletInserimentoRipetizioni extends HttpServlet {
         dao = (DAO) ctx.getAttribute("DAO");
     }
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("ciao post");
-        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317");
-        response.addHeader("Access-Control-Allow-Headers","origin, content-type, accept, authorization");
-        response.addHeader("Access-Control-Allow-Credentials", "true");
-        response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
-        response.setContentType("application/json");
-        HttpSession session = request.getSession();
-        StringBuffer jb = new StringBuffer();
-        String line = null;
-        try {
-            BufferedReader reader = request.getReader();
-            while ((line = reader.readLine()) != null){
-                jb.append(line);
-                System.out.println(line);
-            }
-        } catch (Exception e) {
-            System.out.println("errore in post");
-        }
-        System.out.println("valore di jb: " + jb);
-        Gson gson =  new Gson();
-        Type token = new TypeToken<ArrayList<Prenotazione>>(){}.getType();
-        System.out.println("token = " + token);
-        ArrayList<Prenotazione> prenotazioni = gson.fromJson(String.valueOf(jb), token);
-        System.out.println("lunghezza di pp: " + prenotazioni.size());
-        dao.insertPrenotazione(prenotazioni);
-
-        PrintWriter out = response.getWriter();
-        gson = new Gson();
-        String s = gson.toJson(true);
-        out.print(s);
-        out.flush();
-    }
+//    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        System.out.println("siamo in doPost in ServletInserimentoRipetizioni");
+//        response.setContentType("application/json");
+//        PrintWriter out = response.getWriter();
+//        HttpSession session = request.getSession();
+//        Gson gson =  new Gson();
+//        boolean res = false;
+//        if(session.getAttribute("ruolo").equals("admin") || session.getAttribute("ruolo").equals("cliente")){
+//            Type token = new TypeToken<ArrayList<Prenotazione>>(){}.getType();
+//            System.out.println("token = " + token);
+//            ArrayList<Prenotazione> prenotazioni = gson.fromJson(request.getParameter("prenotazioni"), token);
+//            res = dao.insertPrenotazione(prenotazioni);
+//        }
+//        String s = gson.toJson(res);
+//        out.print(s);
+//        out.flush();
+//    }
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("ciao get");
-        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317");
-        response.addHeader("Access-Control-Allow-Headers","origin, content-type, accept, authorization");
-        response.addHeader("Access-Control-Allow-Credentials", "true");
-        response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
+        System.out.println("siamo in doGet in ServletInserimentoRipetizioni");
         response.setContentType("application/json");
-        HttpSession session = request.getSession();
-        System.out.println("68" + request.getParameter("prenotazioni"));
-        StringBuffer jb = new StringBuffer();
-        String line = null;
-        try {
-            BufferedReader reader = request.getReader();
-            while ((line = reader.readLine()) != null){
-                jb.append(line);
-                System.out.println(line);
-            }
-        } catch (Exception e) {
-            System.out.println("errore in post");
-        }
-        System.out.println("valore di jb: " + jb);
-        Gson gson =  new Gson();
-        Type token = new TypeToken<ArrayList<Prenotazione>>(){}.getType();
-        System.out.println("token = " + token);
-        ArrayList<Prenotazione> prenotazioni = gson.fromJson(request.getParameter("prenotazioni"), token);
-        System.out.println("lunghezza di pp: " + prenotazioni.size());
-        dao.insertPrenotazione(prenotazioni);
-
         PrintWriter out = response.getWriter();
-        gson = new Gson();
-        String s = gson.toJson(true);
+        HttpSession session = request.getSession();
+        Gson gson =  new Gson();
+        boolean res = false;
+        if(session.getAttribute("ruolo").equals("admin") || session.getAttribute("ruolo").equals("cliente")){
+            Type token = new TypeToken<ArrayList<Prenotazione>>(){}.getType();
+            System.out.println("token = " + token);
+            ArrayList<Prenotazione> prenotazioni = gson.fromJson(request.getParameter("prenotazioni"), token);
+            res = dao.insertPrenotazione(prenotazioni);
+        }
+        String s = gson.toJson(res);
         out.print(s);
         out.flush();
     }

@@ -26,13 +26,14 @@ public class ServletRimuoviCorso extends HttpServlet {
         response.setContentType("application/json");
         System.out.println("siamo in cancella corso");
         PrintWriter out = response.getWriter();
+        HttpSession session = request.getSession();
         Gson gson =  new Gson();
-        Type token = new TypeToken<Corso>(){}.getType();
-        System.out.println(request.getParameter("corso"));
-        Corso corso = gson.fromJson(request.getParameter("corso"), token);
-        boolean cancellazione = dao.rimuoviCorsi(corso.getCodice());
-        System.out.println("39 cancella corso"+cancellazione);
-        out.print(cancellazione);
+        boolean res = false;
+        if(session.getAttribute("ruolo").equals("admin")){
+            Corso corso = gson.fromJson(request.getParameter("corso"), Corso.class);
+            res = dao.rimuoviCorsi(corso.getCodice());
+        }
+        out.print(res);
         out.flush();
     }
 

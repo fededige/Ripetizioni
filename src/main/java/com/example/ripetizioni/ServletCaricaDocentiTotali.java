@@ -2,6 +2,7 @@ package com.example.ripetizioni;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import dao.Corso;
 import dao.DAO;
 import dao.Docente;
 
@@ -27,9 +28,12 @@ public class ServletCaricaDocentiTotali extends HttpServlet {
         response.setContentType("application/json");
         HttpSession session = request.getSession();
         PrintWriter out = response.getWriter();
-        List<Docente> listRes = dao.mostraDocenti();
         Gson gson = new Gson();
-        String s = gson.toJson(listRes);
+        String s = gson.toJson("non hai i permessi necessari");
+        if(session.getAttribute("ruolo").equals("admin")){
+            List<Docente> listRes = dao.mostraDocenti();
+            s = gson.toJson(listRes);
+        }
         out.print(s);
         out.flush();
     }

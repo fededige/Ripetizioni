@@ -24,7 +24,6 @@ public class ServletInsegnamenti extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317");
         response.setContentType("application/json");
-        HttpSession session = request.getSession();
         PrintWriter out = response.getWriter();
         List<Insegnamento> insegnamenti = dao.getInsegnamenti();
         Gson gson = new Gson();

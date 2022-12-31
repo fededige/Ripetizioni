@@ -21,12 +21,15 @@ public class ServletLogOut extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317");
         response.setContentType("application/json");
-        HttpSession session = request.getSession();
         PrintWriter out = response.getWriter();
-        session.invalidate();
+        HttpSession session = request.getSession();
         Gson gson = new Gson();
-        String s = gson.toJson(true);
-        System.out.println(s);
+        boolean res = false;
+        if(session.getAttribute("ruolo").equals("admin") || session.getAttribute("ruolo").equals("cliente")){
+            session.invalidate();
+            res = true;
+        }
+        String s = gson.toJson(res);
         out.print(s);
         out.flush();
     }

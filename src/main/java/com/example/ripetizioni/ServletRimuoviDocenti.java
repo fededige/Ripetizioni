@@ -2,6 +2,7 @@ package com.example.ripetizioni;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import dao.Corso;
 import dao.DAO;
 import dao.Docente;
 import dao.Prenotazione;
@@ -24,17 +25,18 @@ public class ServletRimuoviDocenti extends HttpServlet {
     }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-            response.setContentType("application/json");
-            System.out.println("siamo in cancelllaasdadads");
-            PrintWriter out = response.getWriter();
-            Gson gson =  new Gson();
-            Type token = new TypeToken<Docente>(){}.getType();
-            System.out.println(request.getParameter("docente"));
-            Docente docente = gson.fromJson(request.getParameter("docente"), token);
-            boolean cancellazione = dao.rimuoviDocenti(docente.getMatricola());
-            System.out.println("39 cancella "+cancellazione);
-            out.print(cancellazione);
-            out.flush();
+        response.setContentType("application/json");
+        System.out.println("siamo in ServletRimuoviDocenti");
+        PrintWriter out = response.getWriter();
+        Gson gson =  new Gson();
+        HttpSession session = request.getSession();
+        boolean res = false;
+        if(session.getAttribute("ruolo").equals("admin")){
+            Docente docente = gson.fromJson(request.getParameter("docente"), Docente.class);
+            res = dao.rimuoviDocenti(docente.getMatricola());
+        }
+        out.print(res);
+        out.flush();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
