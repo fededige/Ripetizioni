@@ -681,8 +681,7 @@
                         <input type="text" placeholder="Search..." id="corsiTotaliInput"
                                v-on:keyup="filterFunction('corsiTotaliInput','corsiTotaliDropDown')">
                         <div v-for="corso in corsiTot">
-                            <a v-on:click="FunCorsoSceltoDaAggiungere(corso, `corsiTotaliDropDown`)">{{ `${corso.codice} ${corso.titolo_corso}`
-                                }}</a>
+                            <a v-on:click="FunCorsoSceltoDaAggiungere(corso, `corsiTotaliDropDown`)">{{ `${corso.codice} ${corso.titolo_corso}` }}</a>
                         </div>
                     </div>
                 </div>
@@ -1488,8 +1487,9 @@
             getPrenotazioni: function () {
                 var self = this;
                 console.log(self.utente.ruolo);
-                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletRipetizionieff", {utente: self.utente.ruolo === "admin" ? null : self.utente.nome_utente},
+                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletRipetizionieff",{},
                     function (data) {
+                        console.log(data);
                         self.ripetizioniEffettuate = [];
                         self.ripetizioniDaFare = [];
                         self.ripetizioniCancellate = [];
@@ -1704,6 +1704,7 @@
                         } else {
                             console.log("errore in insertInsegnamenti");
                         }
+                        self.getInsegnamenti();
                     }
                 );
             }

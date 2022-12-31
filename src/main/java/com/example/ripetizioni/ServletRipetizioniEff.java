@@ -26,13 +26,17 @@ public class ServletRipetizioniEff extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
         HttpSession session = request.getSession();
-        String usr =null;
-        if(request.getParameter("utente") != null){
-            usr=request.getParameter("utente");
-        }
-        List<Prenotazione> RipetizioniEff = dao.mostraPrenotazioni(usr);
+        List<Prenotazione> RipetizioniEff = null;
         Gson gson = new Gson();
-        String s = gson.toJson(RipetizioniEff);
+        String s = gson.toJson("Non hai i permessi necessari");
+        if(session.getAttribute("ruolo").equals("admin")){
+            RipetizioniEff = dao.mostraPrenotazioni(null);
+            s = gson.toJson(RipetizioniEff);
+        }
+        else if(session.getAttribute("ruolo").equals("cliente")){
+            RipetizioniEff = dao.mostraPrenotazioni(session.getAttribute("login").toString());
+            s = gson.toJson(RipetizioniEff);
+        }
         out.print(s);
         out.flush();
     }

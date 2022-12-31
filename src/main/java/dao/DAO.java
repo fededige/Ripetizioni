@@ -599,8 +599,9 @@ public class DAO {
         return usr;
     }
 
-    public void insertPrenotazione(ArrayList<Prenotazione> prenotazioni){
+    public boolean insertPrenotazione(ArrayList<Prenotazione> prenotazioni){
         Connection conn = openConnection();
+        boolean flag = false;
         int i = 0;
         try{
             String sql = "INSERT INTO prenotazione(corso, docente, utente, giorno, ora, stato) VALUES (?, ?, ?, ?, ?, ?)";
@@ -617,6 +618,7 @@ public class DAO {
                 }
             }
             st.close();
+            flag = true;
         }catch (SQLException e){
             if(e.getErrorCode() == 1062){ //tupla già presente
                 System.out.println("qualcosa che non dove succedere");
@@ -627,6 +629,7 @@ public class DAO {
         }finally {
             closeConnection(conn);
         }
+        return flag;
     }
 
     public boolean controlloPrenotazioniEsistenti(int docente,String giorno,String ora){
@@ -828,8 +831,7 @@ public class DAO {
         try{
             String sql= "SELECT * FROM prenotazione";
             System.out.println("795 ."+ usr + ".");
-            System.out.println(usr.length());
-            if(usr != null && usr.length() != 0){
+            if(usr != null){
                 System.out.println(usr.length());
                 sql +=" WHERE utente= '"+usr+"'";
             }
