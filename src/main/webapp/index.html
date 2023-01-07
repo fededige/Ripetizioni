@@ -592,7 +592,7 @@
                            required>
                 </div>
                 <div class="row justify-content-center">
-                    <button class="btn btn-secondary" type="submit"
+                    <button class="btn btn-secondary" type="button"
                             v-on:click="insertDocente()">Aggiungi Docente</button>
                 </div>
             </form>
@@ -637,7 +637,7 @@
                     <input v-model="InputCodiceCorso" type="text" class="form-control" id="InputCodiceCorso" required>
                 </div>
                 <div class="row justify-content-center">
-                    <button class="btn btn-secondary" type="submit" v-on:click="insertCorso()">Aggiungi Corso</button>
+                    <button class="btn btn-secondary" type="button" v-on:click="insertCorso()">Aggiungi Corso</button>
                 </div>
             </form>
         </div>
@@ -1543,7 +1543,12 @@
                 $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletCaricaDocentiTotali", {},
                     function (data) {
                         self.docentiTot = data;
-                        self.MatricolaDocente = (self.docentiTot[self.docentiTot.length - 1].matricola + 1);
+                        console.log(self.docentiTot);
+                        if(self.docentiTot.length === 0){
+                            self.MatricolaDocente = 0;
+                        }else{
+                            self.MatricolaDocente = (self.docentiTot[self.docentiTot.length - 1].matricola + 1);
+                        }
                     }
                 );
             },
@@ -1553,7 +1558,10 @@
                 $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletCaricaCorsiTotali", {},
                     function (data) {
                         self.corsiTot = data;
-                        self.CodiceUltimoCorso = (self.corsiTot[self.corsiTot.length - 1].codice + 1);
+                        if(self.corsiTot.length === 0){
+                            self.CodiceUltimoCorso = 0;
+                        }else
+                            self.CodiceUltimoCorso = (self.corsiTot[self.corsiTot.length - 1].codice + 1);
                     }
                 );
             },
@@ -1566,6 +1574,7 @@
                     function (data) {
                         if (data) {
                             console.log("cancellazione andata a buon fine");
+                            //TODO RIMUOVORE INSEGAMENTO CORRISPONDENTE
                             self.caricaDocenti();
                         } else {
                             console.log("errore in rimuoviDocente, check");
@@ -1582,10 +1591,12 @@
                     function (data) {
                         if (data) {
                             console.log("cancellazione andata a buon fine");
+                            //TODO RIMUOVORE INSEGAMENTI CORRISPONDENTE
+                            self.caricaCorsi();
                         } else {
                             console.log("errore in rimuoviDocente, check");
                         }
-                        self.caricaCorsi();
+
                     }
                 );
             },
