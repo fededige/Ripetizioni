@@ -70,12 +70,11 @@ public class DAO {
         Connection c = openConnection();
         int i = 0;
         try{
-            String sql = "INSERT INTO corso(codice, titolocorso, stato) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO corso(titolocorso, stato) VALUES (?, ?)";
             PreparedStatement st = c.prepareStatement(sql);
             for (i = 0; i < corsi.size(); i++) {
-                st.setInt(1, corsi.get(i).getCodice());
-                st.setString(2, corsi.get(i).getTitolo_corso());
-                st.setBoolean(3, corsi.get(i).isStato());
+                st.setString(1, corsi.get(i).getTitolo_corso());
+                st.setBoolean(2, corsi.get(i).isStato());
                 st.executeUpdate();
             }
             st.close();
@@ -93,11 +92,10 @@ public class DAO {
     public boolean insertCorsi(Corso corso){
         Connection c = openConnection();
         try{
-            String sql = "INSERT INTO corso(codice, titolocorso, stato) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO corso(titolocorso, stato) VALUES (?, ?)";
             PreparedStatement st = c.prepareStatement(sql);
-            st.setInt(1, corso.getCodice());
-            st.setString(2, corso.getTitolo_corso());
-            st.setBoolean(3, corso.isStato());
+            st.setString(1, corso.getTitolo_corso());
+            st.setBoolean(2, corso.isStato());
             st.executeUpdate();
             st.close();
         }catch (SQLException e){
@@ -113,7 +111,7 @@ public class DAO {
         ArrayList<Corso> corsi = new ArrayList<>();
         try{
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM corso WHERE stato=true");
+            ResultSet rs = st.executeQuery("SELECT * FROM corso WHERE stato = true");
             while (rs.next()){
                 Corso c = new Corso(rs.getInt("codice"),rs.getString("titolocorso"));
                 corsi.add(c);
@@ -188,13 +186,12 @@ public class DAO {
         Connection conn = openConnection();
         int i = 0;
         try{
-            String sql = "INSERT INTO docente(matricola, cognome, nome, stato) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO docente(cognome, nome, stato) VALUES (?, ?, ?)";
             PreparedStatement st = conn.prepareStatement(sql);
             for (i = 0; i < docenti.size(); i++) {
-                st.setInt(1, docenti.get(i).getMatricola());
-                st.setString(2, docenti.get(i).getCognome());
-                st.setString(3, docenti.get(i).getNome());
-                st.setBoolean(4, docenti.get(i).isStato());
+                st.setString(1, docenti.get(i).getCognome());
+                st.setString(2, docenti.get(i).getNome());
+                st.setBoolean(3, docenti.get(i).isStato());
                 st.executeUpdate();
             }
             st.close();
@@ -212,12 +209,11 @@ public class DAO {
     public boolean insertDocenti(Docente docente){
         Connection conn = openConnection();
         try{
-            String sql = "INSERT INTO docente(matricola, cognome, nome, stato) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO docente(cognome, nome, stato) VALUES (?, ?, ?)";
             PreparedStatement st = conn.prepareStatement(sql);
-            st.setInt(1, docente.getMatricola());
-            st.setString(2, docente.getCognome());
-            st.setString(3, docente.getNome());
-            st.setBoolean(4, docente.isStato());
+            st.setString(1, docente.getCognome());
+            st.setString(2, docente.getNome());
+            st.setBoolean(3, docente.isStato());
             st.executeUpdate();
             st.close();
         }catch (SQLException e){
@@ -356,13 +352,9 @@ public class DAO {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM insegna WHERE stato = true");
             while (rs.next()){
-                System.out.println("DAO.getInsegnamenti");
-                System.out.println(getCorso(rs.getInt("corso")).getCodice());
                 Insegnamento insegnamento = new Insegnamento(getCorso(rs.getInt("corso")), getDocente(rs.getInt("docente")));
                 insegnamenti.add(insegnamento);
             }
-            for(Insegnamento insegnamento:insegnamenti)
-                System.out.println(insegnamento.getCorso().getCodice());
             st.close();
         }catch (SQLException e){
             System.out.println(e.getMessage());
@@ -414,14 +406,36 @@ public class DAO {
     public boolean rimuoviInsegnamento(Insegna insegnamento){
         Connection conn = openConnection();
         try{
-            String sql = "UPDATE insegna SET stato = false WHERE docente = ? and corso= ?";
-            PreparedStatement st = conn.prepareStatement(sql);
-            st.setInt(1, insegnamento.getDocente());
-            st.setInt(2, insegnamento.getCorso());
-            if(st.executeUpdate() == 0){
-                System.out.println("executeUpdate: Insegnamento inesistente");
+            String sql = "UPDATE insegna SET stato = false ";
+            if(insegnamento.getCorso() == -1 || insegnamento.getDocente() == -1){
+                sql += " WHERE";
+                if (insegnamento.getDocente() != -1) {
+                    sql += "  docente = ?";
+                    PreparedStatement st = conn.prepareStatement(sql);
+                    st.setInt(1, insegnamento.getDocente());
+                    if(st.executeUpdate() == 0){
+                        System.out.println("executeUpdate: Insegnamento inesistente");
+                    }
+                    st.close();
+                }else if(insegnamento.getCorso() != -1){ // passo -1 per quando elimino solo il corso e quimdi devo rimuovere l'insegnamento
+                    sql += "  corso = ?";
+                    PreparedStatement st = conn.prepareStatement(sql);
+                    st.setInt(1, insegnamento.getCorso());
+                    if(st.executeUpdate() == 0){
+                        System.out.println("executeUpdate: Insegnamento inesistente");
+                    }
+                    st.close();
+                }
+            }else if(insegnamento.getCorso() != -1 || insegnamento.getDocente() != -1){
+                sql += " WHERE docente = ? and corso= ?";
+                PreparedStatement st = conn.prepareStatement(sql);
+                st.setInt(1, insegnamento.getDocente());
+                st.setInt(2, insegnamento.getCorso());
+                if(st.executeUpdate() == 0){
+                    System.out.println("executeUpdate: Insegnamento inesistente");
+                }
+                st.close();
             }
-            st.close();
         }catch (SQLException e){
             System.out.println(e.getMessage());
             return false;
