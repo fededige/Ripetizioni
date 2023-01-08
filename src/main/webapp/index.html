@@ -586,10 +586,32 @@
                 <input v-model="InputCognomeDocente" type="text" class="form-control" id="InputCognomeDocente"
                        required>
             </div>
+
+            <!--**********************************************************************-->
             <div class="row justify-content-center">
-                <button class="btn btn-secondary" type="button"
-                        v-on:click="insertDocente()">Aggiungi Docente</button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#aggiungiDoc" v-on:click="insertDocente()">
+                    Aggiungi Docente
+                </button>
+                <div class="modal fade" id="aggiungiDoc" tabindex="-1" role="dialog" aria-labelledby="aggiungiDoc" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="titoloaggDoc">Aggiungi Docente</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        {{ messaggio }}
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
             </div>
+            <!--**********************************************************************-->
         </div>
     </span>
     <span v-if="paginaEliminaDocente">
@@ -612,10 +634,32 @@
             <p class="h5 mt-4">Sei sicuro di voler eliminare il docente: <span
                     v-if="docenteSceltoDaEliminare.cognome != 'Scegli Docente'">{{ docenteSceltoDaEliminare.cognome
                 }}</span></p>
-            <div class="d-grid gap-2 d-md-block mt-4"> <!--mx-4 serve per mettere il margine-->
-                    <button class="btn btn-secondary" type="button"
-                            v-on:click="rimuoviDocente()">Conferma eliminazione</button>
+
+            <!--**********************************************************************-->
+            <div class="row justify-content-center">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#rimuoviDoc" v-on:click="rimuoviDocente()">
+                    Conferma eliminazione
+                </button>
+                <div class="modal fade" id="rimuoviDoc" tabindex="-1" role="dialog" aria-labelledby="rimuoviDoc" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="titolorimDoc">Rimuovi Docente</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        {{ messaggio }}
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
             </div>
+            <!--**********************************************************************-->
         </div>
     </span>
     <span v-if="paginaAggiungiCorso">
@@ -625,9 +669,32 @@
                 <label for="InputCodiceCorso" class="form-label font-weight-bold">Titolo Corso </label>
                 <input v-model="InputCodiceCorso" type="text" class="form-control" id="InputCodiceCorso" required>
             </div>
+
+            <!--**********************************************************************-->
             <div class="row justify-content-center">
-                <button class="btn btn-secondary" type="button" v-on:click="insertCorso()">Aggiungi Corso</button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#aggiungiCor" v-on:click="insertCorso()">
+                    Aggiungi Corso
+                </button>
+                <div class="modal fade" id="aggiungiCor" tabindex="-1" role="dialog" aria-labelledby="aggiungiCor" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="titoloaggCor">Aggiungi Corso</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        {{ messaggio }}
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
             </div>
+            <!--**********************************************************************-->
         </div>
     </span>
     <span v-if="paginaEliminaCorso">
@@ -652,10 +719,32 @@
             <p class="h5 mt-4">Sei sicuro di voler eliminare il corso: <span
                     v-if="corsoSceltoDaEliminare.titolo_corso != 'Scegli Corso'">{{ corsoSceltoDaEliminare.titolo_corso
                 }}</span></p>
-            <div class="d-grid gap-2 d-md-block mt-4">
-                    <button class="btn btn-secondary" type="button"
-                            v-on:click="rimuoviCorso()">Conferma eliminazione</button>
+
+            <!--**********************************************************************-->
+            <div class="row justify-content-center">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#rimuoviCor" v-on:click="rimuoviCorso()">
+                    Conferma eliminazione
+                </button>
+                <div class="modal fade" id="rimuoviCor" tabindex="-1" role="dialog" aria-labelledby="rimuoviCor" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="titolorimCor">Rimuovi Corso</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        {{ messaggio }}
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
             </div>
+            <!--**********************************************************************-->
         </div>
     </span>
     <span v-if="paginaAggiungiInsegnamenti">
@@ -692,12 +781,31 @@
                     </div>
                 </div>
             </div>
-            <div class="row justify-content-center mt-3">
-                <div class="row justify-content-center">
-                      <button class="btn btn-secondary" type="button"
-                              v-on:click="insertInsegnamenti()">Aggiungi</button>
+            <!--**********************************************************************-->
+            <div class="row justify-content-center">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#aggiungiIns" v-on:click="insertInsegnamenti()">
+                    Aggiungi Docente
+                </button>
+                <div class="modal fade" id="aggiungiIns" tabindex="-1" role="dialog" aria-labelledby="aggiungiIns" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="titoloaggIns">Aggiungi Insegnamento</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        {{ messaggio }}
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
             </div>
+            <!--**********************************************************************-->
         </div>
         </span>
     <span v-if="paginaEliminaInsegnamenti">
@@ -720,9 +828,32 @@
                     <p class="font-weight-bold mt-4">Sei sicuro di voler eliminare l'insegnamento: <span
                             v-if="corsoSceltoDaEliminare.titolo_corso != 'Scegli Corso'">{{ corsoSceltoDaEliminare.titolo_corso
                         }} {{ docenteSceltoDaEliminare.cognome }}</span></p>
-                    <div class="row justify-content-center d-grid gap-2 d-md-block mt-4">
-                        <button class="btn btn-secondary" type="button" v-on:click="rimuoviInsegnamento(null,null)">Conferma eliminazione</button>
+
+                <!--**********************************************************************-->
+            <div class="row justify-content-center">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#rimuoviIns" v-on:click="rimuoviInsegnamento(null,null)">
+                    Conferma eliminazione
+                </button>
+                <div class="modal fade" id="rimuoviIns" tabindex="-1" role="dialog" aria-labelledby="rimuoviIns" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="titolorimIns">Rimuovi Insegnamento</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        {{ messaggio }}
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      </div>
                     </div>
+                  </div>
+                </div>
+            </div>
+                <!--**********************************************************************-->
             </div>
         </div>
     </span>
@@ -1554,13 +1685,13 @@
                     function (data) {
                         if (data) {
                             console.log("cancellazione andata a buon fine");
-                            window.alert("Docente cancellato correttamente");
+                            self.messaggio="Docente cancellato correttamente";
 
                             self.rimuoviInsegnamento(self.docenteSceltoDaEliminare,null);
                             self.caricaDocenti();
                         } else {
                             console.log("errore in rimuoviDocente, check");
-                            window.alert("Errore!!! Docente non cancellato");
+                            self.messaggio="Errore!!! Docente non cancellato";
                         }
                     }
                 );
@@ -1574,12 +1705,12 @@
                     function (data) {
                         if (data) {
                             console.log("cancellazione andata a buon fine");
-                            window.alert("Corso cancellato correttamente");
+                            self.messaggio="Corso cancellato correttamente";
                             self.rimuoviInsegnamento(null,self.corsoSceltoDaEliminare);
                             self.caricaCorsi();
                         } else {
                             console.log("errore in rimuoviDocente, check");
-                            window.alert("Errore!!! Corso non cancellato")
+                            self.messaggio="Errore!!! Corso non cancellato";
                         }
 
                     }
@@ -1587,21 +1718,25 @@
             },
             rimuoviInsegnamento: function ( d, c) {
                 var self = this;
+                var flag = false;
                 console.log("Sono in rimuovi Insegnamento " + self.insegnamentoSceltoDaEliminare);
                 var insegnamentoDaEliminare=[];
                 if(d !== null || c !== null){
+                    flag=true;
                     if(d !== null){
                         insegnamentoDaEliminare = {
                             "corso": -1,
                             "docente": d.matricola,
                             "stato" : true
                         };
+                        self.messaggio="Docente cancellato correttamente"; // scrivo qui perche vengo chiamato da rimuoviDOcente e messaggio si azzera
                     }else if( c !== null){
                         insegnamentoDaEliminare = {
                             "corso": c.codice,
                             "docente":-1,
                             "stato" : true
                         };
+                        self.messaggio="Corso cancellato correttamente";
                     }
                 }else{
                     insegnamentoDaEliminare = {
@@ -1609,18 +1744,20 @@
                         "docente": self.insegnamentoSceltoDaEliminare.docente.matricola,
                         "stato": true
                     };
+                    self.messaggio="PROVA";
                 }
 
                 var myJson = JSON.stringify(insegnamentoDaEliminare);
-                console.log("rimuovi insegnamento: " + myJson);
                 $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRimuoviInsegnamento", {insegnamento: myJson.toString()},
                     function (data) {
                         if (data) {
                             console.log("cancellazione andata a buon fine");
-                            window.alert("Insegnamento cancellato correttamente");
+                            if(flag === false)
+                                self.messaggio="Insegnamento cancellato correttamente";
                         } else {
                             console.log("errore in rimuoviInsegnamento, check");
-                            window.alert("Errore!! Insegnamento non cancellato");
+                            if(flag == false)
+                                self.messaggio="Errore!! Insegnamento non cancellato";
                         }
                         self.getInsegnamenti();
                     }
@@ -1629,6 +1766,7 @@
             insertDocente: function () {
                 var self = this;
                 if (self.InputNomeDocente == null || self.InputCognomeDocente == null) {
+                    self.messaggio="Campi vuoti";
                     return;
                 }
                 self.NuovoDocente = {
@@ -1646,10 +1784,10 @@
                     function (data) {
                         if (data) {
                             console.log("aggiunta andata a buon fine");
-                            window.alert("Docente aggiunto correttamente");
+                            self.messaggio="Docente aggiunto correttamente";
                         } else {
                             console.log("errore in insertDocente, check");
-                            window.alert("Errore!!! Docente non aggiunto ");
+                            self.messaggio="Errore!!! Docente non aggiunto ";
                         }
                         self.caricaDocenti();
                     }
@@ -1673,10 +1811,10 @@
                     function (data) {
                         if (data) {
                             console.log("insermineto andata a buon fine");
-                            window.alert("Corso aggiunto correttamente");
+                            self.messaggio="Corso aggiunto correttamente";
                         } else {
                             console.log("errore in insert Corso, check");
-                            window.alert("Errore!!! Corso non aggiunto");
+                            self.messaggio="Errore!!! Corso non aggiunto";
                         }
                         self.caricaCorsi();
                     }
@@ -1721,10 +1859,10 @@
                     function (data) {
                         if (data) {
                             console.log("inserimento andato a buon fine");
-                            window.alert("Inserimento andato a buon fine");
+                            self.messaggio="Inserimento andato a buon fine";
                         } else {
                             console.log("errore in insertInsegnamenti");
-                            window.alert("Inserimento non andato a buon fine");
+                            self.messaggio="Inserimento non andato a buon fine";
                         }
                         self.getInsegnamenti();
                     }
