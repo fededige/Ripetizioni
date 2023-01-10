@@ -35,12 +35,22 @@ public class ServletAuth extends HttpServlet {
         String login =  request.getParameter("login");
         String password = request.getParameter("password");
         PrintWriter out = response.getWriter();
+        String res;
+        String s;
+        Gson gson = new Gson();
         if (login != null && password != null) {
             Utente user = dao.utenteEsistente(login, password);
-            session.setAttribute("login", user.getNome_utente());
-            session.setAttribute("ruolo", user.getRuolo());
-            Gson gson = new Gson();
-            String s = gson.toJson(user);
+            if(user.getNome_utente() == null && !user.isStato()){
+                res = "UtenteInesistente";
+                s = gson.toJson(res);
+            } else if(user.getNome_utente() == null && user.isStato()){
+                res = "PasswordErrata";
+                s = gson.toJson(res);
+            }else{
+                session.setAttribute("login", user.getNome_utente());
+                session.setAttribute("ruolo", user.getRuolo());
+                s = gson.toJson(session);
+            }
             System.out.println(s);
             out.print(s);
         }

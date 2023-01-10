@@ -969,20 +969,20 @@
                             password: self.InputPassword
                         },
                         function (data) {
-                            self.utente = data;
-                            if (self.utente != null) {
-                                if (self.utente.nome_utente == null) {
-                                    if (self.utente.stato === true) {
-                                        self.messaggio = "password errata";
-                                    } else {
-                                        self.messaggio = "utente inesistente";
-                                    }
-                                } else {
-                                    self.visualizzaPagina("home");
-                                    self.ruolo = self.utente.ruolo.toLowerCase();
-                                    self.giornoSelezionato = "Lunedì";
-                                    self.getPrenotazioni();
-                                }
+                            if(data === "UtenteInesistente"){
+                                self.messaggio = "utente inesistente";
+                            } else if(data === "PasswordErrata"){
+                                self.messaggio = "password errata";
+                            } else if(data != null){
+                                self.utente = {"nome_utente": self.InputNomeUtente, "password": self.InputPassword, "ruolo": data.session.attributes["ruolo"]};
+                                // self.utente.nome_utente = self.InputNomeUtente;
+                                // self.utente.password = self.InputPassword;
+                                // self.utente.ruolo = data.split(";")[1];
+
+                                self.visualizzaPagina("home");
+                                self.ruolo = self.utente.ruolo.toLowerCase();
+                                self.giornoSelezionato = "Lunedì";
+                                self.getPrenotazioni();
                             } else {
                                 self.messaggio = "errore richiesta";
                             }
@@ -1392,10 +1392,13 @@
                 var vp = document.getElementById(idVp).value;
                 var np = document.getElementById(idNp).value;
                 var cnp = document.getElementById(idCNp).value;
-                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletImpostazioni", {
+                if(np.toString() !== cnp.toString()){
+                    self.messaggio = "Le password non corrispondono";
+                    return;
+                }
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletImpostazioni", {
                         vecchiaPassword: vp.toString(),
                         nuovaPassword: np.toString(),
-                        confermaNuovaPassword: cnp.toString()
                     },
                     function (data) {
                         if (data) {
@@ -1517,7 +1520,7 @@
             confermaRipetizioni: function () {
                 var self = this;
                 var myJson = JSON.stringify(self.carrelloRipetizioni);
-                console.log(myJson);
+                console.log("obiettivo" + myJson); //qesta dovrebbe uessere una post
                 $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletInserimentoRipetizioni", {prenotazioni: myJson.toString()},
                     function (data) {
                         if (data) {
