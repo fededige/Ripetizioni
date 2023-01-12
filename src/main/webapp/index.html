@@ -23,22 +23,78 @@
 <body>
 <div id="spa">
     <span v-if="paginaLogIn">
-        <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
-            <div class="mb-3">
-                <label for="InputNomeUtente" class="form-label">Nome utente</label>
+        <div class="col-sm-3 m-auto">
+            <div class="input-group mb-3">
                 <input v-model="InputNomeUtente" type="text" class="form-control" id="InputNomeUtente"
-                       aria-describedby="emailHelp">
+                       aria-describedby="emailHelp" placeholder="Inserisci NomeUtente">
             </div>
-            <div class="mb-3">
-                <label for="InputPassword" class="form-label">Password</label>
-                <input v-model="InputPassword" type="password" class="form-control" id="InputPassword">
+            <div class="input-group mb-3">
+                <input id="password" type="password" class="form-control"
+                       placeholder="Inserisci Password" aria-label="Recipient's password"
+                       aria-describedby="basic-addon2" v-model="InputPassword" required>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button"
+                            v-on:click="mostraPassword('password')">
+                        <span v-if="mostraNp">
+                            <i class="fa fa-eye" aria-hidden="true"></i>
+                        </span>
+                        <span v-else>
+                            <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                        </span>
+                    </button>
+                </div>
             </div>
-            <div class="row justify-content-center">
-                <button v-on:click="transit" type="button" class="btn btn-primary">Log in</button>
+            <div class="row justify-content-center ">
+                <button v-on:click="transit" type="button" class="btn btn-primary mr-2">Log in</button>
+                <button v-on:click="visualizzaPagina('home')" type="button"
+                        class="btn btn-danger ml-2">Annulla</button>
             </div>
-            <div class="row justify-content-center">
-                    <button v-on:click="visualizzaPagina('home')" type="button"
-                            class="btn btn-danger mt-2">Annulla</button>
+            <p>{{messaggio}}</p>
+        </div>
+    </span>
+<!--            v-model="InputPassword"-->
+    <span v-else-if="registrati">
+        <div class="col-sm-3 m-auto">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" id="InputNomeUtenteRegistazione"
+                       aria-describedby="emailHelp" placeholder="Inserisci NomeUtente">
+            </div>
+            <div class="input-group mb-3">
+                <input id="passwordRegistrazione" type="password" class="form-control"
+                       placeholder="Inserisci Password" aria-label="Recipient's password"
+                       aria-describedby="basic-addon2" required>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button"
+                            v-on:click="mostraPassword('passwordRegistrazione')">
+                        <span v-if="mostraNp">
+                            <i class="fa fa-eye" aria-hidden="true"></i>
+                        </span>
+                        <span v-else>
+                            <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <div class="input-group mb-3">
+                <input id="confermaPasswordRegistrazione" type="password" class="form-control"
+                       placeholder="Inserisci Password" aria-label="Recipient's password"
+                       aria-describedby="basic-addon2" required>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button"
+                            v-on:click="mostraPassword('confermaPasswordRegistrazione')">
+                        <span v-if="mostraCNp">
+                            <i class="fa fa-eye" aria-hidden="true"></i>
+                        </span>
+                        <span v-else>
+                            <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <div class="row justify-content-center ">
+                <button v-on:click="registraUtente" type="button" class="btn btn-primary mr-2">Registrati</button>
+                <button v-on:click="visualizzaPagina('home')" type="button"
+                        class="btn btn-danger ml-2">Annulla</button>
             </div>
             <p>{{messaggio}}</p>
         </div>
@@ -48,6 +104,10 @@
              <div class="row justify-content-end mt-2 mr-3">
                     <button class="btn btn-secondary" type="button"
                             v-on:click="visualizzaPagina('login')">Login</button>
+             </div>
+            <div class="row justify-content-end mt-2 mr-3">
+                    <button class="btn btn-secondary" type="button"
+                            v-on:click="visualizzaPagina('registrati')">Registrati</button>
              </div>
         </span>
          <span class="row justify-content-end mr-4" v-else>
@@ -873,6 +933,7 @@
             paginaEliminaCorso: false,
             paginaAggiungiInsegnamenti: false,
             paginaEliminaInsegnamenti: false,
+            registrati: false,
             ruolo: "ospite",
             utente: null,
             InputNomeUtente: null,
@@ -1380,9 +1441,9 @@
                 var self = this;
                 if (id === "vecchiaPassword") {
                     self.mostraVp = !self.mostraVp;
-                } else if (id === "nuovaPassword") {
+                } else if (id === "nuovaPassword" || id === "password" || id === "passwordRegistrazione") {
                     self.mostraNp = !self.mostraNp;
-                } else if (id === "CnuovaPassword") {
+                } else if (id === "CnuovaPassword" || id === "confermaPasswordRegistrazione") {
                     self.mostraCNp = !self.mostraCNp;
                 }
                 document.getElementById(id).setAttribute("type", document.getElementById(id).getAttribute("type") === "password" ? "text" : "password");
@@ -1540,6 +1601,7 @@
                 self.paginaEliminaCorso = false;
                 self.paginaAggiungiInsegnamenti = false;
                 self.paginaEliminaInsegnamenti = false;
+                self.registrati = false;
                 self.docenteSceltoDaEliminare = {
                     "matricola": 0,
                     "nome": "",
@@ -1600,6 +1662,8 @@
                         self.caricaDocenti();
                         self.paginaEliminaInsegnamenti = true;
                         break;
+                    case "registrati":
+                        self.registrati = true;
                 }
                 if (self.paginaPrenotazioni || self.paginaStorico) {
                     self.getPrenotazioni();
@@ -1867,6 +1931,28 @@
                         self.getInsegnamenti();
                     }
                 );
+            },
+            registraUtente: function (){
+                var self = this;
+                var nomeUtente = document.getElementById("InputNomeUtenteRegistazione").value;
+                var password = document.getElementById("passwordRegistrazione").value;
+                var confermaPassword = document.getElementById("confermaPasswordRegistrazione").value;
+                if(password === confermaPassword){
+                    var nuovoUtente = {"nome_utente": nomeUtente, "password": password, "ruolo": "cliente"};
+                    var myJson = JSON.stringify(nuovoUtente);
+                    console.log(myJson);
+                    $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRegistrazione", {"nuovoUtente": myJson},
+                        function (data) {
+                            if(data){
+                                self.utente = nuovoUtente;
+                                self.visualizzaPagina("home");
+                                self.ruolo = self.utente.ruolo.toLowerCase();
+                                self.giornoSelezionato = "Lunedì";
+                                self.getPrenotazioni();
+                            }
+                        }
+                    );
+                }
             }
         },
         mounted() {
