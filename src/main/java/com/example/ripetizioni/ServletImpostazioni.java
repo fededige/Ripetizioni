@@ -2,6 +2,7 @@ package com.example.ripetizioni;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import dao.DAO;
 import dao.Utente;
 
@@ -10,9 +11,6 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Map;
 
 @WebServlet(name = "ServletImpostazioni", value = "/ServletImpostazioni")
 public class ServletImpostazioni extends HttpServlet {
@@ -35,29 +33,36 @@ public class ServletImpostazioni extends HttpServlet {
     //ogni volta chiedere a ServletAuth
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
-        HttpSession session = request.getSession();
         PrintWriter out = response.getWriter();
         Gson gson = new Gson();
         String s = gson.toJson("non hai i permessi necessari");
+        String sessionID;
         String vecchiaPassword;
         String nuovaPassword;
-        if(session.isNew()){
-            String bodyJson = request.getReader().readLine();
-            JsonObject jobj = new Gson().fromJson( bodyJson, JsonObject.class);
-            vecchiaPassword = gson.fromJson(jobj.get("vecchiaPassword"), String.class);
-            nuovaPassword = gson.fromJson(jobj.get("nuovaPassword"), String.class);
-            JsonObject sessionJson =  new Gson().fromJson( jobj.get("session"), JsonObject.class);
-            Map<String, String> sessioAtt = gson.fromJson(sessionJson.get("attributes"), Map.class);
-            session.setAttribute("ruolo", sessioAtt.get("ruolo"));
-            session.setAttribute("login", sessioAtt.get("login"));
+
+        String body = request.getReader().readLine();
+        System.out.println("body: " + body);
+        if(SessionUtils.isJson(body)){
+            JsonObject obj = new JsonParser().parse(body).getAsJsonObject();
+            sessionID = obj.get("session").getAsString();
+            vecchiaPassword =  obj.get("vecchiaPassword").getAsString();
+            nuovaPassword = obj.get("nuovaPassword").getAsString();
         } else{
-            vecchiaPassword =  request.getParameter("vecchiaPassword");
-            nuovaPassword = request.getParameter("nuovaPassword");
+            vecchiaPassword = body.split("vecchiaPassword=")[1].split("&")[0];
+            nuovaPassword = body.split("nuovaPassword=")[1].split("&")[0];
+            sessionID = body.split("session=")[1].split("&")[0];
         }
+        System.out.println("vecchiaPassword " + vecchiaPassword);
+        System.out.println("nuovaPassword " + nuovaPassword);
+        System.out.println("sessionID " + sessionID);
+
+        HttpSession session = SessionUtils.sessionMap.get(sessionID);
+
 
         if(session.getAttribute("ruolo").equals("admin") || session.getAttribute("ruolo").equals("cliente")){
             boolean res = false;
             String nomeUtente = session.getAttribute("login").toString();
+            System.out.println("login from session" + nomeUtente);
             Utente utente = dao.utenteEsistente(nomeUtente, vecchiaPassword);
             if(utente != null && utente.getNome_utente() != null){
                 res = dao.editPassword(nomeUtente, nuovaPassword);

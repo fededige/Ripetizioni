@@ -1,9 +1,7 @@
 package com.example.ripetizioni;
 
 import com.google.gson.Gson;
-import dao.Corso;
 import dao.DAO;
-import dao.Docente;
 import dao.Utente;
 
 import javax.servlet.ServletConfig;
@@ -16,8 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Date;
 
 @WebServlet(name = "ServletAuth", value = "/ServletAuth")
 public class ServletAuth extends HttpServlet {
@@ -29,7 +25,6 @@ public class ServletAuth extends HttpServlet {
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317");
         response.setContentType("application/json");
         HttpSession session = request.getSession();
         String login =  request.getParameter("login");
@@ -49,7 +44,8 @@ public class ServletAuth extends HttpServlet {
             }else{
                 session.setAttribute("login", user.getNome_utente());
                 session.setAttribute("ruolo", user.getRuolo());
-                s = gson.toJson(session);
+                SessionUtils.sessionMap.put(session.getId(), session);
+                s = gson.toJson(session.getId() + ";" + user.getRuolo());
             }
             System.out.println(s);
             out.print(s);

@@ -974,7 +974,7 @@
                             } else if(data === "PasswordErrata"){
                                 self.messaggio = "password errata";
                             } else if(data != null){
-                                self.utente = {"nome_utente": self.InputNomeUtente, "password": self.InputPassword, "ruolo": data.session.attributes["ruolo"]};
+                                self.utente = {"nome_utente": self.InputNomeUtente, "password": self.InputPassword, "ruolo": data.split(";")[1], "session": data.split(";")[0]};
                                 // self.utente.nome_utente = self.InputNomeUtente;
                                 // self.utente.password = self.InputPassword;
                                 // self.utente.ruolo = data.split(";")[1];
@@ -1192,6 +1192,7 @@
                     var matricolaDoce = "null";
                     var codCorso = "null";
                     var usr = "null";
+                    console.log("utente ospite" + usr);
 
                     if (self.docenteScelto != null) {
                         matricolaDoce = self.docenteScelto.matricola;
@@ -1200,11 +1201,12 @@
                         codCorso = self.corsoScelto.codice;
                     }
                     if (self.utente != null) {
-                        usr = self.utente.nome_utente;
+                        usr = self.utente.session;
                     }
+                    console.log("utente ospite dopo" + usr);
 
 
-                    $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletPrenotazioni", {
+                    $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletPrenotazioni", {
                             docente: matricolaDoce,
                             corso: codCorso,
                             utente: usr
@@ -1396,9 +1398,11 @@
                     self.messaggio = "Le password non corrispondono";
                     return;
                 }
+                console.log("session: " + self.utente.session);
                 $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletImpostazioni", {
                         vecchiaPassword: vp.toString(),
                         nuovaPassword: np.toString(),
+                        session: self.utente.session,
                     },
                     function (data) {
                         if (data) {
@@ -1412,7 +1416,7 @@
             },
             logOut: function () {
                 var self = this;
-                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletLogOut", {},
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletLogOut", {session: self.utente.session},
                     function (data) {
                         if (data) {
                             self.orariDisp = [];

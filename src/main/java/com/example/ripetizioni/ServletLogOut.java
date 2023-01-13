@@ -1,6 +1,7 @@
 package com.example.ripetizioni;
 
-import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import dao.DAO;
 
 import javax.servlet.*;
@@ -18,19 +19,28 @@ public class ServletLogOut extends HttpServlet {
         dao = (DAO) ctx.getAttribute("DAO");
     }
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
-        HttpSession session = request.getSession();
-        Gson gson = new Gson();
+        String sessionID = "";
+        String body = request.getReader().readLine();
+        if(SessionUtils.isJson(body)){
+            JsonObject obj = new JsonParser().parse(body).getAsJsonObject();
+            sessionID = obj.get("session").getAsString();
+        } else {
+            sessionID = body.split("session=")[1];
+        }
+        HttpSession session = SessionUtils.sessionMap.get(sessionID);
+
         boolean res = false;
         if(session.getAttribute("ruolo").equals("admin") || session.getAttribute("ruolo").equals("cliente")){
+            SessionUtils.sessionMap.remove(session.getId());
             session.invalidate();
             res = true;
         }
-        String s = gson.toJson(res);
-        out.print(s);
+        out.print(res);
         out.flush();
     }
+
+
 }

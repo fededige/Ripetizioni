@@ -720,7 +720,10 @@ public class DAO {
     // 1 == docente occupato
     // 2 == utente occupato
 
-    public int[][] prentoazioni_disp(Integer docente, Integer corso, String utente){
+    public int[][] prenotazioni_disp(Integer docente, Integer corso, String utente){
+
+        System.out.println("prenotazioni_disp Pram: " + docente + corso + utente);
+
         Connection conn = openConnection();
         ArrayList<Prenotazione> prenotazioni = null;
         int size = 5;
