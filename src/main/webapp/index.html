@@ -77,7 +77,7 @@
             </div>
             <div class="input-group mb-3">
                 <input id="confermaPasswordRegistrazione" type="password" class="form-control"
-                       placeholder="Inserisci Password" aria-label="Recipient's password"
+                       placeholder="Conferma Password" aria-label="Recipient's password"
                        aria-describedby="basic-addon2" required>
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="button"
@@ -1953,13 +1953,12 @@
                     console.log(myJson);
                     $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRegistrazione", {"nuovoUtente": myJson},
                         function (data) {
-                            if(data){
-                                self.utente = nuovoUtente;
-                                self.visualizzaPagina("home");
-                                self.ruolo = self.utente.ruolo.toLowerCase();
-                                self.giornoSelezionato = "Lunedì";
-                                self.getPrenotazioni();
-                            }
+                            self.utente = nuovoUtente;
+                            self.utente.session = data.split(";")[0];
+                            self.visualizzaPagina("home");
+                            self.ruolo = self.utente.ruolo.toLowerCase();
+                            self.giornoSelezionato = "Lunedì";
+                            self.getPrenotazioni();
                         }
                     );
                 }

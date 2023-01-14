@@ -19,48 +19,27 @@ public class ServletRegistrazione extends HttpServlet {
         dao = (DAO) ctx.getAttribute("DAO");
     }
 
-//    @Override
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317");
-//        response.setContentType("application/json");
-//        HttpSession session = request.getSession();
-//        String username =  request.getParameter("username");
-//        String password = request.getParameter("password");
-//        String confPassword = request.getParameter("confpassword");
-//        System.out.println(username + password + confPassword);
-//        PrintWriter out = response.getWriter();
-//        if (username != null && password != null && confPassword != null) {
-//            if(password.equals(confPassword)){
-//                boolean f = dao.insertUtente(new Utente(username, password, "cliente"));
-//                Utente usr = null;
-//                if(f){
-//                    session.setAttribute("login", username);
-//                    session.setAttribute("ruolo", "cliente");
-//                    usr = new Utente(username, password, "cliente");
-//                }
-//                Gson gson = new Gson();
-//                String s = gson.toJson(usr);
-//                System.out.println("s = " + s);
-//                out.print(s);
-//            }
-//        }
-//        out.flush();
-//    }
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
         HttpSession session = request.getSession();
+        PrintWriter out = response.getWriter();
+        System.out.println(request.getParameter("nuovoUtente"));
         Gson gson = new Gson();
         Utente nuovoUtente = gson.fromJson(request.getParameter("nuovoUtente"), Utente.class);
-        System.out.println("nuovoUtente: " + nuovoUtente.getNome_utente() + nuovoUtente.getPassword());
-        PrintWriter out = response.getWriter();
+        System.out.println("nome_ut: " + nuovoUtente.getNome_utente());
+        System.out.println("pass: " + nuovoUtente.getPassword());
         boolean f = dao.insertUtente(nuovoUtente);
+        String s = "Nome utente esistente";
         if(f){
             session.setAttribute("login", nuovoUtente.getNome_utente());
-            session.setAttribute("ruolo", nuovoUtente.getRuolo());
+            session.setAttribute("ruolo", "cliente");
+            SessionUtils.sessionMap.put(session.getId(), session);
+            s = gson.toJson(session.getId() + ";" + session.getAttribute("ruolo"));
         }
-        out.print(f);
+        System.out.println("s: " + s);
+        out.print(s);
         out.flush();
+        out.close();
     }
 }
