@@ -1,6 +1,8 @@
 package com.example.ripetizioni;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import dao.Corso;
 import dao.DAO;
@@ -26,9 +28,18 @@ public class ServletRimuoviCorso extends HttpServlet {
         response.setContentType("application/json");
         System.out.println("siamo in cancella corso");
         PrintWriter out = response.getWriter();
-        HttpSession session = request.getSession();
         Gson gson =  new Gson();
         boolean res = false;
+
+        String sessionID;
+        if(request.getParameter("session") == null){
+            JsonObject obj = new JsonParser().parse(request.getReader().readLine()).getAsJsonObject();
+            sessionID = obj.get("session").getAsString();
+        } else {
+            sessionID = request.getParameter("session");
+        }
+        HttpSession session = SessionUtils.sessionMap.get(sessionID);
+
         if(session.getAttribute("ruolo").equals("admin")){
             Corso corso = gson.fromJson(request.getParameter("corso"), Corso.class);
             res = dao.rimuoviCorsi(corso.getCodice());

@@ -39,18 +39,15 @@ public class ServletImpostazioni extends HttpServlet {
         String sessionID;
         String vecchiaPassword;
         String nuovaPassword;
-
-        String body = request.getReader().readLine();
-        System.out.println("body: " + body);
-        if(SessionUtils.isJson(body)){
-            JsonObject obj = new JsonParser().parse(body).getAsJsonObject();
+        if(request.getParameter("session") == null){
+            JsonObject obj = new JsonParser().parse(request.getReader().readLine()).getAsJsonObject();
             sessionID = obj.get("session").getAsString();
             vecchiaPassword =  obj.get("vecchiaPassword").getAsString();
             nuovaPassword = obj.get("nuovaPassword").getAsString();
         } else{
-            vecchiaPassword = body.split("vecchiaPassword=")[1].split("&")[0];
-            nuovaPassword = body.split("nuovaPassword=")[1].split("&")[0];
-            sessionID = body.split("session=")[1].split("&")[0];
+            vecchiaPassword = request.getParameter("vecchiaPassword");
+            nuovaPassword = request.getParameter("nuovaPassword");
+            sessionID = request.getParameter("session");
         }
         System.out.println("vecchiaPassword " + vecchiaPassword);
         System.out.println("nuovaPassword " + nuovaPassword);

@@ -52,40 +52,42 @@ public class ServletPrenotazioni extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
         String sessionID = "";
-        String body = request.getReader().readLine();
         String nome_utente = null;
         Integer corso = null;
         Integer docente = null;
         boolean ospite = true;
-        System.out.println(body);
-        if(SessionUtils.isJson(body)){
+        if(request.getParameter("utente") == null){
+            String body = request.getReader().readLine();
+            System.out.println("body in ServletPrenotazioni: " + body);
             JsonObject obj = new JsonParser().parse(body).getAsJsonObject();
-            sessionID = obj.get("session").getAsString();
+            docente = obj.get("docente").getAsInt();
+            System.out.println("docente json: " + docente);
+            corso = obj.get("corso").getAsInt();
+            System.out.println("corso json: " + corso);
+            if(!obj.get("session").getAsString().equals("null")){
+                ospite = false;
+                sessionID = obj.get("session").getAsString();
+                System.out.println("sessionID json: " + sessionID);
+            }
         } else {
-            if(!body.split("utente=")[1].equals("null")){
-                sessionID = body.split("utente=")[1];
-                System.out.println("sessionID: " + sessionID);
+            if(!(request.getParameter("utente").equals("null"))){
+                sessionID = request.getParameter("utente");
                 ospite = false;
             }
-            String temp = body.split("corso=")[1].split("&")[0];
-            System.out.println("tempC: " + temp);
+            String temp = request.getParameter("corso");
             if(!temp.equals("null")){
                 corso = Integer.parseInt(temp);
-                System.out.println("corso: " + corso);
             }
-            temp = body.split("docente=")[1].split("&")[0];
-            System.out.println("tempD: " + temp);
+            temp = request.getParameter("docente");
             if(!temp.equals("null")){
                 docente = Integer.parseInt(temp);
-                System.out.println("docente: " + docente);
             }
         }
         if(!ospite){
             HttpSession session = SessionUtils.sessionMap.get(sessionID);
             nome_utente = session.getAttribute("login").toString();
-            System.out.println("nome_utente: " + nome_utente);
+            System.out.println("nome_utente in ServletPrenotazioni" + nome_utente);
         }
-
         int[][] prenotazioni = dao.prenotazioni_disp(docente, corso, nome_utente);
         Gson gson = new Gson();
         String s = gson.toJson(prenotazioni);

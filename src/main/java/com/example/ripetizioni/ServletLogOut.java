@@ -23,15 +23,14 @@ public class ServletLogOut extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
         String sessionID = "";
-        String body = request.getReader().readLine();
-        if(SessionUtils.isJson(body)){
-            JsonObject obj = new JsonParser().parse(body).getAsJsonObject();
+        System.out.println(request.getParameter("session"));
+        if(request.getParameter("session") == null){
+            JsonObject obj = new JsonParser().parse(request.getReader().readLine()).getAsJsonObject();
             sessionID = obj.get("session").getAsString();
         } else {
-            sessionID = body.split("session=")[1];
+            sessionID = request.getParameter("session");
         }
         HttpSession session = SessionUtils.sessionMap.get(sessionID);
-
         boolean res = false;
         if(session.getAttribute("ruolo").equals("admin") || session.getAttribute("ruolo").equals("cliente")){
             SessionUtils.sessionMap.remove(session.getId());

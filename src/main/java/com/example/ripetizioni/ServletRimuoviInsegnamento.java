@@ -1,6 +1,8 @@
 package com.example.ripetizioni;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import dao.DAO;
 import dao.Docente;
@@ -22,11 +24,11 @@ public class ServletRimuoviInsegnamento extends HttpServlet {
         ServletContext ctx = conf.getServletContext();
         dao = (DAO) ctx.getAttribute("DAO");
     }
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("ciao");
-        doPost(request, response);
-    }
+//    @Override
+//    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        System.out.println("ciao");
+//        doPost(request, response);
+//    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -34,7 +36,16 @@ public class ServletRimuoviInsegnamento extends HttpServlet {
         System.out.println("siamo in ServletRimuoviInsegnamento");
         PrintWriter out = response.getWriter();
         Gson gson =  new Gson();
-        HttpSession session = request.getSession();
+
+        String sessionID;
+        if(request.getParameter("session") == null){
+            JsonObject obj = new JsonParser().parse(request.getReader().readLine()).getAsJsonObject();
+            sessionID = obj.get("session").getAsString();
+        } else {
+            sessionID = request.getParameter("session");
+        }
+        HttpSession session = SessionUtils.sessionMap.get(sessionID);
+
         boolean res = false;
         if(session.getAttribute("ruolo").equals("admin")){
             Insegna insegnamento = gson.fromJson(request.getParameter("insegnamento"), Insegna.class);
