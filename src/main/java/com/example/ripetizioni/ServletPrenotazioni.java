@@ -1,6 +1,8 @@
 package com.example.ripetizioni;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import dao.DAO;
 
 import javax.servlet.*;
@@ -17,22 +19,76 @@ public class ServletPrenotazioni extends HttpServlet {
         ServletContext ctx = conf.getServletContext();
         dao = (DAO) ctx.getAttribute("DAO");
     }
+//    @Override
+//    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        System.out.println("siamo in doGet");
+//        doPost(request, response);
+//    }
+//    @Override
+//    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317");
+//        response.setContentType("application/json");
+//        PrintWriter out = response.getWriter();
+//        Integer corso = null;
+//        Integer docente = null;
+//        System.out.println("kjnj "+request.getParameter("corso"));
+//        System.out.println(request.getParameter("docente"));
+//        if(!request.getParameter("corso").equals("null")){
+//            corso = Integer.parseInt(request.getParameter("corso"));
+//        }
+//        if(!request.getParameter("docente").equals("null")){
+//            docente = Integer.parseInt(request.getParameter("docente"));
+//        }
+//        int[][] prenotazioni = dao.prentoazioni_disp(docente , corso , request.getParameter("utente"));
+//        Gson gson = new Gson();
+//        String s = gson.toJson(prenotazioni);
+//        System.out.println(s);
+//        out.print(s);
+//        out.flush();
+//    }
+
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
+        String sessionID = "";
+        String nome_utente = null;
         Integer corso = null;
         Integer docente = null;
-        System.out.println("kjnj "+request.getParameter("corso"));
-        System.out.println(request.getParameter("docente"));
-        if(!request.getParameter("corso").equals("null")){
-            corso = Integer.parseInt(request.getParameter("corso"));
+        boolean ospite = true;
+        if(request.getParameter("utente") == null){
+            String body = request.getReader().readLine();
+            System.out.println("body in ServletPrenotazioni: " + body);
+            JsonObject obj = new JsonParser().parse(body).getAsJsonObject();
+            docente = obj.get("docente").getAsInt();
+            System.out.println("docente json: " + docente);
+            corso = obj.get("corso").getAsInt();
+            System.out.println("corso json: " + corso);
+            if(!obj.get("session").getAsString().equals("null")){
+                ospite = false;
+                sessionID = obj.get("session").getAsString();
+                System.out.println("sessionID json: " + sessionID);
+            }
+        } else {
+            if(!(request.getParameter("utente").equals("null"))){
+                sessionID = request.getParameter("utente");
+                ospite = false;
+            }
+            String temp = request.getParameter("corso");
+            if(!temp.equals("null")){
+                corso = Integer.parseInt(temp);
+            }
+            temp = request.getParameter("docente");
+            if(!temp.equals("null")){
+                docente = Integer.parseInt(temp);
+            }
         }
-        if(!request.getParameter("docente").equals("null")){
-            docente = Integer.parseInt(request.getParameter("docente"));
+        if(!ospite){
+            HttpSession session = SessionUtils.sessionMap.get(sessionID);
+            nome_utente = session.getAttribute("login").toString();
+            System.out.println("nome_utente in ServletPrenotazioni" + nome_utente);
         }
-        int[][] prenotazioni = dao.prentoazioni_disp(docente , corso , request.getParameter("utente"));
+        int[][] prenotazioni = dao.prenotazioni_disp(docente, corso, nome_utente);
         Gson gson = new Gson();
         String s = gson.toJson(prenotazioni);
         System.out.println(s);
@@ -40,5 +96,3 @@ public class ServletPrenotazioni extends HttpServlet {
         out.flush();
     }
 }
-
-/**/

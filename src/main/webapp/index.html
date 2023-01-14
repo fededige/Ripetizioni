@@ -1030,20 +1030,20 @@
                             password: self.InputPassword
                         },
                         function (data) {
-                            self.utente = data;
-                            if (self.utente != null) {
-                                if (self.utente.nome_utente == null) {
-                                    if (self.utente.stato === true) {
-                                        self.messaggio = "password errata";
-                                    } else {
-                                        self.messaggio = "utente inesistente";
-                                    }
-                                } else {
-                                    self.visualizzaPagina("home");
-                                    self.ruolo = self.utente.ruolo.toLowerCase();
-                                    self.giornoSelezionato = "Lunedì";
-                                    self.getPrenotazioni();
-                                }
+                            if(data === "UtenteInesistente"){
+                                self.messaggio = "utente inesistente";
+                            } else if(data === "PasswordErrata"){
+                                self.messaggio = "password errata";
+                            } else if(data != null){
+                                self.utente = {"nome_utente": self.InputNomeUtente, "password": self.InputPassword, "ruolo": data.split(";")[1], "session": data.split(";")[0]};
+                                // self.utente.nome_utente = self.InputNomeUtente;
+                                // self.utente.password = self.InputPassword;
+                                // self.utente.ruolo = data.split(";")[1];
+
+                                self.visualizzaPagina("home");
+                                self.ruolo = self.utente.ruolo.toLowerCase();
+                                self.giornoSelezionato = "Lunedì";
+                                self.getPrenotazioni();
                             } else {
                                 self.messaggio = "errore richiesta";
                             }
@@ -1253,6 +1253,7 @@
                     var matricolaDoce = "null";
                     var codCorso = "null";
                     var usr = "null";
+                    console.log("utente ospite" + usr);
 
                     if (self.docenteScelto != null) {
                         matricolaDoce = self.docenteScelto.matricola;
@@ -1261,11 +1262,12 @@
                         codCorso = self.corsoScelto.codice;
                     }
                     if (self.utente != null) {
-                        usr = self.utente.nome_utente;
+                        usr = self.utente.session;
                     }
+                    console.log("utente ospite dopo" + usr);
 
 
-                    $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletPrenotazioni", {
+                    $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletPrenotazioni", {
                             docente: matricolaDoce,
                             corso: codCorso,
                             utente: usr
@@ -1453,10 +1455,15 @@
                 var vp = document.getElementById(idVp).value;
                 var np = document.getElementById(idNp).value;
                 var cnp = document.getElementById(idCNp).value;
-                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletImpostazioni", {
+                if(np.toString() !== cnp.toString()){
+                    self.messaggio = "Le password non corrispondono";
+                    return;
+                }
+                console.log("session: " + self.utente.session);
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletImpostazioni", {
                         vecchiaPassword: vp.toString(),
                         nuovaPassword: np.toString(),
-                        confermaNuovaPassword: cnp.toString()
+                        session: self.utente.session,
                     },
                     function (data) {
                         if (data) {
@@ -1470,7 +1477,7 @@
             },
             logOut: function () {
                 var self = this;
-                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletLogOut", {},
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletLogOut", {session: self.utente.session},
                     function (data) {
                         if (data) {
                             self.orariDisp = [];
@@ -1520,6 +1527,7 @@
                             self.visualizzaPagina("home");
                             self.ruolo = "ospite";
                             self.mostraCards = false;
+                            self.utente = null;
                         }
                     }
                 );
@@ -1578,8 +1586,9 @@
             confermaRipetizioni: function () {
                 var self = this;
                 var myJson = JSON.stringify(self.carrelloRipetizioni);
-                console.log(myJson);
-                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletInserimentoRipetizioni", {prenotazioni: myJson.toString()},
+                console.log("carello: " + myJson);
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletInserimentoRipetizioni",
+                    {prenotazioni: myJson, session: self.utente.session},
                     function (data) {
                         if (data) {
                             self.carrelloRipetizioni = [];
@@ -1672,7 +1681,7 @@
             getPrenotazioni: function () {
                 var self = this;
                 console.log(self.utente.ruolo);
-                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletRipetizionieff",{},
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRipetizionieff",{session: self.utente.session},
                     function (data) {
                         console.log(data);
                         self.ripetizioniEffettuate = [];
@@ -1695,7 +1704,7 @@
                 var myJson = JSON.stringify(ripetizione);
                 console.log(myJson);
                 if (dest === "trash") {
-                    $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRipetizioneCancellata", {prenotazione: myJson.toString()},
+                    $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRipetizioneCancellata", {prenotazione: myJson.toString(), session: self.utente.session},
                         function (data) {
                             if (data) {
                                 console.log("cancellazione andata a buon fine");
@@ -1707,7 +1716,7 @@
                         }
                     );
                 } else if (dest === "check") {
-                    $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRipetizioniEffettuate", {prenotazione: myJson.toString()},
+                    $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRipetizioniEffettuate", {prenotazione: myJson.toString(), session: self.utente.session},
                         function (data) {
                             if (data) {
                                 console.log("prenotazione andata a buon fine");
@@ -1725,7 +1734,7 @@
             caricaDocenti: function () {
                 var self = this;
                 console.log("Sono in carica totali Docenti");
-                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletCaricaDocentiTotali", {},
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletCaricaDocentiTotali", {session: self.utente.session},
                     function (data) {
                         self.docentiTot = data;
                     }
@@ -1734,7 +1743,7 @@
             caricaCorsi: function () {
                 var self = this;
                 console.log("Sono in carica totali Corsi");
-                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletCaricaCorsiTotali", {},
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletCaricaCorsiTotali", {session: self.utente.session},
                     function (data) {
                         self.corsiTot = data;
                     }
@@ -1745,7 +1754,7 @@
                 console.log("Sono in rimuovi Docenti" + self.docenteSceltoDaEliminare);
                 var myJson = JSON.stringify(self.docenteSceltoDaEliminare);
                 console.log("1168" + myJson);
-                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRimuoviDocenti", {docente: myJson.toString()},
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRimuoviDocenti", {docente: myJson.toString(), session: self.utente.session},
                     function (data) {
                         if (data) {
                             console.log("cancellazione andata a buon fine");
@@ -1765,7 +1774,7 @@
                 console.log("Sono in rimuovi Corso " + self.corsoSceltoDaEliminare);
                 var myJson = JSON.stringify(self.corsoSceltoDaEliminare);
                 console.log("1239" + myJson);
-                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRimuoviCorso", {corso: myJson.toString()},
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRimuoviCorso", {corso: myJson.toString(), session: self.utente.session},
                     function (data) {
                         if (data) {
                             console.log("cancellazione andata a buon fine");
@@ -1812,7 +1821,7 @@
                 }
 
                 var myJson = JSON.stringify(insegnamentoDaEliminare);
-                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRimuoviInsegnamento", {insegnamento: myJson.toString()},
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRimuoviInsegnamento", {insegnamento: myJson.toString(), session: self.utente.session},
                     function (data) {
                         if (data) {
                             console.log("cancellazione andata a buon fine");
@@ -1844,7 +1853,7 @@
                 self.InputCognomeDocente = null;
                 var myJson = JSON.stringify(self.NuovoDocente);
                 console.log("1255" + myJson.toString());
-                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletInsertDocente", {docente: myJson.toString()},
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletInsertDocente", {docente: myJson.toString(), session: self.utente.session},
                     function (data) {
                         if (data) {
                             console.log("aggiunta andata a buon fine");
@@ -1871,7 +1880,7 @@
                 self.InputCodiceCorso = null;
                 var myJ = JSON.stringify(self.NuovoCorso);
                 console.log("1168" + myJ);
-                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletInsertCorso", {corso: myJ.toString()},
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletInsertCorso", {corso: myJ.toString(), session: self.utente.session},
                     function (data) {
                         if (data) {
                             console.log("insermineto andata a buon fine");
@@ -1919,7 +1928,8 @@
                     "stato": true
                 };
                 var myJs = JSON.stringify(nuovoInsegnamento);
-                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletInserimentoInsegnamenti", {insegnamento: myJs.toString()},
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletInserimentoInsegnamenti",
+                    {insegnamento: myJs.toString(), session: self.utente.session},
                     function (data) {
                         if (data) {
                             console.log("inserimento andato a buon fine");

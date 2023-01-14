@@ -1,6 +1,8 @@
 package com.example.ripetizioni;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import dao.Corso;
 import dao.DAO;
@@ -24,22 +26,26 @@ public class ServletCaricaDocentiTotali extends HttpServlet {
         dao = (DAO) ctx.getAttribute("DAO");
     }
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
-        HttpSession session = request.getSession();
         PrintWriter out = response.getWriter();
         Gson gson = new Gson();
         String s = gson.toJson("non hai i permessi necessari");
+
+        String sessionID;
+        if(request.getParameter("session") == null){
+            JsonObject obj = new JsonParser().parse(request.getReader().readLine()).getAsJsonObject();
+            sessionID = obj.get("session").getAsString();
+        } else {
+            sessionID = request.getParameter("session");
+        }
+        HttpSession session = SessionUtils.sessionMap.get(sessionID);
+
         if(session.getAttribute("ruolo").equals("admin")){
             List<Docente> listRes = dao.mostraDocenti();
             s = gson.toJson(listRes);
         }
         out.print(s);
         out.flush();
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
     }
 }

@@ -1,6 +1,8 @@
 package com.example.ripetizioni;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import dao.DAO;
 import dao.Prenotazione;
@@ -30,7 +32,16 @@ public class ServletRipetizioneCancellata extends HttpServlet {
         PrintWriter out = response.getWriter();
         Gson gson =  new Gson();
         boolean res = false;
-        HttpSession session = request.getSession();
+
+        String sessionID;
+        if(request.getParameter("session") == null){
+            JsonObject obj = new JsonParser().parse(request.getReader().readLine()).getAsJsonObject();
+            sessionID = obj.get("session").getAsString();
+        } else {
+            sessionID = request.getParameter("session");
+        }
+        HttpSession session = SessionUtils.sessionMap.get(sessionID);
+
         if(session.getAttribute("ruolo").equals("admin") || session.getAttribute("ruolo").equals("cliente")){
             Prenotazione prenEff = gson.fromJson(request.getParameter("prenotazione"), Prenotazione.class);
             res = dao.rimuoviPrenotazioni(prenEff);

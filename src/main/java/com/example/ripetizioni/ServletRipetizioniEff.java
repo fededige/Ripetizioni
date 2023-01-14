@@ -1,6 +1,8 @@
 package com.example.ripetizioni;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import dao.DAO;
 import dao.Prenotazione;
 import javax.servlet.*;
@@ -21,14 +23,22 @@ public class ServletRipetizioniEff extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317"); //TODO: utilizzare la sessione al posto di request
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
-        HttpSession session = request.getSession();
         List<Prenotazione> RipetizioniEff = null;
         Gson gson = new Gson();
         String s = gson.toJson("Non hai i permessi necessari");
+
+        String sessionID;
+        if(request.getParameter("session") == null){
+            JsonObject obj = new JsonParser().parse(request.getReader().readLine()).getAsJsonObject();
+            sessionID = obj.get("session").getAsString();
+        } else {
+            sessionID = request.getParameter("session");
+        }
+        HttpSession session = SessionUtils.sessionMap.get(sessionID);
+
         if(session.getAttribute("ruolo").equals("admin")){
             RipetizioniEff = dao.mostraPrenotazioni(null);
             s = gson.toJson(RipetizioniEff);

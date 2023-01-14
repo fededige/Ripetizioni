@@ -55,10 +55,20 @@ public class ServletRegistrazione extends HttpServlet {
         Utente nuovoUtente = gson.fromJson(request.getParameter("nuovoUtente"), Utente.class);
         System.out.println("nuovoUtente: " + nuovoUtente.getNome_utente() + nuovoUtente.getPassword());
         PrintWriter out = response.getWriter();
-        boolean f = dao.insertUtente(nuovoUtente);
-        if(f){
-            session.setAttribute("login", nuovoUtente.getNome_utente());
-            session.setAttribute("ruolo", nuovoUtente.getRuolo());
+        String s = null;
+        if (username != null && password != null && confPassword != null) {
+            if(password.equals(confPassword)){
+                boolean f = dao.insertUtente(new Utente(username, password, "cliente"));
+                if(f){
+                    session.setAttribute("login", username);
+                    session.setAttribute("ruolo", "cliente");
+                    SessionUtils.sessionMap.put(session.getId(), session);
+                    Gson gson = new Gson();
+                    s = gson.toJson(session.getId() + ";" + session.getAttribute("ruolo"));
+                }
+                System.out.println("s = " + s);
+                out.print(s);
+            }
         }
         out.print(f);
         out.flush();
