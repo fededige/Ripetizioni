@@ -463,43 +463,16 @@ public class DAO {
         return utente;
     }
 
-    public boolean insertUtente(ArrayList<Utente> utenti){
-        Connection conn = openConnection();
-        int i = 0;
-        try{
-            String sql = "INSERT INTO utente(nomeutente, password, ruolo, stato) VALUES (?, ?, ?, ?)";
-            PreparedStatement st = conn.prepareStatement(sql);
-            for (i = 0; i < utenti.size(); i++) {
-                st.setString(1, utenti.get(i).getNome_utente());
-                st.setString(2, utenti.get(i).getPassword());
-                st.setString(3, utenti.get(i).getRuolo());
-                st.setBoolean(4, utenti.get(i).isStato());
-                st.executeUpdate();
-            }
-            st.close();
-        }catch (SQLException e){
-            if(e.getErrorCode() == 1062){ //tupla già presente
-                utenti.remove(i);
-                insertUtente(utenti);
-            }
-            System.out.println(e.getMessage());
-        }finally {
-            closeConnection(conn);
-        }
-        return false; //TODO: temp, da modificare
-    }
-
     public boolean insertUtente(Utente utente){
         Connection conn = openConnection();
         int i = 0;
         boolean res = false;
         try{
-            String sql = "INSERT INTO utente(nomeutente, password, ruolo, stato) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO utente(nomeutente, password, ruolo, stato) VALUES (?, ?, ?, true)";
             PreparedStatement st = conn.prepareStatement(sql);
             st.setString(1, utente.getNome_utente());
             st.setString(2, utente.getPassword());
             st.setString(3, utente.getRuolo());
-            st.setBoolean(4, utente.isStato());
             int n = st.executeUpdate();
             System.out.println("n = " + n);
             if(n == 1){
