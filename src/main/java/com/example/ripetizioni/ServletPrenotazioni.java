@@ -60,10 +60,15 @@ public class ServletPrenotazioni extends HttpServlet {
             String body = request.getReader().readLine();
             System.out.println("body in ServletPrenotazioni: " + body);
             JsonObject obj = new JsonParser().parse(body).getAsJsonObject();
-            docente = obj.get("docente").getAsInt();
+
+            if(!obj.get("docente").toString().equals("null"))
+                docente = obj.get("docente").getAsInt();
             System.out.println("docente json: " + docente);
-            corso = obj.get("corso").getAsInt();
+
+            if(!obj.get("corso").toString().equals("null"))
+                corso = obj.get("corso").getAsInt();
             System.out.println("corso json: " + corso);
+
             if(!obj.get("session").getAsString().equals("null")){
                 ospite = false;
                 sessionID = obj.get("session").getAsString();
@@ -91,7 +96,7 @@ public class ServletPrenotazioni extends HttpServlet {
         int[][] prenotazioni = dao.prenotazioni_disp(docente, corso, nome_utente);
         Gson gson = new Gson();
         String s = gson.toJson(prenotazioni);
-        System.out.println(s);
+        System.out.println("ServletPrenotazioni: " + s);
         out.print(s);
         out.flush();
     }

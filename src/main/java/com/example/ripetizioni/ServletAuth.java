@@ -36,11 +36,9 @@ public class ServletAuth extends HttpServlet {
         if (login != null && password != null) {
             Utente user = dao.utenteEsistente(login, password);
             if(user.getNome_utente() == null && !user.isStato()){
-                res = "UtenteInesistente";
-                s = gson.toJson(res);
+                s = "UtenteInesistente";
             } else if(user.getNome_utente() == null && user.isStato()){
-                res = "PasswordErrata";
-                s = gson.toJson(res);
+                s = "PasswordErrata";
             }else{
                 session.setAttribute("login", user.getNome_utente());
                 session.setAttribute("ruolo", user.getRuolo());
