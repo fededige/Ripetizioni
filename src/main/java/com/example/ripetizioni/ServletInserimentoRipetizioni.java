@@ -63,11 +63,11 @@ public class ServletInserimentoRipetizioni extends HttpServlet {
 //    }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("siamo in doGet in ServletInserimentoRipetizioni");
+        System.out.println("siamo in doPost in ServletInserimentoRipetizioni");
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
         Gson gson =  new Gson();
-        boolean res = false;
+        ArrayList<Integer> res = new ArrayList<>();
 
 
         String sessionID;
@@ -76,7 +76,6 @@ public class ServletInserimentoRipetizioni extends HttpServlet {
         if(request.getParameter("session") == null){
             JsonObject obj = new JsonParser().parse(request.getReader().readLine()).getAsJsonObject();
             sessionID = obj.get("session").getAsString();
-            System.out.println("session from Json: " + sessionID);
             bodyArr = String.valueOf(obj.get("prenotazione"));
             System.out.println(bodyArr);
         } else {
@@ -94,6 +93,7 @@ public class ServletInserimentoRipetizioni extends HttpServlet {
             res = dao.insertPrenotazione(prenotazioni);
         }
         String s = gson.toJson(res);
+        System.out.println("s: " + s);
         out.print(s);
         out.flush();
     }

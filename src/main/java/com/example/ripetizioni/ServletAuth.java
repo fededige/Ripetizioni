@@ -25,7 +25,6 @@ public class ServletAuth extends HttpServlet {
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("application/json");
         HttpSession session = request.getSession();
         String login =  request.getParameter("login");
         String password = request.getParameter("password");
@@ -40,6 +39,7 @@ public class ServletAuth extends HttpServlet {
             } else if(user.getNome_utente() == null && user.isStato()){
                 s = "PasswordErrata";
             }else{
+                response.setContentType("application/json");
                 session.setAttribute("login", user.getNome_utente());
                 session.setAttribute("ruolo", user.getRuolo());
                 SessionUtils.sessionMap.put(session.getId(), session);

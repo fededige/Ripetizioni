@@ -586,9 +586,10 @@ public class DAO {
         return usr;
     }
 
-    public boolean insertPrenotazione(ArrayList<Prenotazione> prenotazioni){
+    public ArrayList<Integer> insertPrenotazione(ArrayList<Prenotazione> prenotazioni){
         Connection conn = openConnection();
-        boolean flag = false;
+        ArrayList<Integer> res = new ArrayList<>();
+        System.out.println("in insertPrenotazione");
         int i = 0;
         try{
             String sql = "INSERT INTO prenotazione(corso, docente, utente, giorno, ora, stato) VALUES (?, ?, ?, ?, ?, ?)";
@@ -602,21 +603,25 @@ public class DAO {
                     st.setString(5, prenotazioni.get(i).getOra());
                     st.setBoolean(6, prenotazioni.get(i).isStato());
                     st.executeUpdate();
+                }else{
+                    System.out.println("prenotazioneEsistente");
+                    res.add(i);
+                    //break;
                 }
             }
+            //System.out.println(st.toString());
             st.close();
-            flag = true;
         }catch (SQLException e){
             if(e.getErrorCode() == 1062){ //tupla già presente
-                System.out.println("qualcosa che non dove succedere");
-                prenotazioni.remove(i);
-                insertPrenotazione(prenotazioni);
+                System.out.println("***** qualcosa che non dove succedere *****");
+//                prenotazioni.remove(i);
+//                insertPrenotazione(prenotazioni);
             }
             System.out.println(e.getMessage());
         }finally {
             closeConnection(conn);
         }
-        return flag;
+        return res;
     }
 
     public boolean controlloPrenotazioniEsistenti(int docente,String giorno,String ora){
@@ -638,26 +643,26 @@ public class DAO {
         return true;
     }
 
-    public void insertPrenotazione(Prenotazione prenotazione){
-        Connection conn = openConnection();
-        int i = 0;
-        try{
-            String sql = "INSERT INTO prenotazione(corso, docente, utente, giorno, ora, stato) VALUES (?, ?, ?, ?, ?, ?)";
-            PreparedStatement st = conn.prepareStatement(sql);
-            st.setInt(1, prenotazione.getCorso().getCodice());
-            st.setInt(2, prenotazione.getDocente().getMatricola());
-            st.setString(3,prenotazione.getUtente());
-            st.setString(4, prenotazione.getGiorno());
-            st.setString(5, prenotazione.getOra());
-            st.setBoolean(6,prenotazione.isStato());
-            st.executeUpdate();
-            st.close();
-        }catch (SQLException e){
-            System.out.println(e.getMessage());
-        }finally {
-            closeConnection(conn);
-        }
-    }
+//    public void insertPrenotazione(Prenotazione prenotazione){
+//        Connection conn = openConnection();
+//        int i = 0;
+//        try{
+//            String sql = "INSERT INTO prenotazione(corso, docente, utente, giorno, ora, stato) VALUES (?, ?, ?, ?, ?, ?)";
+//            PreparedStatement st = conn.prepareStatement(sql);
+//            st.setInt(1, prenotazione.getCorso().getCodice());
+//            st.setInt(2, prenotazione.getDocente().getMatricola());
+//            st.setString(3,prenotazione.getUtente());
+//            st.setString(4, prenotazione.getGiorno());
+//            st.setString(5, prenotazione.getOra());
+//            st.setBoolean(6,prenotazione.isStato());
+//            st.executeUpdate();
+//            st.close();
+//        }catch (SQLException e){
+//            System.out.println(e.getMessage());
+//        }finally {
+//            closeConnection(conn);
+//        }
+//    }
 
     public ArrayList<Docente> docentiDisponibili(Integer corso, String giorno, String ora){
         Connection conn = openConnection();
@@ -695,7 +700,7 @@ public class DAO {
 
     public int[][] prenotazioni_disp(Integer docente, Integer corso, String utente){
 
-        System.out.println("prenotazioni_disp Pram: " + docente + corso + utente);
+        System.out.println("prenotazioni_disp Param: " + docente + corso + utente);
 
         Connection conn = openConnection();
         ArrayList<Prenotazione> prenotazioni = null;
