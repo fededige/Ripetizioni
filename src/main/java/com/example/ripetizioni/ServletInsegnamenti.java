@@ -24,7 +24,7 @@ public class ServletInsegnamenti extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
-        List<Insegnamento> insegnamenti = dao.getInsegnamenti();
+        List<Insegnamento> insegnamenti = dao.getInsegnamenti(Integer.parseInt(request.getParameter("id")));
         Gson gson = new Gson();
         String s = gson.toJson(insegnamenti);
         System.out.println(s);

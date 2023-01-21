@@ -345,17 +345,22 @@ public class DAO {
         return insegnamenti;
     }
 
-    public ArrayList<Insegnamento> getInsegnamenti(){ //TODO: risolvere i problemi con mostraInsegnamenti
+    public ArrayList<Insegnamento> getInsegnamenti(int lunghezza){
         Connection conn = openConnection();
         ArrayList<Insegnamento> insegnamenti = new ArrayList<>();
         try{
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM insegna WHERE stato = true");
-            while (rs.next()){
-                Insegnamento insegnamento = new Insegnamento(getCorso(rs.getInt("corso")), getDocente(rs.getInt("docente")));
-                insegnamenti.add(insegnamento);
+            ResultSet conta_insegnamenti = st.executeQuery("SELECT count(*) AS conta FROM insegna WHERE stato = true");
+            System.out.println("prima count "+conta_insegnamenti);
+            conta_insegnamenti.next();
+            if(conta_insegnamenti.getInt("conta") != lunghezza) {
+                ResultSet rs = st.executeQuery("SELECT * FROM insegna WHERE stato = true");
+                while (rs.next()) {
+                    Insegnamento insegnamento = new Insegnamento(getCorso(rs.getInt("corso")), getDocente(rs.getInt("docente")));
+                    insegnamenti.add(insegnamento);
+                }
+                st.close();
             }
-            st.close();
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }finally {

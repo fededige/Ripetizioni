@@ -1030,16 +1030,14 @@
                             password: self.InputPassword
                         },
                         function (data) {
+                            console.log("prova");
+                            console.log("prova"+data);
                             if(data === "UtenteInesistente"){
                                 self.messaggio = "utente inesistente";
                             } else if(data === "PasswordErrata"){
-                                self.messaggio = "password errata";
+                                self.messaggio = "Password errata";
                             } else if(data != null){
                                 self.utente = {"nome_utente": self.InputNomeUtente, "password": self.InputPassword, "ruolo": data.split(";")[1], "session": data.split(";")[0]};
-                                // self.utente.nome_utente = self.InputNomeUtente;
-                                // self.utente.password = self.InputPassword;
-                                // self.utente.ruolo = data.split(";")[1];
-
                                 self.visualizzaPagina("home");
                                 self.ruolo = self.utente.ruolo.toLowerCase();
                                 self.giornoSelezionato = "Lunedì";
@@ -1053,44 +1051,49 @@
             },
             getInsegnamenti: function () {
                 var self = this;
-                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletInsegnamenti", {},
+                var numero_insegnamenti = 0;
+                if(self.insegnamenti.length > 0){
+                    numero_insegnamenti = self.insegnamenti.length;
+                }
+                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletInsegnamenti", {id : numero_insegnamenti},
                     function (data) {
-                        let i;
-                        let flag;
-                        self.insegnamenti = data;
-                        for (i = 0; i < self.insegnamenti.length; i++) {
-                            // console.log(JSON.stringify(self.insegnamenti[i]));
-                            flag = true;
-                            for (let j = 1; j < self.docenti.length; j++) {
-                                if (self.docenti[j].matricola === self.insegnamenti[i].docente.matricola) {
-                                    flag = false;
-                                    break;
+                        if(data.length > 0) {
+                            self.insegnamenti = data;
+                            let i;
+                            let flag;
+                            for (i = 0; i < self.insegnamenti.length; i++) {
+                                flag = true;
+                                for (let j = 1; j < self.docenti.length; j++) {
+                                    if (self.docenti[j].matricola === self.insegnamenti[i].docente.matricola) {
+                                        flag = false;
+                                        break;
+                                    }
+                                }
+                                if (flag) {
+                                    self.docenti.push(self.insegnamenti[i].docente);
                                 }
                             }
-                            if (flag) {
-                                self.docenti.push(self.insegnamenti[i].docente);
-                            }
-                        }
-                        for (i = 0; i < self.insegnamenti.length; i++) {
-                            flag = true;
-                            for (let j = 1; j < self.corsi.length; j++) {
-                                if (self.corsi[j].codice === self.insegnamenti[i].corso.codice) {
-                                    flag = false;
-                                    break;
+                            for (i = 0; i < self.insegnamenti.length; i++) {
+                                flag = true;
+                                for (let j = 1; j < self.corsi.length; j++) {
+                                    if (self.corsi[j].codice === self.insegnamenti[i].corso.codice) {
+                                        flag = false;
+                                        break;
+                                    }
+                                }
+                                if (flag) {
+                                    self.corsi.push(self.insegnamenti[i].corso);
                                 }
                             }
-                            if (flag) {
-                                self.corsi.push(self.insegnamenti[i].corso);
+                            self.docentiL.splice(1, self.docentiL.length);
+                            self.corsiL.splice(1, self.corsiL.length);
+                            for (i = 1; i < self.docenti.length; i++) {
+                                self.docentiL.push(self.docenti[i]);
                             }
-                        }
-                        self.docentiL.splice(1, self.docentiL.length);
-                        self.corsiL.splice(1, self.corsiL.length);
-                        for (i = 1; i < self.docenti.length; i++) {
-                            self.docentiL.push(self.docenti[i]);
-                        }
 
-                        for (i = 1; i < self.corsi.length; i++) {
-                            self.corsiL.push(self.corsi[i]);
+                            for (i = 1; i < self.corsi.length; i++) {
+                                self.corsiL.push(self.corsi[i]);
+                            }
                         }
                     }
                 );
@@ -1098,7 +1101,6 @@
             myFunction: function (id) {
                 document.getElementById(id).classList.toggle("show");
             },
-
             getElementoSel: function (chiave, id) {
                 var self = this;
                 console.log(chiave);
@@ -1727,10 +1729,8 @@
                             var indice = self.ripetizioniDaFare.indexOf(ripetizione);
                             self.ripetizioniDaFare.splice(indice);
                             self.ripetizioniCancellate.push(ripetizione);
-
                             self.aggiornaFlagBottoni(ripetizione.giorno, ripetizione.ora, true);
                             self.getPrenotazioni();
-
                         }
                     );
                 } else if (dest === "check") {
