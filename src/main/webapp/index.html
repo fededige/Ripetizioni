@@ -1734,18 +1734,45 @@
             caricaDocenti: function () {
                 var self = this;
                 console.log("Sono in carica totali Docenti");
-                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletCaricaDocentiTotali", {session: self.utente.session},
+                var ultimo_id=0;
+                if(self.docentiTot.length === 0)
+                    ultimo_id=0
+                else
+                    ultimo_id= self.docentiTot[self.docentiTot.length-1].matricola;
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletCaricaDocentiTotali", {session: self.utente.session , id: ultimo_id},
                     function (data) {
-                        self.docentiTot = data;
+                        if(self.docentiTot.length === 0){
+                            self.docentiTot = data;
+                        }
+                        else{
+                            for(var i=0;i<data.length;i++){
+                                console.log(data[i]);
+                                self.docentiTot.push(data[i]);
+                            }
+                        }
                     }
                 );
             },
             caricaCorsi: function () {
                 var self = this;
                 console.log("Sono in carica totali Corsi");
-                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletCaricaCorsiTotali", {session: self.utente.session},
+                var ultimo_id=0
+                if(self.corsiTot.length === 0)
+                    ultimo_id=0
+                else
+                    ultimo_id= self.corsiTot[self.corsiTot.length-1].codice;
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletCaricaCorsiTotali", {session: self.utente.session,  id: ultimo_id},
                     function (data) {
-                        self.corsiTot = data;
+                        console.log("data"+self.corsiTot.length);
+                        if(self.corsiTot.length === 0){
+                            self.corsiTot = data;
+                        }
+                        else{
+                            for(var i=0;i<data.length;i++){
+                                console.log(data[i]);
+                                self.corsiTot.push(data[i]);
+                            }
+                        }
                     }
                 );
             },
@@ -1753,17 +1780,17 @@
                 var self = this;
                 console.log("Sono in rimuovi Docenti" + self.docenteSceltoDaEliminare);
                 var myJson = JSON.stringify(self.docenteSceltoDaEliminare);
-                console.log("1168" + myJson);
                 $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRimuoviDocenti", {docente: myJson.toString(), session: self.utente.session},
                     function (data) {
                         if (data) {
-                            console.log("cancellazione andata a buon fine");
                             self.messaggio="Docente cancellato correttamente";
-
+                            var indice = self.docentiTot.indexOf(self.docenteSceltoDaEliminare);
+                            self.docentiTot.splice(indice);
                             self.rimuoviInsegnamento(self.docenteSceltoDaEliminare,null);
                             self.caricaDocenti();
+                            self.docenteSceltoDaEliminare= {"matricola": 0, "nome": "", "cognome": "Scegli Docente", "stato": true};
+
                         } else {
-                            console.log("errore in rimuoviDocente, check");
                             self.messaggio="Errore!!! Docente non cancellato";
                         }
                     }
@@ -1779,8 +1806,12 @@
                         if (data) {
                             console.log("cancellazione andata a buon fine");
                             self.messaggio="Corso cancellato correttamente";
+                            var indice = self.corsiTot.indexOf(self.corsoSceltoDaEliminare);
+                            self.corsiTot.splice(indice);
                             self.rimuoviInsegnamento(null,self.corsoSceltoDaEliminare);
                             self.caricaCorsi();
+                            self.corsoSceltoDaEliminare= {"codice": 0, "titolo_corso": "Scegli Corso", "stato": true};
+
                         } else {
                             console.log("errore in rimuoviDocente, check");
                             self.messaggio="Errore!!! Corso non cancellato";

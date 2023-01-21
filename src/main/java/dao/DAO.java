@@ -106,12 +106,12 @@ public class DAO {
         return true;
     }
 
-    public ArrayList<Corso> mostraCorsi(){
+    public ArrayList<Corso> mostraCorsi(int ID){
         Connection conn = openConnection();
         ArrayList<Corso> corsi = new ArrayList<>();
         try{
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM corso WHERE stato = true");
+            ResultSet rs = st.executeQuery("SELECT * FROM corso WHERE stato = true and codice > " + ID);
             while (rs.next()){
                 Corso c = new Corso(rs.getInt("codice"),rs.getString("titolocorso"));
                 corsi.add(c);
@@ -224,12 +224,12 @@ public class DAO {
         return true;
     }
 
-    public ArrayList<Docente> mostraDocenti(){
+    public ArrayList<Docente> mostraDocenti(int ID){
         Connection conn = openConnection();
         ArrayList<Docente> docenti = new ArrayList<>();
         try{
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM docente WHERE stato = true");
+            ResultSet rs = st.executeQuery("SELECT * FROM docente WHERE stato = true and matricola > "+ID);
             while (rs.next()){
                 Docente d = new Docente(rs.getInt("matricola"),rs.getString("nome"), rs.getString("cognome"));
                 docenti.add(d);

@@ -28,26 +28,23 @@ public class ServletCaricaCorsiTotali extends HttpServlet {
         PrintWriter out = response.getWriter();
         Gson gson = new Gson();
         String s = gson.toJson("non hai i permessi necessari");
-
+        int ultimo_codice_corso=0;
         String sessionID;
         if(request.getParameter("session") == null){
             JsonObject obj = new JsonParser().parse(request.getReader().readLine()).getAsJsonObject();
             sessionID = obj.get("session").getAsString();
+            ultimo_codice_corso = obj.get("id").getAsInt();
         } else {
             sessionID = request.getParameter("session");
+            ultimo_codice_corso =  Integer.parseInt(request.getParameter("id"));
         }
         HttpSession session = SessionUtils.sessionMap.get(sessionID);
 
         if(session.getAttribute("ruolo").equals("admin")){
-            List<Corso> listRes = dao.mostraCorsi();
+            List<Corso> listRes = dao.mostraCorsi(ultimo_codice_corso);
             s = gson.toJson(listRes);
         }
         out.print(s);
         out.flush();
     }
-
-//    @Override
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//
-//    }
 }
