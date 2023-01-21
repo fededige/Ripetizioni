@@ -1,6 +1,8 @@
 package dao;
 
 public class Prenotazione {
+
+    private int codice;
     private Corso corso;
     private Docente docente;
     private String utente;
@@ -9,7 +11,8 @@ public class Prenotazione {
     private boolean stato;
     private boolean effettuata;
 
-    public Prenotazione(Corso corso, Docente docente, String utente, String giorno, String ora,boolean stato,boolean effettuata){
+    public Prenotazione(int codice, Corso corso, Docente docente, String utente, String giorno, String ora,boolean stato,boolean effettuata){
+        this.codice = codice;
         this.corso = corso;
         this.docente = docente;
         this.utente = utente;

@@ -1680,20 +1680,33 @@
             },
             getPrenotazioni: function () {
                 var self = this;
-                console.log(self.utente.ruolo);
-                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRipetizionieff",{session: self.utente.session},
+                var ultimo_id = 0;
+                if(self.ripetizioniEffettuate.length === 0 && self.ripetizioniDaFare.length === 0 && self.ripetizioniCancellate.length === 0){
+                    ultimo_id = 0;
+                }else{
+                    var ultimo_codice_ripetizioniEffettuate =0;
+                    if(self.ripetizioniEffettuate.length > 0)
+                        ultimo_codice_ripetizioniEffettuate = self.ripetizioniEffettuate[self.ripetizioniEffettuate.length-1].codice;
+
+                    var ultimo_codice_ripetizioniDaFare=0;
+                    if(self.ripetizioniDaFare.length > 0)
+                        ultimo_codice_ripetizioniDaFare = self.ripetizioniDaFare[self.ripetizioniDaFare.length-1].codice;
+
+                    var ultimo_codice_ripetizioniCancellate=0
+                    if(self.ripetizioniCancellate.length>0)
+                        ultimo_codice_ripetizioniCancellate = self.ripetizioniCancellate[self.ripetizioniCancellate.length-1].codice;
+
+                    ultimo_id = Math.max(ultimo_codice_ripetizioniEffettuate,ultimo_codice_ripetizioniDaFare,ultimo_codice_ripetizioniCancellate);
+                }
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRipetizionieff",{session: self.utente.session,id : ultimo_id},
                     function (data) {
-                        console.log(data);
-                        self.ripetizioniEffettuate = [];
-                        self.ripetizioniDaFare = [];
-                        self.ripetizioniCancellate = [];
                         for (let i = 0; i < data.length; i++) {
                             if (data[i].stato === true && data[i].effettuata === false) {
-                                self.ripetizioniDaFare.push(data[i]);
+                                    self.ripetizioniDaFare.push(data[i]);
                             } else if (data[i].stato === false && data[i].effettuata === true) {
-                                self.ripetizioniEffettuate.push(data[i]);
+                                    self.ripetizioniEffettuate.push(data[i]);
                             } else if (data[i].stato === false && data[i].effettuata === false) {
-                                self.ripetizioniCancellate.push(data[i]);
+                                    self.ripetizioniCancellate.push(data[i]);
                             }
                         }
                     }
@@ -1711,8 +1724,13 @@
                             } else {
                                 console.log("errore in modificaListaPren, trash");
                             }
+                            var indice = self.ripetizioniDaFare.indexOf(ripetizione);
+                            self.ripetizioniDaFare.splice(indice);
+                            self.ripetizioniCancellate.push(ripetizione);
+
                             self.aggiornaFlagBottoni(ripetizione.giorno, ripetizione.ora, true);
                             self.getPrenotazioni();
+
                         }
                     );
                 } else if (dest === "check") {
@@ -1723,6 +1741,9 @@
                             } else {
                                 console.log("errore in modificaListaPren, check");
                             }
+                            var indice = self.ripetizioniDaFare.indexOf(ripetizione);
+                            self.ripetizioniDaFare.splice(indice);
+                            self.ripetizioniEffettuate.push(ripetizione);
                             self.aggiornaFlagBottoni(ripetizione.giorno, ripetizione.ora, true);
                             self.getPrenotazioni();
                         }

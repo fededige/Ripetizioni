@@ -710,7 +710,6 @@ public class DAO {
         }
         try {
             prenotazioni = mostraPrenotazioni(docente, corso, utente);
-            //if (prenotazioni == null ) System.out.println("è null");
             if(docente != null) {
                 for (Prenotazione p : prenotazioni) {
                     int y = DayToIndex(p.getGiorno());
@@ -815,23 +814,21 @@ public class DAO {
         return indice;
     }
 
-    public ArrayList<Prenotazione> mostraPrenotazioni(String usr){
+    public ArrayList<Prenotazione> mostraPrenotazioni(String usr,Integer ID){
         Connection conn = openConnection();
         ArrayList<Prenotazione> prenotazioni = new ArrayList<>();
         try{
-            String sql= "SELECT * FROM prenotazione";
-            System.out.println("795 ."+ usr + ".");
+            String sql= "SELECT * FROM prenotazione WHERE idPrenotazione > " + ID;
             if(usr != null){
-                System.out.println(usr.length());
-                sql +=" WHERE utente= '"+usr+"'";
+                sql +=" and utente= '"+usr+"' ";
             }
             System.out.println(sql);
-            Statement st = conn.createStatement();//SELECT * FROM prenotazione WHERE stato = true
+            Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(sql);
             while (rs.next()){
                 Corso c=getCorso(rs.getInt("corso"));
                 Docente d=getDocente(rs.getInt("docente"));
-                Prenotazione prenotazione = new Prenotazione(c,d,rs.getString("utente"),rs.getString("giorno"),rs.getString("ora"),rs.getBoolean("stato"),rs.getBoolean("effettuata"));
+                Prenotazione prenotazione = new Prenotazione(rs.getInt("idPrenotazione"),c,d,rs.getString("utente"),rs.getString("giorno"),rs.getString("ora"),rs.getBoolean("stato"),rs.getBoolean("effettuata"));
                 prenotazioni.add(prenotazione);
             }
             st.close();
@@ -856,7 +853,7 @@ public class DAO {
                 Statement st = conn.createStatement();
                 System.out.println(corso);
                 if(docente != null && corso != null){
-                    sql2 = "SELECT * FROM insegna WHERE docente = " + docente + " and corso = " + corso;
+                    sql2 = "SELECT * FROM insegna WHERE  docente = " + docente + " and corso = " + corso;
                     ResultSet rs2 = st.executeQuery(sql2);
                     if(rs2.next()){
                         sql += "docente= " + docente + ")";
@@ -873,7 +870,7 @@ public class DAO {
                 while (rs.next()) {
                     Corso c=getCorso(rs.getInt("corso"));
                     Docente d=getDocente(rs.getInt("docente"));
-                    Prenotazione prenotazione = new Prenotazione(c, d, rs.getString("utente"), rs.getString("giorno"), rs.getString("ora"),rs.getBoolean("stato"),rs.getBoolean("effettuata"));
+                    Prenotazione prenotazione = new Prenotazione(rs.getInt("idPrenotazione"),c, d, rs.getString("utente"), rs.getString("giorno"), rs.getString("ora"),rs.getBoolean("stato"),rs.getBoolean("effettuata"));
                     prenotazioni.add(prenotazione);
                 }
                 st.close();
@@ -894,8 +891,6 @@ public class DAO {
                 System.out.println(sql);
                 Statement st = conn.createStatement();
                 st.executeUpdate(sql);
-                //rs.next();
-                //System.out.println(rs);
                 st.close();
             }
         }catch (SQLException e){

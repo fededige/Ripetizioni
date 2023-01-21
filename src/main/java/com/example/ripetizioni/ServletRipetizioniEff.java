@@ -29,24 +29,27 @@ public class ServletRipetizioniEff extends HttpServlet {
         List<Prenotazione> RipetizioniEff = null;
         Gson gson = new Gson();
         String s = gson.toJson("Non hai i permessi necessari");
-
+        int id_ultima_prenotazione = 0;
         String sessionID;
         if(request.getParameter("session") == null){
             JsonObject obj = new JsonParser().parse(request.getReader().readLine()).getAsJsonObject();
             sessionID = obj.get("session").getAsString();
+            id_ultima_prenotazione = obj.get("id").getAsInt();
         } else {
             sessionID = request.getParameter("session");
+            id_ultima_prenotazione = Integer.parseInt(request.getParameter("id"));
         }
         HttpSession session = SessionUtils.sessionMap.get(sessionID);
 
         if(session.getAttribute("ruolo").equals("admin")){
-            RipetizioniEff = dao.mostraPrenotazioni(null);
+            RipetizioniEff = dao.mostraPrenotazioni(null,id_ultima_prenotazione);
             s = gson.toJson(RipetizioniEff);
         }
         else if(session.getAttribute("ruolo").equals("cliente")){
-            RipetizioniEff = dao.mostraPrenotazioni(session.getAttribute("login").toString());
+            RipetizioniEff = dao.mostraPrenotazioni(session.getAttribute("login").toString(),id_ultima_prenotazione);
             s = gson.toJson(RipetizioniEff);
         }
+        System.out.println("52"+s);
         out.print(s);
         out.flush();
     }
