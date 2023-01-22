@@ -5,7 +5,7 @@ public class Corso {
     private String titolo_corso;
     private boolean stato;
 
-    public Corso(int codice, String titolo_corso){//direi di non mettere nei parametri stato, tanto lo mettiamo a true di default
+    public Corso(int codice, String titolo_corso){
         this.codice = codice;
         this.titolo_corso = titolo_corso;
         this.stato = true;

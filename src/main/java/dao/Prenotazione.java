@@ -1,16 +1,18 @@
 package dao;
 
 public class Prenotazione {
+
+    private int codice;
     private Corso corso;
     private Docente docente;
     private String utente;
     private String giorno;
     private String ora;
     private boolean stato;
-
     private boolean effettuata;
 
-    public Prenotazione(Corso corso, Docente docente, String utente, String giorno, String ora,boolean stato,boolean effettuata){
+    public Prenotazione(int codice, Corso corso, Docente docente, String utente, String giorno, String ora,boolean stato,boolean effettuata){
+        this.codice = codice;
         this.corso = corso;
         this.docente = docente;
         this.utente = utente;
@@ -18,16 +20,6 @@ public class Prenotazione {
         this.ora = ora;
         this.stato = stato;
         this.effettuata=effettuata;
-    }
-
-    public Prenotazione(Corso corso, Docente docente, String utente, String giorno, String ora){
-        this.corso = corso;
-        this.docente = docente;
-        this.utente = utente;
-        this.giorno = giorno.toLowerCase();
-        this.ora = ora;
-        this.stato = true;
-        this.effettuata = false;
     }
 
     public Docente getDocente() {

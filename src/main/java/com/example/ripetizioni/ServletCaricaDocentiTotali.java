@@ -31,18 +31,20 @@ public class ServletCaricaDocentiTotali extends HttpServlet {
         PrintWriter out = response.getWriter();
         Gson gson = new Gson();
         String s = gson.toJson("non hai i permessi necessari");
-
+        int ultima_matricola=0;
         String sessionID;
         if(request.getParameter("session") == null){
             JsonObject obj = new JsonParser().parse(request.getReader().readLine()).getAsJsonObject();
             sessionID = obj.get("session").getAsString();
+            ultima_matricola = obj.get("id").getAsInt();
         } else {
             sessionID = request.getParameter("session");
+            ultima_matricola =  Integer.parseInt(request.getParameter("id"));
         }
         HttpSession session = SessionUtils.sessionMap.get(sessionID);
 
         if(session.getAttribute("ruolo").equals("admin")){
-            List<Docente> listRes = dao.mostraDocenti();
+            List<Docente> listRes = dao.mostraDocenti(ultima_matricola);
             s = gson.toJson(listRes);
         }
         out.print(s);

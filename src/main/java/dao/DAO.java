@@ -106,12 +106,12 @@ public class DAO {
         return true;
     }
 
-    public ArrayList<Corso> mostraCorsi(){
+    public ArrayList<Corso> mostraCorsi(int ID){
         Connection conn = openConnection();
         ArrayList<Corso> corsi = new ArrayList<>();
         try{
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM corso WHERE stato = true");
+            ResultSet rs = st.executeQuery("SELECT * FROM corso WHERE stato = true and codice > " + ID);
             while (rs.next()){
                 Corso c = new Corso(rs.getInt("codice"),rs.getString("titolocorso"));
                 corsi.add(c);
@@ -224,12 +224,12 @@ public class DAO {
         return true;
     }
 
-    public ArrayList<Docente> mostraDocenti(){
+    public ArrayList<Docente> mostraDocenti(int ID){
         Connection conn = openConnection();
         ArrayList<Docente> docenti = new ArrayList<>();
         try{
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM docente WHERE stato = true");
+            ResultSet rs = st.executeQuery("SELECT * FROM docente WHERE stato = true and matricola > "+ID);
             while (rs.next()){
                 Docente d = new Docente(rs.getInt("matricola"),rs.getString("nome"), rs.getString("cognome"));
                 docenti.add(d);
@@ -345,17 +345,22 @@ public class DAO {
         return insegnamenti;
     }
 
-    public ArrayList<Insegnamento> getInsegnamenti(){ //TODO: risolvere i problemi con mostraInsegnamenti
+    public ArrayList<Insegnamento> getInsegnamenti(int lunghezza){
         Connection conn = openConnection();
         ArrayList<Insegnamento> insegnamenti = new ArrayList<>();
         try{
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM insegna WHERE stato = true");
-            while (rs.next()){
-                Insegnamento insegnamento = new Insegnamento(getCorso(rs.getInt("corso")), getDocente(rs.getInt("docente")));
-                insegnamenti.add(insegnamento);
+            ResultSet conta_insegnamenti = st.executeQuery("SELECT count(*) AS conta FROM insegna WHERE stato = true");
+            System.out.println("prima count "+conta_insegnamenti);
+            conta_insegnamenti.next();
+            if(conta_insegnamenti.getInt("conta") != lunghezza) {
+                ResultSet rs = st.executeQuery("SELECT * FROM insegna WHERE stato = true");
+                while (rs.next()) {
+                    Insegnamento insegnamento = new Insegnamento(getCorso(rs.getInt("corso")), getDocente(rs.getInt("docente")));
+                    insegnamenti.add(insegnamento);
+                }
+                st.close();
             }
-            st.close();
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }finally {
@@ -715,7 +720,6 @@ public class DAO {
         }
         try {
             prenotazioni = mostraPrenotazioni(docente, corso, utente);
-            //if (prenotazioni == null ) System.out.println("è null");
             if(docente != null) {
                 for (Prenotazione p : prenotazioni) {
                     int y = DayToIndex(p.getGiorno());
@@ -820,23 +824,21 @@ public class DAO {
         return indice;
     }
 
-    public ArrayList<Prenotazione> mostraPrenotazioni(String usr){
+    public ArrayList<Prenotazione> mostraPrenotazioni(String usr,Integer ID){
         Connection conn = openConnection();
         ArrayList<Prenotazione> prenotazioni = new ArrayList<>();
         try{
-            String sql= "SELECT * FROM prenotazione";
-            System.out.println("795 ."+ usr + ".");
+            String sql= "SELECT * FROM prenotazione WHERE idPrenotazione > " + ID;
             if(usr != null){
-                System.out.println(usr.length());
-                sql +=" WHERE utente= '"+usr+"'";
+                sql +=" and utente= '"+usr+"' ";
             }
             System.out.println(sql);
-            Statement st = conn.createStatement();//SELECT * FROM prenotazione WHERE stato = true
+            Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(sql);
             while (rs.next()){
                 Corso c=getCorso(rs.getInt("corso"));
                 Docente d=getDocente(rs.getInt("docente"));
-                Prenotazione prenotazione = new Prenotazione(c,d,rs.getString("utente"),rs.getString("giorno"),rs.getString("ora"),rs.getBoolean("stato"),rs.getBoolean("effettuata"));
+                Prenotazione prenotazione = new Prenotazione(rs.getInt("idPrenotazione"),c,d,rs.getString("utente"),rs.getString("giorno"),rs.getString("ora"),rs.getBoolean("stato"),rs.getBoolean("effettuata"));
                 prenotazioni.add(prenotazione);
             }
             st.close();
@@ -861,7 +863,7 @@ public class DAO {
                 Statement st = conn.createStatement();
                 System.out.println(corso);
                 if(docente != null && corso != null){
-                    sql2 = "SELECT * FROM insegna WHERE docente = " + docente + " and corso = " + corso;
+                    sql2 = "SELECT * FROM insegna WHERE  docente = " + docente + " and corso = " + corso;
                     ResultSet rs2 = st.executeQuery(sql2);
                     if(rs2.next()){
                         sql += "docente= " + docente + ")";
@@ -878,7 +880,7 @@ public class DAO {
                 while (rs.next()) {
                     Corso c=getCorso(rs.getInt("corso"));
                     Docente d=getDocente(rs.getInt("docente"));
-                    Prenotazione prenotazione = new Prenotazione(c, d, rs.getString("utente"), rs.getString("giorno"), rs.getString("ora"),rs.getBoolean("stato"),rs.getBoolean("effettuata"));
+                    Prenotazione prenotazione = new Prenotazione(rs.getInt("idPrenotazione"),c, d, rs.getString("utente"), rs.getString("giorno"), rs.getString("ora"),rs.getBoolean("stato"),rs.getBoolean("effettuata"));
                     prenotazioni.add(prenotazione);
                 }
                 st.close();
@@ -899,8 +901,6 @@ public class DAO {
                 System.out.println(sql);
                 Statement st = conn.createStatement();
                 st.executeUpdate(sql);
-                //rs.next();
-                //System.out.println(rs);
                 st.close();
             }
         }catch (SQLException e){

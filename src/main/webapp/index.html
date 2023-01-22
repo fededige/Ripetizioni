@@ -279,7 +279,7 @@
                 <button v-on:click="caricaPrenotazioni" type="button" class="btn btn-primary btn-lg">Cerca</button>
             </div>
         </div>
-        <div class="container">
+        <div class="container-fluid">
             <div class="event-schedule-area-two bg-color pad100">
                 <div class="row">
                     <div class="col-lg-12 d-none d-lg-block">
@@ -869,7 +869,7 @@
         </div>
         </span>
     <span v-if="paginaEliminaInsegnamenti">
-        <div class="conteiner">
+        <div class="container-fluid">
             <p class="h3 text-center mt-3"> ELIMINA INSEGNAMENTO</p>
             <div class="d-flex flex-column justify-content-center align-items-center mt-3">
                     <div class="dropdown">
@@ -885,12 +885,14 @@
                             </div>
                         </div>
                     </div>
-                    <p class="font-weight-bold mt-4">Sei sicuro di voler eliminare l'insegnamento: <span
-                            v-if="corsoSceltoDaEliminare.titolo_corso != 'Scegli Corso'">{{ corsoSceltoDaEliminare.titolo_corso
-                        }} {{ docenteSceltoDaEliminare.cognome }}</span></p>
+                    <p class="font-weight-bold mt-4">Sei sicuro di voler eliminare l'insegnamento:
+                        <span v-if="corsoSceltoDaEliminare.titolo_corso != 'Scegli Corso'">{{ corsoSceltoDaEliminare.titolo_corso
+                        }} {{ docenteSceltoDaEliminare.cognome }}
+                        </span>
+                    </p>
 
                 <!--**********************************************************************-->
-            <div class="row justify-content-center">
+            <div class="row justify-content-center" style="display: block">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#rimuoviIns" v-on:click="rimuoviInsegnamento(null,null)">
                     Conferma eliminazione
                 </button>
@@ -1030,16 +1032,14 @@
                             password: self.InputPassword
                         },
                         function (data) {
+                            console.log("prova");
+                            console.log("prova"+data);
                             if(data === "UtenteInesistente"){
                                 self.messaggio = "utente inesistente";
                             } else if(data === "PasswordErrata"){
-                                self.messaggio = "password errata";
+                                self.messaggio = "Password errata";
                             } else if(data != null){
                                 self.utente = {"nome_utente": self.InputNomeUtente, "password": self.InputPassword, "ruolo": data.split(";")[1], "session": data.split(";")[0]};
-                                // self.utente.nome_utente = self.InputNomeUtente;
-                                // self.utente.password = self.InputPassword;
-                                // self.utente.ruolo = data.split(";")[1];
-
                                 self.visualizzaPagina("home");
                                 self.ruolo = self.utente.ruolo.toLowerCase();
                                 self.giornoSelezionato = "Lunedì";
@@ -1053,44 +1053,49 @@
             },
             getInsegnamenti: function () {
                 var self = this;
-                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletInsegnamenti", {},
+                var numero_insegnamenti = 0;
+                if(self.insegnamenti.length > 0){
+                    numero_insegnamenti = self.insegnamenti.length;
+                }
+                $.get("http://localhost:8081/Ripetizioni_war_exploded/ServletInsegnamenti", {id : numero_insegnamenti},
                     function (data) {
-                        let i;
-                        let flag;
-                        self.insegnamenti = data;
-                        for (i = 0; i < self.insegnamenti.length; i++) {
-                            // console.log(JSON.stringify(self.insegnamenti[i]));
-                            flag = true;
-                            for (let j = 1; j < self.docenti.length; j++) {
-                                if (self.docenti[j].matricola === self.insegnamenti[i].docente.matricola) {
-                                    flag = false;
-                                    break;
+                        if(data.length > 0) {
+                            self.insegnamenti = data;
+                            let i;
+                            let flag;
+                            for (i = 0; i < self.insegnamenti.length; i++) {
+                                flag = true;
+                                for (let j = 1; j < self.docenti.length; j++) {
+                                    if (self.docenti[j].matricola === self.insegnamenti[i].docente.matricola) {
+                                        flag = false;
+                                        break;
+                                    }
+                                }
+                                if (flag) {
+                                    self.docenti.push(self.insegnamenti[i].docente);
                                 }
                             }
-                            if (flag) {
-                                self.docenti.push(self.insegnamenti[i].docente);
-                            }
-                        }
-                        for (i = 0; i < self.insegnamenti.length; i++) {
-                            flag = true;
-                            for (let j = 1; j < self.corsi.length; j++) {
-                                if (self.corsi[j].codice === self.insegnamenti[i].corso.codice) {
-                                    flag = false;
-                                    break;
+                            for (i = 0; i < self.insegnamenti.length; i++) {
+                                flag = true;
+                                for (let j = 1; j < self.corsi.length; j++) {
+                                    if (self.corsi[j].codice === self.insegnamenti[i].corso.codice) {
+                                        flag = false;
+                                        break;
+                                    }
+                                }
+                                if (flag) {
+                                    self.corsi.push(self.insegnamenti[i].corso);
                                 }
                             }
-                            if (flag) {
-                                self.corsi.push(self.insegnamenti[i].corso);
+                            self.docentiL.splice(1, self.docentiL.length);
+                            self.corsiL.splice(1, self.corsiL.length);
+                            for (i = 1; i < self.docenti.length; i++) {
+                                self.docentiL.push(self.docenti[i]);
                             }
-                        }
-                        self.docentiL.splice(1, self.docentiL.length);
-                        self.corsiL.splice(1, self.corsiL.length);
-                        for (i = 1; i < self.docenti.length; i++) {
-                            self.docentiL.push(self.docenti[i]);
-                        }
 
-                        for (i = 1; i < self.corsi.length; i++) {
-                            self.corsiL.push(self.corsi[i]);
+                            for (i = 1; i < self.corsi.length; i++) {
+                                self.corsiL.push(self.corsi[i]);
+                            }
                         }
                     }
                 );
@@ -1098,7 +1103,6 @@
             myFunction: function (id) {
                 document.getElementById(id).classList.toggle("show");
             },
-
             getElementoSel: function (chiave, id) {
                 var self = this;
                 console.log(chiave);
@@ -1680,20 +1684,33 @@
             },
             getPrenotazioni: function () {
                 var self = this;
-                console.log(self.utente.ruolo);
-                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRipetizionieff",{session: self.utente.session},
+                var ultimo_id = 0;
+                if(self.ripetizioniEffettuate.length === 0 && self.ripetizioniDaFare.length === 0 && self.ripetizioniCancellate.length === 0){
+                    ultimo_id = 0;
+                }else{
+                    var ultimo_codice_ripetizioniEffettuate =0;
+                    if(self.ripetizioniEffettuate.length > 0)
+                        ultimo_codice_ripetizioniEffettuate = self.ripetizioniEffettuate[self.ripetizioniEffettuate.length-1].codice;
+
+                    var ultimo_codice_ripetizioniDaFare=0;
+                    if(self.ripetizioniDaFare.length > 0)
+                        ultimo_codice_ripetizioniDaFare = self.ripetizioniDaFare[self.ripetizioniDaFare.length-1].codice;
+
+                    var ultimo_codice_ripetizioniCancellate=0
+                    if(self.ripetizioniCancellate.length>0)
+                        ultimo_codice_ripetizioniCancellate = self.ripetizioniCancellate[self.ripetizioniCancellate.length-1].codice;
+
+                    ultimo_id = Math.max(ultimo_codice_ripetizioniEffettuate,ultimo_codice_ripetizioniDaFare,ultimo_codice_ripetizioniCancellate);
+                }
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRipetizionieff",{session: self.utente.session,id : ultimo_id},
                     function (data) {
-                        console.log(data);
-                        self.ripetizioniEffettuate = [];
-                        self.ripetizioniDaFare = [];
-                        self.ripetizioniCancellate = [];
                         for (let i = 0; i < data.length; i++) {
                             if (data[i].stato === true && data[i].effettuata === false) {
-                                self.ripetizioniDaFare.push(data[i]);
+                                    self.ripetizioniDaFare.push(data[i]);
                             } else if (data[i].stato === false && data[i].effettuata === true) {
-                                self.ripetizioniEffettuate.push(data[i]);
+                                    self.ripetizioniEffettuate.push(data[i]);
                             } else if (data[i].stato === false && data[i].effettuata === false) {
-                                self.ripetizioniCancellate.push(data[i]);
+                                    self.ripetizioniCancellate.push(data[i]);
                             }
                         }
                     }
@@ -1711,6 +1728,9 @@
                             } else {
                                 console.log("errore in modificaListaPren, trash");
                             }
+                            var indice = self.ripetizioniDaFare.indexOf(ripetizione);
+                            self.ripetizioniDaFare.splice(indice);
+                            self.ripetizioniCancellate.push(ripetizione);
                             self.aggiornaFlagBottoni(ripetizione.giorno, ripetizione.ora, true);
                             self.getPrenotazioni();
                         }
@@ -1723,6 +1743,9 @@
                             } else {
                                 console.log("errore in modificaListaPren, check");
                             }
+                            var indice = self.ripetizioniDaFare.indexOf(ripetizione);
+                            self.ripetizioniDaFare.splice(indice);
+                            self.ripetizioniEffettuate.push(ripetizione);
                             self.aggiornaFlagBottoni(ripetizione.giorno, ripetizione.ora, true);
                             self.getPrenotazioni();
                         }
@@ -1734,18 +1757,45 @@
             caricaDocenti: function () {
                 var self = this;
                 console.log("Sono in carica totali Docenti");
-                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletCaricaDocentiTotali", {session: self.utente.session},
+                var ultimo_id=0;
+                if(self.docentiTot.length === 0)
+                    ultimo_id=0
+                else
+                    ultimo_id= self.docentiTot[self.docentiTot.length-1].matricola;
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletCaricaDocentiTotali", {session: self.utente.session , id: ultimo_id},
                     function (data) {
-                        self.docentiTot = data;
+                        if(self.docentiTot.length === 0){
+                            self.docentiTot = data;
+                        }
+                        else{
+                            for(var i=0;i<data.length;i++){
+                                console.log(data[i]);
+                                self.docentiTot.push(data[i]);
+                            }
+                        }
                     }
                 );
             },
             caricaCorsi: function () {
                 var self = this;
                 console.log("Sono in carica totali Corsi");
-                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletCaricaCorsiTotali", {session: self.utente.session},
+                var ultimo_id=0
+                if(self.corsiTot.length === 0)
+                    ultimo_id=0
+                else
+                    ultimo_id= self.corsiTot[self.corsiTot.length-1].codice;
+                $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletCaricaCorsiTotali", {session: self.utente.session,  id: ultimo_id},
                     function (data) {
-                        self.corsiTot = data;
+                        console.log("data"+self.corsiTot.length);
+                        if(self.corsiTot.length === 0){
+                            self.corsiTot = data;
+                        }
+                        else{
+                            for(var i=0;i<data.length;i++){
+                                console.log(data[i]);
+                                self.corsiTot.push(data[i]);
+                            }
+                        }
                     }
                 );
             },
@@ -1753,17 +1803,17 @@
                 var self = this;
                 console.log("Sono in rimuovi Docenti" + self.docenteSceltoDaEliminare);
                 var myJson = JSON.stringify(self.docenteSceltoDaEliminare);
-                console.log("1168" + myJson);
                 $.post("http://localhost:8081/Ripetizioni_war_exploded/ServletRimuoviDocenti", {docente: myJson.toString(), session: self.utente.session},
                     function (data) {
                         if (data) {
-                            console.log("cancellazione andata a buon fine");
                             self.messaggio="Docente cancellato correttamente";
-
+                            var indice = self.docentiTot.indexOf(self.docenteSceltoDaEliminare);
+                            self.docentiTot.splice(indice);
                             self.rimuoviInsegnamento(self.docenteSceltoDaEliminare,null);
                             self.caricaDocenti();
+                            self.docenteSceltoDaEliminare= {"matricola": 0, "nome": "", "cognome": "Scegli Docente", "stato": true};
+
                         } else {
-                            console.log("errore in rimuoviDocente, check");
                             self.messaggio="Errore!!! Docente non cancellato";
                         }
                     }
@@ -1779,8 +1829,12 @@
                         if (data) {
                             console.log("cancellazione andata a buon fine");
                             self.messaggio="Corso cancellato correttamente";
+                            var indice = self.corsiTot.indexOf(self.corsoSceltoDaEliminare);
+                            self.corsiTot.splice(indice);
                             self.rimuoviInsegnamento(null,self.corsoSceltoDaEliminare);
                             self.caricaCorsi();
+                            self.corsoSceltoDaEliminare= {"codice": 0, "titolo_corso": "Scegli Corso", "stato": true};
+
                         } else {
                             console.log("errore in rimuoviDocente, check");
                             self.messaggio="Errore!!! Corso non cancellato";
