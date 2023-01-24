@@ -26,26 +26,27 @@ public class ServletRipetizioneCancellata extends HttpServlet {
     }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:54317");
         response.setContentType("application/json");
-        System.out.println("siamo in effettuate");
+        System.out.println("siamo in cancellate");
         PrintWriter out = response.getWriter();
         Gson gson =  new Gson();
         boolean res = false;
-
+        Prenotazione prenEff;
         String sessionID;
         if(request.getParameter("session") == null){
             JsonObject obj = new JsonParser().parse(request.getReader().readLine()).getAsJsonObject();
             sessionID = obj.get("session").getAsString();
+            prenEff = gson.fromJson(String.valueOf(obj.get("prenotazione")), Prenotazione.class);
         } else {
             sessionID = request.getParameter("session");
+            prenEff = gson.fromJson((String) request.getParameter("prenotazione"), Prenotazione.class);
         }
         HttpSession session = SessionUtils.sessionMap.get(sessionID);
 
         if(session.getAttribute("ruolo").equals("admin") || session.getAttribute("ruolo").equals("cliente")){
-            Prenotazione prenEff = gson.fromJson(request.getParameter("prenotazione"), Prenotazione.class);
-            res = dao.rimuoviPrenotazioni(prenEff);
+            res = dao.prenotazioneEff(prenEff);
         }
+        System.out.println(res);
         out.print(res);
         out.flush();
     }

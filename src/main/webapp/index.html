@@ -101,16 +101,14 @@
     </span>
     <span v-else>
         <span v-if="ruolo == 'ospite'">
-             <div class="row justify-content-end mt-2 mr-3">
-                    <button class="btn btn-secondary" type="button"
+             <div class="row justify-content-end mr-3 mb-2">
+                    <button class="btn btn-success mr-2" type="button"
                             v-on:click="visualizzaPagina('login')">Login</button>
-             </div>
-            <div class="row justify-content-end mt-2 mr-3">
-                    <button class="btn btn-secondary" type="button"
-                            v-on:click="visualizzaPagina('registrati')">Registrati</button>
+                 <button class="btn btn-success" type="button"
+                         v-on:click="visualizzaPagina('registrati')">Registrati</button>
              </div>
         </span>
-         <span class="row justify-content-end mr-4" v-else>
+         <span class="row justify-content-end mr-4 mb-2" v-else>
                 <div class="dropdown" id="DropDownUser">
                     <button id="Userbtn" class="btn-lg btn-success dropdown-toggle"
                             v-on:click="myFunction('LoginDropDown')" type="button" data-bs-toggle="dropdown"
@@ -124,7 +122,7 @@
                     </div>
                 </div>
          </span>
-        <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <nav class="navbar navbar-expand-md navbar-light navcolor">
             <!-- Serve per fare il menu a tendina-->
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
                     aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -132,15 +130,15 @@
             </button>
             <!-- FINE-->
             <div class="collapse navbar-collapse m-auto" id="navbarNavAltMarkup">
-              <div class="navbar-nav sticky-bottom sticky-bottom bg-light">
+              <div class="navbar-nav sticky-bottom sticky-bottom">
                 <div class="container-fluid">
-                  <button id="Homebtn" class="btn btn-light btn-sm border " v-on:click="visualizzaPagina('home')"
+                  <button id="Homebtn" class="btn navbutton btn-sm" v-on:click="visualizzaPagina('home')"
                           type="button" aria-expanded="false">
                     Home
                   </button>
                   <div class="row justify-content-end m-auto" v-if="ruolo != 'ospite'">
                     <div class="dropdown" id="DropDownPrenotazioni">
-                      <button id="Prenotazionibtn" class="btn btn-light btn-sm dropdown-toggle border"
+                      <button id="Prenotazionibtn" class="btn btn-sm dropdown-toggle navbutton"
                               v-on:click="myFunction('PrenotazioniDocenteDropDown')" type="button"
                               data-bs-toggle="dropdown" aria-expanded="false">
                         Prenotazioni
@@ -153,7 +151,7 @@
                   </div>
                   <div class="row justify-content-end m-auto" v-if="ruolo == 'admin'">
                     <div class="dropdown" id="DropDownModificaDocente">
-                      <button id="ModificaDocentebtn" class="btn btn-light btn-sm dropdown-toggle border"
+                      <button id="ModificaDocentebtn" class="btn btn-sm dropdown-toggle navbutton"
                               v-on:click="myFunction('ModificaDocenteDropDown')" type="button" data-bs-toggle="dropdown"
                               aria-expanded="false">
                         Modifica Docente
@@ -166,7 +164,7 @@
                   </div>
                   <div class="row justify-content-end m-auto" v-if="ruolo == 'admin'">
                     <div class="dropdown" id="DropDownModificaCorso">
-                      <button class="btn btn-light btn-sm dropdown-toggle border"
+                      <button class="btn btn-sm dropdown-toggle navbutton"
                               v-on:click="myFunction('ModificaCorsoDropDown')" type="button" id="ModificaCorsobtn"
                               data-bs-toggle="dropdown" aria-expanded="false">
                         Modifica Corso
@@ -179,7 +177,7 @@
                   </div>
                   <div class="row justify-content-end m-auto" v-if="ruolo == 'admin'">
                     <div class="dropdown" id="DropDownModificaInsegnamento">
-                      <button class="btn btn-light btn-sm dropdown-toggle border"
+                      <button class="btn btn-sm dropdown-toggle navbutton"
                               v-on:click="myFunction('ModificaInsegnamentoDropDown')" type="button"
                               id="ModificaInsegnamentobtn" data-bs-toggle="dropdown" aria-expanded="false">
                         Modifica Insegnamento

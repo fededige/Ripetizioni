@@ -7,7 +7,17 @@ body{margin-top:20px;}
   }
 
 .coloreSfondo{
-    background-color: #04AA6D;
+    background-color: #28a745;
+}
+
+.navcolor{
+    background-color: #007bff;
+}
+
+.navbutton{
+    background-color: #007bff;
+    border-color: white;
+    color: white;
 }
 /*FIne*/
 
@@ -52,7 +62,7 @@ body{margin-top:20px;}
     left: 0;
     bottom: 0;
     content: "";
-    background: #4125dd;
+    background: #0073E6;
     width: 0;
     height: 2px;
     -webkit-transition: all 0.4s;
@@ -62,12 +72,12 @@ body{margin-top:20px;}
 
 /* colore del giorno selezionato */
 .event-schedule-area-two ul.custom-tab li a.active {
-    color: #4125dd;
+    color: #0073E6;
 }
 
 /* Dropdown Button */
 .dropbtn {
-  background-color: #04AA6D;
+  background-color: #28a745;
   color: white;
   padding: 16px;
   font-size: 16px;
@@ -78,7 +88,7 @@ body{margin-top:20px;}
 
 /* Dropdown button on hover & focus */
 .dropbtn:hover, .dropbtn:focus {
-  background-color: #3e8e41;
+  background-color: #28a745;
 }
 
 /* The search field */
